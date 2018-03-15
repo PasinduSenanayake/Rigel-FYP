@@ -6,7 +6,7 @@ import os
 import shutil
 
 depPath = os.getcwd()+"/Utils"
-processOutput = subprocess.Popen('pip install --target='+depPath+' -r requirements.txt',shell=True)
+processOutput = subprocess.Popen('python -m pip install --target='+depPath+' -r requirements.txt',shell=True)
 stdout, stderr = processOutput.communicate()
 if(stderr==None):
     print "SystemDependencies installed successfully."

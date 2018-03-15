@@ -24,7 +24,7 @@ if(sys.argv[1]=="install"):
             fileData.write(line)
     fileData.close()
     if not (tempName):
-        processOutput = subprocess.Popen('pip install --target='+depPath+' '+sys.argv[2]+'',shell=True, stderr=subprocess.PIPE)
+        processOutput = subprocess.Popen('python -m pip install --target='+depPath+' '+sys.argv[2]+'',shell=True, stderr=subprocess.PIPE)
         stdout, stderr = processOutput.communicate()
         if(stderr== None):
             with open("requirements.txt", "a") as reqFile:
@@ -58,7 +58,7 @@ elif(sys.argv[1]=="uninstall"):
             response = raw_input("Requirment File adjusted. It is required to remove from dependencies as well (Y/N): ")
             if(response=="Y"):
                 shutil.rmtree(src)
-                processOutput = subprocess.Popen('pip install --target='+depPath+' -r requirements.txt',shell=True,stderr=subprocess.PIPE)
+                processOutput = subprocess.Popen('python -m pip install --target='+depPath+' -r requirements.txt',shell=True,stderr=subprocess.PIPE)
                 stdout, stderr = processOutput.communicate()
                 if(stderr==None):
                     shutil.rmtree(dst)
