@@ -11,11 +11,14 @@ try:
     processOutput = subprocess.Popen('pip install --target='+depPath+' -r DependencyManager/requirements.txt',shell=True)
     stdout, stderr = processOutput.communicate()
     if(stderr==None):
+        filesPath = str(os.path.dirname(os.path.realpath(__file__)))+"/DependencyManager"
+        shutil.copy2(filesPath+'/requirements.json', filesPath+'/requirementsLocal.json')
         print "Modules installed successfully."
     else:
         print stderr
         shutil.rmtree(depPath)
         print "Modules installation failed."
+
 except Exception as e:
     print e
     print "Modules installation failed."
