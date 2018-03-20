@@ -1,4 +1,0 @@
-include ompp/ompp/bin/kinst-ompp
-include ompp/ompp/bin/opari
-include ompp/ompp/bin/*.h
-include ompp/ompp/lib/libompp.a

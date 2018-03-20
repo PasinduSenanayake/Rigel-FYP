@@ -7,8 +7,6 @@ import shutil
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+'/DependencyManager/')
 from InternalManager import *
 
-
-
 depPath = str(os.path.dirname(os.path.realpath(__file__)))+"/Utils"
 print "Making SystemDependencies persistance."
 src = str(os.path.dirname(os.path.realpath(__file__)))+"/Utils"
@@ -249,14 +247,39 @@ def updateDep(module,version):
         isSuccess = False
     return isSuccess
 
+if len(sys.argv)>1:
+    if(sys.argv[1]=="install"):
+        if len(sys.argv) == 4:
+            if not (sys.argv[2].isspace() or sys.argv[3].isspace()):
+                installDep(sys.argv[2],sys.argv[3])
+            else:
+                print "Install requires [Module Name] [Version]. Please enter arguments correctly"
+                shutil.rmtree(dst)
+                removeTemp()
+        else:
+            print "Install requires [Module Name] [Version]. Please enter arguments correctly"
+            shutil.rmtree(dst)
+            removeTemp()
+    elif(sys.argv[1]=="uninstall"):
+        if len(sys.argv) == 4:
+            if not (sys.argv[2].isspace() or sys.argv[3].isspace()):
+                uninstallDep(sys.argv[2],sys.argv[3])
+            else:
+                print "Uninstall requires [Module Name] [Version]. Please enter arguments correctly"
+                shutil.rmtree(dst)
+                removeTemp()
+        else:
+            print "Uninstall requires [Module Name] [Version]. Please enter arguments correctly"
+            shutil.rmtree(dst)
+            removeTemp()
 
-if(sys.argv[1]=="install"):
-    installDep(sys.argv[2],sys.argv[3])
-elif(sys.argv[1]=="uninstall"):
-    uninstallDep(sys.argv[2],sys.argv[3])
-elif(sys.argv[1]=="updateAll"):
-    updateAll()
+    elif(sys.argv[1]=="updateAll"):
+        updateAll()
+    else:
+        print "Please enter arguments correctly"
+        shutil.rmtree(dst)
+        removeTemp()
 else:
-    print "Please enter arguments correctly"
+    print "Required parameters are missing. Please follow the API documentation in github."
     shutil.rmtree(dst)
     removeTemp()
