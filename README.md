@@ -1,0 +1,90 @@
+
+
+<h1 align="center">C - OpenMp Optimizer </h1>
+
+<div align="center">
+
+[OpenMp](http://www.openmp.org/) Optimizer for C codes. ( This project is still under development )
+
+
+</div>
+
+## Pre-Requirements 
+
+1. [Python](https://www.python.org/) [ Version - 2.7.10 ~ 2.7.14 ]
+2. [PIP](https://pypi.python.org/pypi/pip) [ Version 9.0.1 ]
+
+## Installation
+
+For the moment C - OpenMp Optimizer is only available as an open source git project.
+
+After cloning the git repository, execute 
+```sh
+python Initialize.py
+```
+
+
+## Framework
+
+### 1. Dependency Manager
+
+This framework contains a python dependency manager.
+1. Install a new dependency <br/>
+```sh
+python Handler.py insatll [depName] [specific version]
+```
+Example :
+```sh
+    python Handler.py insatll ompp 1.0.0
+```
+2. Uninstall a dependency <br/>
+```sh
+python Handler.py uninsatll [depName] [specific version]
+```
+Example :
+```sh
+    python Handler.py uninsatll ompp 1.0.0
+```
+
+3. Update the entire dependenies after remote dependency adding( ex: git pull)<br/>
+```sh
+python Handler.py updateAll
+```
+### 2. OmpP profiler
+[OmpP](http://www.ompp-tool.com/) profiler is a [OpenMp](http://www.openmp.org/) related profiling tool. [OmpP](https://github.com/PasinduSenanayake/Rigel-FYP/tree/ompppackage) repository contains API documentation.
+
+## Questions
+
+For *how-to* questions and other non-issues,
+please use [StackOverflow](http://stackoverflow.com/questions/tagged/C-OpenMp-Opt) instead of Github issues.
+There is a StackOverflow tag called "C-OpenMp-Opt" that you can use to tag your questions.
+
+## Examples
+
+Are you looking for an example project to get started? We don't currently have any. But we would love to host one or  more as soon as possible.
+
+## Documentation
+
+For the moment this is the only documentation we have. 
+
+## Contributing
+
+We'd greatly appreciate any [contribution](/CONTRIBUTING.md) you make. :)
+
+## Changelog
+
+Recently Updated?
+Please read the [changelog](https://github.com/PasinduSenanayake/Rigel-FYP/releases).
+
+## Roadmap
+
+The future plans and high priority features and enhancements can be found in the [ROADMAP.md]() file. ( Currently under development )
+
+## Thanks
+
+Thank you In order :)
+## License
+
+This project is licensed under the terms of the
+[MIT license](/LICENSE).
+
