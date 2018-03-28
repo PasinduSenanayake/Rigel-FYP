@@ -23,7 +23,21 @@ After cloning the git repository, execute
 python Initialize.py
 ```
 
+## Initialization
 
+Valid .c file is required for the execution of optimizer.
+```sh
+python Initializer.py -fp FPATH [-fa FARGUMENTS]
+```
+Example :
+```sh
+    python Initializer.py -fp $Home/test.c -fa 2
+```
+Parameters :<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fp : Absolute path to the .c file [ Required ]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fa : Arguments required for the .c file ( Optional )<br /><br />
+Output:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For this moment, this execution will provide some advices related to achievable performance enhancements in scheduling mechanisms. ( Only if the input .c file contains 'parallel for' loops.)
 ## Framework
 
 ### 1. Dependency Manager
@@ -35,7 +49,7 @@ python Handler.py insatll [depName] [specific version]
 ```
 Example :
 ```sh
-    python Handler.py insatll ompp 1.0.0
+    python Handler.py insatll ompp 1.0.1
 ```
 2. Uninstall a dependency <br/>
 ```sh
@@ -43,7 +57,7 @@ python Handler.py uninsatll [depName] [specific version]
 ```
 Example :
 ```sh
-    python Handler.py uninsatll ompp 1.0.0
+    python Handler.py uninsatll ompp 1.0.1
 ```
 
 3. Update the entire dependenies after remote dependency adding( ex: git pull)<br/>
@@ -87,4 +101,8 @@ Thank you In order :)
 
 This project is licensed under the terms of the
 [MIT license](/LICENSE).
+
+
+
+
 
