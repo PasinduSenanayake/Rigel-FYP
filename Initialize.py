@@ -8,7 +8,7 @@ try:
     if(os.path.isdir(depPath)):
         shutil.rmtree(depPath)
     os.makedirs(depPath)
-    processOutput = subprocess.Popen('pip install --target='+depPath+' -r DependencyManager/requirements.txt',shell=True)
+    processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' -r DependencyManager/requirements.txt',shell=True)
     stdout, stderr = processOutput.communicate()
     if(stderr==None):
         filesPath = str(os.path.dirname(os.path.realpath(__file__)))+"/DependencyManager"

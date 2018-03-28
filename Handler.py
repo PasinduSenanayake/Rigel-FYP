@@ -40,7 +40,7 @@ def installDep(module,version):
                 print "Please uninstall before install the module."
             elif(response['code']==2):
                 print response['info']
-                processOutput = subprocess.Popen('pip install --target='+depPath+' '+module+'=='+version+' --upgrade',shell=True, stderr=subprocess.PIPE)
+                processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' '+module+'=='+version+' --upgrade',shell=True, stderr=subprocess.PIPE)
                 stdout, stderr = processOutput.communicate()
                 if(stderr== ""):
                     updateState = updateMain("update",module,version)
@@ -72,7 +72,7 @@ def installDep(module,version):
                     print "Module upgrade failed. Rolledback to previous state."
             elif(response['code']==3):
                 print response['info']
-                processOutput = subprocess.Popen('pip install --target='+depPath+' '+module+'=='+version+'',shell=True, stderr=subprocess.PIPE)
+                processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' '+module+'=='+version+'',shell=True, stderr=subprocess.PIPE)
                 stdout, stderr = processOutput.communicate()
                 if(stderr== ""):
                     updateState = updateMain("install",module,version)
@@ -126,7 +126,7 @@ def uninstallDep(module,version):
                             stderr =""
                             shutil.rmtree(src)
                             if not (os.stat("DependencyManager/requirements.txt").st_size == 0):
-                                processOutput = subprocess.Popen('pip install --target='+depPath+' -r DependencyManager/requirements.txt',shell=True,stderr=subprocess.PIPE)
+                                processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' -r DependencyManager/requirements.txt',shell=True,stderr=subprocess.PIPE)
                                 stdout, stderr = processOutput.communicate()
                             else:
                                  os.makedirs(src)
@@ -221,7 +221,7 @@ def updateDep(module,version):
         if not (response['code'] == 0):
             if(response['code']==2):
                 print response['info']
-                processOutput = subprocess.Popen('pip install --target='+depPath+' '+module+'=='+version+' --upgrade',shell=True, stderr=subprocess.PIPE)
+                processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' '+module+'=='+version+' --upgrade',shell=True, stderr=subprocess.PIPE)
                 stdout, stderr = processOutput.communicate()
                 if(stderr== ""):
                     print module+" Module upgraded successfully."
@@ -231,7 +231,7 @@ def updateDep(module,version):
                     print module+" Module upgrade failed"
             elif(response['code']==3):
                 print response['info']
-                processOutput = subprocess.Popen('pip install --target='+depPath+' '+module+'=='+version+'',shell=True, stderr=subprocess.PIPE)
+                processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' '+module+'=='+version+'',shell=True, stderr=subprocess.PIPE)
                 stdout, stderr = processOutput.communicate()
                 if(stderr== ""):
                     print module+" Module installed successfully."
