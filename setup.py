@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='ompp',
-      version='1.0.0',
+      version='1.0.1',
       description='ompp python support',
       url='https://github.com/PasinduSenanayake/Rigel-FYP/tree/ompppackage',
       author='Rigel',
