@@ -3,11 +3,10 @@ import os
 import shutil
 import platform
 
-
 def getBasicProfile(filePath, arguments=""):
     response = {
         "error":"",
-        "content":"",
+        "content":{},
         "returncode":0
         }
     try:
@@ -27,6 +26,7 @@ def getBasicProfile(filePath, arguments=""):
                         if(os.path.isfile('unknown.4-0.ompp.csv')):
                             with open('unknown.4-0.ompp.csv') as fileData:
                                 response['content'] = fileData.readlines()
+                            response['content'] = [element.replace("\n", "") for element in response['content']]
                             response['returncode']=1
                         else:
                             response['error']="Ompp failed Process terminated. Please check your input file."
@@ -66,4 +66,7 @@ def getBasicProfile(filePath, arguments=""):
     except Exception as e:
         print e
         print "Unexpected Error Occured."
+        response['error'] = e
+        response['content'] = {}
+        response['returncode'] = 0
     return response
