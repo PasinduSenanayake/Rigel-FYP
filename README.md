@@ -12,7 +12,8 @@
 ## Pre-Requirements
 
 1. [Python](https://www.python.org/) [ Version - 2.7.10 ~ 2.7.14 ]
-2. [PIP](https://pypi.python.org/pypi/pip) [ Version 9.0.1 ]
+2. [PIP](https://pypi.python.org/pypi/pip) [ Version - 9.0.1 ]
+3. [GCC](https://gcc.gnu.org/) [ Version - 4.8 ~ 7.1 ]
 
 ## Installation
 
@@ -20,7 +21,7 @@ For the moment OmpP Python Package available as an open source git project and P
 
 
 ```sh
-pip install ompp==1.0.1
+pip install ompp==1.0.3
 ```
 
 
@@ -28,15 +29,17 @@ pip install ompp==1.0.1
 
 ### 1. Basic OmpP Report
 
-Basic OmpP report contains all the information related to [kinst-ompp](http://www.ompp-tool.com/downloads/ompp-manual.pdf)
+Basic OmpP report contains all the information related to [kinst-ompp](http://www.ompp-tool.com/downloads/ompp-manual.pdf). This package currently works with "GCC" compilers only.
  #### Usage
 ```sh
 import ompp
-response = ompp.getBasicProfile(absolute file path ,[run time arguments])
+response = ompp.getBasicProfile(absolute file path, [compile time arguments], [run time arguments])
 ```
 Parameters :<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"absolute file path" : Path of the .c file need to be analized [ Required ]<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"run time arguments" : Arguments required for compiled C file ( optional ) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"run time arguments" : Arguments required for executable file ( optional ) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"compile time arguments" : Arguments required for compilation of C file ( optional )
+
 
  #### Response
 ```sh
@@ -59,7 +62,7 @@ response = ompp.getSummarizedProfile(basic profile data)
 ```
 Parameters :<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"basic profile data" : 'content' of response of ompp.getBasicProfile(). [ Required ] <br/>
- 
+
 
  #### Response
 ```sh
@@ -83,7 +86,7 @@ response = ompp.getParallelLoopSummary(summarized data,basic profile data)
 Parameters :<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"summarized data" : 'content' of response of ompp.getSummarizedProfile(). [ Required ]<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"basic profile data" : 'content' of response of ompp.getBasicProfile(). [ Required ] <br/>
- 
+
 
  #### Response
 ```sh
@@ -106,8 +109,8 @@ response = ompp.getParallelLoopData(absolute file path ,[run time arguments])
 ```
 Parameters :<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"absolute file path" : Path of the .c file need to be analized [ Required ]<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"run time arguments" : Arguments required for compiled C file ( optional ) 
- 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"run time arguments" : Arguments required for compiled C file ( optional )
+
 
  #### Response
 ```sh
@@ -153,4 +156,3 @@ Thank you In order :)
 
 This project is licensed under the terms of the
 [MIT license](/LICENSE).
-
