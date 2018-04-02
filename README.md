@@ -35,7 +35,7 @@ Example :
 ```
 Parameters :<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fp : Absolute path to the .c file [ Required ]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fa : Arguments required for executable file ( Optional )<br /><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fa : Arguments required for executable file ( Optional )<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-ca : Arguments required for the .c file compilation  [ except "-fopenmp" ] ( Optional )<br /><br />
 Output:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For this moment, this execution will provide some advices related to achievable performance enhancements in scheduling mechanisms. ( Only if the input .c file contains 'parallel for' loops.)
