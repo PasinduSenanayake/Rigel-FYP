@@ -2,14 +2,14 @@ from .omppbasicprofile import getBasicProfile
 from .omppsummarizedprofile import getSummarizedProfile
 from .omppparallelloopprofile import getParallelLoopSummary
 
-def getParallelLoopData(filePath, arguments=""):
+def getParallelLoopData(filePath, compTimeArguments="",runTimeArguments=""):
     response = {
         "error":"",
         "content":{},
         "returncode":0
         }
     try:
-        dataArray  = getBasicProfile(filePath,arguments)
+        dataArray  = getBasicProfile(filePath,compTimeArguments=compTimeArguments,runTimeArguments=runTimeArguments)
         if not (dataArray['returncode'] == 0):
             dataSumArray = getSummarizedProfile(dataArray['content'])
             if not (dataSumArray['returncode'] == 0):
