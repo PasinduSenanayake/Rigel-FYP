@@ -9,7 +9,7 @@
 
 </div>
 
-## Pre-Requirements 
+## Pre-Requirements
 
 1. [Python](https://www.python.org/) [ Version - 2.7.10 ~ 2.7.14 ]
 2. [PIP](https://pypi.python.org/pypi/pip) [ Version 9.0.1 ]
@@ -18,7 +18,7 @@
 
 For the moment C - OpenMp Optimizer is only available as an open source git project.
 
-After cloning the git repository, execute 
+After cloning the git repository, execute
 ```sh
 python Initialize.py
 ```
@@ -31,11 +31,12 @@ python Initializer.py -fp FPATH [-fa FARGUMENTS]
 ```
 Example :
 ```sh
-    python Initializer.py -fp $Home/test.c -fa 2
+    python Initializer.py -fp $Home/test.c -fa 2 -ca "-lgmp -lssl"
 ```
 Parameters :<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fp : Absolute path to the .c file [ Required ]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fa : Arguments required for the .c file ( Optional )<br /><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fa : Arguments required for executable file ( Optional )<br /><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-ca : Arguments required for the .c file compilation  [ except "-fopenmp" ] ( Optional )<br /><br />
 Output:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For this moment, this execution will provide some advices related to achievable performance enhancements in scheduling mechanisms. ( Only if the input .c file contains 'parallel for' loops.)
 ## Framework
@@ -79,7 +80,7 @@ Are you looking for an example project to get started? We don't currently have a
 
 ## Documentation
 
-For the moment this is the only documentation we have. 
+For the moment this is the only documentation we have.
 
 ## Contributing
 
@@ -101,8 +102,3 @@ Thank you In order :)
 
 This project is licensed under the terms of the
 [MIT license](/LICENSE).
-
-
-
-
-
