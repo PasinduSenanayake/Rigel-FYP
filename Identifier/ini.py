@@ -6,9 +6,9 @@ response = {
     "content":{}
     }
 
-def trigger(filePath, fileArguments = ""):
+def trigger(filePath,compTimeArguments,runTimeArguments):
     try:
-        responseObj = loopAnalysis(filePath,fileArguments)
+        responseObj = loopAnalysis(filePath,compTimeArguments,runTimeArguments)
         if (responseObj['returncode'] == 1):
             response['error'] = ""
             response['content'] = responseObj['content']

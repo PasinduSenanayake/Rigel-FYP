@@ -7,17 +7,14 @@ response = {
     "content":{}
 }
 
-def loopAnalysis(filePath, fileArguments = ""):
+def loopAnalysis(filePath, compTimeArguments, runTimeArguments):
     try:
         if not (filePath == None ):
-            if(fileArguments == ""):
-                parallelDataArray =  ompp.getParallelLoopData(filePath)
-            else:
-                parallelDataArray =  ompp.getParallelLoopData(filePath,fileArguments)
+            parallelDataArray =  ompp.getParallelLoopData(filePath,compTimeArguments = compTimeArguments,runTimeArguments = runTimeArguments)
             for region in parallelDataArray['content'].keys():
                 if(float(parallelDataArray['content'][region]['threadData']['SUM']['execT'])>3):
                     if('ImbalP' in parallelDataArray['content'][region]['overallData']):
-                        if(parallelDataArray['content'][region]['overallData']['ImbalP']>6 and parallelDataArray['content'][region]['overallProgramData']['ImbalP']>1):
+                        if(float(parallelDataArray['content'][region]['overallData']['ImbalP'])>6.0 and float(parallelDataArray['content'][region]['overallProgramData']['ImbalP'])>1):
                             threadTimeDataKey=[]
                             threadTimeData=[]
                             for threadData in parallelDataArray['content'][region]['threadData'].keys():
