@@ -10,6 +10,13 @@
 ### 1. CpuBenchPrimeFinder
 1.1 Category - LoopSchedular <br/>
 1.2 Pre-Requirements - gmp.h, openssl/md5.h  [ Both Available Online ]<br />
+```sh
+#Install gmp.h with
+sudo apt-get install  libgmp3-dev
+
+#Install openssl/md5.h with
+sudo apt-get install libssl-dev
+```
 1.3 Script
 ```sh
 python Initializer.py -fp /home/path/to/Framework/Sandbox/CpuBenchPrimeFinder.c -fa "[numberscheckforprime] --multithreaded --printdigits" -ca "-lgmp -lssl -lcrypto"
@@ -17,7 +24,7 @@ python Initializer.py -fp /home/path/to/Framework/Sandbox/CpuBenchPrimeFinder.c 
 1.4 Changeable options  
 
 ```sh
-1. numberscheckforprime
+1. numberscheckforprime - Corresponds to upper limit of finding prime numbers
 ```
 ### 2. SleepIterator
 2.1 Category - LoopSchedular <br/>
