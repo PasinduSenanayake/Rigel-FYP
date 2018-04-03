@@ -25,9 +25,9 @@ python Initialize.py
 
 ## Initialization
 
-Valid .c file is required for the execution of optimizer.
+Valid .c file is required for the execution of optimizer. Copy all the required files in to Sandbox folder.
 ```sh
-python Initializer.py -fp FPATH [-fa FARGUMENTS]
+python Initializer.py -fp FPATH [-fa FARGUMENTS] [-ca CARGUMENTS]
 ```
 Example :
 ```sh
