@@ -1,7 +1,7 @@
 {
   "general":{
     "type": "BasicStructured",
-    "clauses": "if,num_threads,default,private,firstprivate,shared,copyin,reduction,proc_bind"
+    "clauses": "if,num_threads,default,shared,copyin,proc_bind,private,firstprivate,lastprivate,linear,reduction,schedule,collapse,ordered"
   },
 
   "clauses":{
@@ -24,18 +24,6 @@
       "0": "shared$none"
     },
 
-    "private": {
-      "optimizable": false,
-      "haveParameters": true,
-      "parameterPattern": "2"
-    },
-
-    "firstprivate": {
-      "optimizable": false,
-      "haveParameters": true,
-      "parameterPattern": "2"
-    },
-
     "shared": {
       "optimizable": false,
       "haveParameters": true,
@@ -48,6 +36,37 @@
       "parameterPattern": "2"
     },
 
+    "proc_bind": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1",
+      "0": "master$close$spread"
+    },
+
+    "private": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "firstprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "lastprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "linear": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2:0"
+    },
+
     "reduction": {
       "optimizable": false,
       "haveParameters": true,
@@ -55,11 +74,31 @@
       "0": "+$*"
     },
 
-    "proc_bind": {
+    "schedule": {
       "optimizable": true,
       "haveParameters": true,
-      "parameterPattern": "1",
-      "0": "master$close$spread"
+      "parameterPattern": "1,0",
+      "0": "static$dynamic$guided$auto$runtime"
+    },
+
+    "schedule_1": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1:1,0",
+      "0": "monotonic$nonmonotonic$nonmonotonic",
+      "1": "static$dynamic$guided$auto$runtime"
+    },
+
+    "collapse": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "0"
+    },
+
+    "ordered": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "0"
     }
   }
 }

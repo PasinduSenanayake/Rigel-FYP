@@ -11,9 +11,10 @@ class Clause:
         self.details = None
         self.startIndex = startIndex
         if(directiveDetails[name]["haveParameters"]):
-            self.findParameters(source, directiveDetails)
+            self.parameters = self.findParameters(source, directiveDetails)
 
     def findParameters(self, source, directiveDetails):  #0-int 1-enum 2-string
+        parameterStart = 0
         for index in range(self.startIndex, len(source)):
             openBracketCount = 0
             if(source[index] == "\n" or source[index] == "\\"):
@@ -31,18 +32,31 @@ class Clause:
 
         delimiters = []
         parameters = []
-        for char in list(directiveDetails[self.name]["parameterPattern"]):
+        parametersAndDelimiters = list(directiveDetails[self.name]["parameterPattern"])
+        for char in list(parametersAndDelimiters):
             if char.isdigit():
                 parameters.append(char)
             else:
                 delimiters.append(char)
         delimiterRegex = '|'.join(delimiters)
         parameterList = re.split(delimiterRegex, parameterString)
+
+        # pprint(parametersAndDelimiters)
+        # pprint(delimiters)
+        # pprint(parameters)
+        # print self.name
+
+        parameterObjList = []
         for i in range(len(parameters)):
-            if(parameters[i] == 1):
-                parameter = Parameter(parameters[i], parameterList[i], directiveDetails[self.name][str(i)].split("$"))
+            if(parameters[i] == "1"):
+                # print "in"
+                parameter = Parameter(parametersAndDelimiters[i], parameterList[i], directiveDetails[self.name][str(i)].split("$"))
+                parameterObjList.append(parameter)
             else:
-                parameter = Parameter(parameters[i], parameterList[i])
-                # how to store parameters
+                parameter = Parameter(parameters[i], parameterList[i], None)
+                parameterObjList.append(parameter)
 
-
+        for i in range(len(parametersAndDelimiters)):
+            if parametersAndDelimiters[i].isdigit():
+                parametersAndDelimiters[i] = parameterObjList.pop(0)
+        return parametersAndDelimiters

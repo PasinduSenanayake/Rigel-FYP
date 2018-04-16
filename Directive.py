@@ -35,19 +35,16 @@ class Directive:
         clauses = {}
         directiveDetails = self.directivesDict[self.name]
         for clause, details in directiveDetails["clauses"].items():
-            regex = re.compile(clause, re.DOTALL)
+            regex = None
+            if(details["haveParameters"]):
+                regex = re.compile(clause+"[^\\S]*\(", re.DOTALL)
+            else:
+                regex = re.compile(clause, re.DOTALL)
             matching = regex.search(directive)
             if matching:
                 clauses[clause] = Clause(clause,matching.start(), directive, directiveDetails["clauses"])
                 directive = directive[:matching.start()] + "@"*(matching.end()-matching.start()) + directive[matching.end():]
-
-
-                # print self.code[matching.start():matching.end()]
-        # while (matching):
-        #     loop = ForLoop(matching.start(), sourceCode)
-        #     self.forLoops.append(loop)
-        #     sourceCode = sourceCode[:matching.start()] + "@" * 3 + sourceCode[matching.start() + 3:]
-        #     matching = regex.search(sourceCode)
+        return clauses
 
     def getLineEnding(self, string, startIndex):
         lineBreaks = 0

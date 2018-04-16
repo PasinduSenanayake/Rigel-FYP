@@ -1,6 +1,7 @@
 import re
 from ForLoop import ForLoop
 from Directive import Directive
+from Parameter import Parameter
 from pprint import pprint
 
 class SourceCode:
@@ -13,6 +14,22 @@ class SourceCode:
         self.removeLineComments()
         self.searchForLoops()
         self.searchDirectives()
+
+        for directive in self.directives:
+            print "##start directive##"
+            print "directive name - " + directive.name
+            for clause,clauseObj in directive.clauses.items():
+                print "--start clause--"
+                print "clause name - " + clause
+                for parameter in clauseObj.parameters:
+                    if(isinstance(parameter, Parameter)):
+                        print "current value - " + parameter.value
+                        print "type - " + parameter.type
+                        if(parameter.enums):
+                            print "possible values - "
+                            pprint(parameter.enums)
+                print "--end clause--"
+            print "##end directive##"
 
     def removeBlockComments(self):
         regex = re.compile(r"(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)",
