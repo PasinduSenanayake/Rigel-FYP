@@ -1,0 +1,65 @@
+{
+  "general":{
+    "type": "BasicStructured",
+    "clauses": "if,num_threads,default,private,firstprivate,shared,copyin,reduction,proc_bind"
+  },
+
+  "clauses":{
+    "if": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "num_threads": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "0"
+    },
+
+    "default": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "1",
+      "0": "shared$none"
+    },
+
+    "private": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "firstprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "shared": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "copyin": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "reduction": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "1:2",
+      "0": "+$*"
+    },
+
+    "proc_bind": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1",
+      "0": "master$close$spread"
+    }
+  }
+}
