@@ -19,7 +19,8 @@ cpu_info_list={"num_cores":"",
                "model_name":"",
                "cpu_max_speed":"",
                "vectorization":"",
-               "cpu_average_speed":""}
+               "cpu_average_speed":"",
+               "architecture":""}
 
 # dictionary used to map json mapping attribute names with system hardware details
 cpu_json_mapping={"Core(s) per socket":"num_cores",
@@ -30,7 +31,8 @@ cpu_json_mapping={"Core(s) per socket":"num_cores",
                   "L3 cache":"cache_L3",
                   "Model name":"model_name",
                   "CPU max MHz":"cpu_max_speed",
-                  "Flags":"vectorization"}
+                  "Flags":"vectorization",
+                  "Architecture": "architecture"}
 
 gpu_json_mapping={"VGA compatible controller":"VGAinfo",
                   "3D controller":"3Dcontrollerinfo"}
@@ -38,16 +40,19 @@ gpu_json_mapping={"VGA compatible controller":"VGAinfo",
 gpu_info_list={"VGAinfo":[],"3Dcontrollerinfo":[]}
 
 systemInforDictionary = {"cpuinfo":cpu_info_list,
-                        "gpuinfo":gpu_info_list}
+                       "gpuinfo":gpu_info_list}
 
 systemCommandDictionary = {}
 
+hdwInfoDictionary = {}
+
 inputfilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "command.json"
 outputFilepath =str(os.path.dirname(os.path.realpath(__file__))) + os.sep +"sysinfo"+os.sep + "systemInfo.json"
-
+hwdFilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "storage.json"
 
 # function can be used to organize stdoutput from shell output
 def __extractCpuInformation(sysoutput):
+    global cpu_info_list
     list_output = sysoutput.splitlines()
     for x in cpu_json_mapping:
         for y in list_output:
@@ -57,6 +62,7 @@ def __extractCpuInformation(sysoutput):
 
 
 def __extracGpuInformation(sysoutput,key):
+    global gpu_info_list
     list_output = sysoutput.splitlines()
     for acc in list_output:
         if key in acc:
@@ -67,13 +73,35 @@ def __extracGpuInformation(sysoutput,key):
 
 # function can be used to extract extra details from original details
 def __extractDetails(value,splitCharacter,key):
+    global cpu_info_list
     cpu_info_list[key]=value.split(splitCharacter)[1].strip()
 
 
+
+def __extractVectorizationinfo():
+    global hdwInfoDictionary
+    global cpu_info_list
+
+    architecture = cpu_info_list["architecture"].split("_")[0]  # will work only for x86 architectures
+    instructionset_list = hdwInfoDictionary["vectorization"][architecture]
+    tempFlag_list = cpu_info_list["vectorization"].split()
+    vector_inst_list = []
+    for inst in instructionset_list:
+        if inst.lower() in [flag.lower() for flag in tempFlag_list]:
+            vector_inst_list.append(inst.lower())
+
+    cpu_info_list["vectorization"] = vector_inst_list
+
+
+
 def __systemInformationIdentifier():
+    global systemCommandDictionary
+    global hdwInfoDictionary
     try:
         with open(inputfilepath) as inputfile:
             systemCommandDictionary = json.load(inputfile)
+        with open(hwdFilepath) as hdwinfoFile:
+            hdwInfoDictionary = json.load(hdwinfoFile)
     except Exception as e:
             response['error'] = e
             response['content'] = {}
@@ -87,6 +115,7 @@ def __systemInformationIdentifier():
             if infocmd == "cpuinfo":
                 __extractCpuInformation(output)
                 __extractDetails(cpu_info_list["model_name"], "@", "cpu_average_speed")
+                __extractVectorizationinfo()
             elif infocmd == "VGAinfo":
                 __extracGpuInformation(output, "VGA compatible controller")
             elif infocmd == "3Dcontrollerinfo":
@@ -101,7 +130,7 @@ def __systemInformationIdentifier():
         with open(outputFilepath, 'w') as outfile:
             json.dump(systemInforDictionary, outfile)
         response['returncode'] = 1
-        print response['returncode']
+        response['returncode']
         response['error'] = ""
         response['content'] = "System Data Fetcher successfully executed"
     except Exception as e:
