@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[OpenMp](http://www.openmp.org/) Optimizer for C codes. ( This project is still under development )
+[OpenMp](http://www.openmp.org/) Optimizer for C codes. ( This research project is still under development )
 
 
 </div>
