@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
-from Identifier.ini import trigger, trigger1
+from Identifier.ini import trigger1
 
 parser = argparse.ArgumentParser(description='Initilizer of optimizer')
 parser.add_argument('-fp', '--fpath', type=str, help='Absolute file path', required=True)
