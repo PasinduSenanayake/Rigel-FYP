@@ -1,19 +1,12 @@
+from Block import Block
 
-class ForLoop:
-    # def __init__(self, code, startIndex, blockStartIndex, blockEndIndex, iterationCount):
-    #     self.code = code
-    #     self.startIndex = startIndex
-    #     self.r_blockStartIndex = blockStartIndex - startIndex
-    #     self.r_blockEndIndex = blockEndIndex - startIndex
-    #     self.loopHeader = code[:self.r_blockStartIndex-1]
-    #     self.body = code[self.r_blockStartIndex-1:]
-    #     self.iterationCount = iterationCount
-
+class ForLoop(Block):
     def __init__(self, startIndex, sourceCode):
         blockDetails = self.getBlockLength(sourceCode, startIndex)
-        self.startIndex = startIndex
-        self.loopHeader = sourceCode[startIndex:blockDetails["blockStartIndex"]-1]
-        self.body = sourceCode[blockDetails["blockStartIndex"]-1:blockDetails["blockEndIndex"]]
+        loopHeader = sourceCode[startIndex:blockDetails["blockStartIndex"]]
+        elements = [Block(blockDetails["blockStartIndex"], sourceCode[blockDetails["blockStartIndex"]:blockDetails["blockEndIndex"]])]
+        super(ForLoop, self).__init__(startIndex, loopHeader)
+        super(ForLoop, self).setElements(elements)
         self.iterationCount = 0
 
     def getBlockLength(self, string, startIndex):
@@ -30,4 +23,24 @@ class ForLoop:
                 openedBracketCount = openedBracketCount - 1
                 if (openedBracketCount == 0):
                     break
-        return {"blockStartIndex":blockStartIndex, "blockEndIndex":startIndex+blockLength}
+        return {"blockStartIndex":blockStartIndex - 1, "blockEndIndex":startIndex+blockLength}
+
+    def isChild(self, parent):
+        if parent.getStartIndex() < self.getStartIndex() and self.getStartIndex() < parent.getEndIndex():
+            return True
+        return False
+
+    def addChild(self, child):
+        for i, item in enumerate(self.elements):
+            if child.isChild(item):
+                if isinstance(item, Block):
+                    a = child.getStartIndex() - item.getStartIndex()
+                    b = child.getEndIndex() - item.getStartIndex()
+                    # print item.body[:a]
+                    # print "-"
+                    # print item.body[a:a + b - 1]
+                    # print "-"
+                    # print item.body[a + b - 1:]
+                    # print "-----"
+                else:
+                    item.addChild(child)

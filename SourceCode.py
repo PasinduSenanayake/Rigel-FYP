@@ -1,7 +1,8 @@
 import re
 from ForLoop import ForLoop
 from Directive import Directive
-from Parameter import Parameter
+from StructuredBlock import StructuredBlock
+from Block import Block
 from pprint import pprint
 
 class SourceCode:
@@ -14,22 +15,7 @@ class SourceCode:
         self.removeLineComments()
         self.searchForLoops()
         self.searchDirectives()
-
-        for directive in self.directives:
-            print "##start directive##"
-            print "directive name - " + directive.name
-            for clause,clauseObj in directive.clauses.items():
-                print "--start clause--"
-                print "clause name - " + clause
-                for parameter in clauseObj.parameters:
-                    if(isinstance(parameter, Parameter)):
-                        print "current value - " + parameter.value
-                        print "type - " + parameter.type
-                        if(parameter.enums):
-                            print "possible values - "
-                            pprint(parameter.enums)
-                print "--end clause--"
-            print "##end directive##"
+        self.structureCode()
 
     def removeBlockComments(self):
         regex = re.compile(r"(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)",
@@ -70,6 +56,71 @@ class SourceCode:
             self.directives.append(directive)
             sourceCode = sourceCode[:matching.start()] + "@@@" + sourceCode[matching.start() + 3:]
             matching = regex.search(sourceCode)
+
+    def structureCode(self):
+        unstructuredForLoops = self.forLoops[:]
+        structure = []
+        for directive in self.directives:
+            structure.append(StructuredBlock(directive, None, self.forLoops, self.code))
+        for structuredBlock in structure:
+            if structuredBlock.elements[0] in unstructuredForLoops:
+                unstructuredForLoops.remove(structuredBlock.body[0])
+        for loop in unstructuredForLoops:
+            structure.append(StructuredBlock(None, loop, self.forLoops, self.code))
+
+        structure.sort(key=lambda x: x.getStartIndex(), reverse=False)
+
+        for structuredBlock in structure:
+            structuredBlock.fillSpaces(self.code)
+
+        out = []
+        structure.sort(key=lambda x: x.length(), reverse=True)
+        for i in structure:
+            child = False
+            for j in out:
+                if i.isChild(j):
+                    child = True
+            if not child:
+                out.append(i)
+
+        out.sort(key=lambda x: x.getStartIndex(), reverse=False)
+        rem = []
+        start = 0
+        for i in out:
+            dif = i.getStartIndex() - start
+            if(dif > 0):
+                rem.append(Block(start,self.code[start: i.getStartIndex()]))
+            start = i.getEndIndex() + 1
+        rem.append(Block(start,self.code[start:]))
+
+        out = out + rem
+        out.sort(key=lambda x: x.getStartIndex(), reverse=False)
+        string = ""
+        for i in out:
+            string = string + i.getContent()
+
+        file = open("out.c", "w")
+        file.write(string)
+        file.close()
+
+        structure.sort(key=lambda x: x.length(), reverse=False)
+        nestedStructure = []
+        for structuredBlockItr in range(len(structure)):
+            for innerItr in range(structuredBlockItr+1,len(structure)):
+                if structure[structuredBlockItr].isChild(structure[innerItr]):
+                    structure[innerItr].addChild(structure[structuredBlockItr])
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

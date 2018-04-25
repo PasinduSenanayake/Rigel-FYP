@@ -1,6 +1,6 @@
 {
   "general":{
-    "type": "BasicStructured",
+    "type": "ForStructured",
     "clauses": "if,num_threads,default,shared,copyin,proc_bind,private,firstprivate,lastprivate,linear,reduction,schedule,collapse,ordered"
   },
 

@@ -1,7 +1,7 @@
 from FileHandler import FileHandler
 from SourceCode import SourceCode
 
-class Tuner:
+class Extractor:
 
     def __init__(self):
         self.sourceCodes = {}
