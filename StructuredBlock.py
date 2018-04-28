@@ -48,12 +48,14 @@ class StructuredBlock(Block):
                 else:
                     a = child.getStartIndex() - item.getStartIndex()
                     b = child.getEndIndex() - item.getStartIndex()
-                    # print item.body[:a]
-                    # print "-"
-                    # print item.body[a:a + b - 1]
-                    # print "-"
-                    # print item.body[a + b - 1:]
-                    # print "-----"
+                    block1 = Block(item.getStartIndex(),item.body[:a])
+                    block2 = child
+                    block3 = Block(child.getEndIndex()+1, item.body[b+1:])
+                    del self.elements[i]
+                    self.elements.insert(i, block3)
+                    self.elements.insert(i, block2)
+                    self.elements.insert(i, block1)
+                break
 
     def getBlockLength(self, string, startIndex):
         openedBracketCount = 0
@@ -70,4 +72,11 @@ class StructuredBlock(Block):
                 if (openedBracketCount == 0):
                     break
         return {"blockStartIndex":blockStartIndex - 1, "blockEndIndex":startIndex+blockLength}
+
+    # def scheduleStatic(self):
+    #     if isinstance(self.elements[0], Directive):
+    #         self.elements[0].setSchedule("static")
+    #     for element in self.elements:
+    #         if isinstance(element, StructuredBlock):
+    #             element.scheduleStatic()
 

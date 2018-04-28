@@ -15,7 +15,8 @@ class SourceCode:
         self.removeLineComments()
         self.searchForLoops()
         self.searchDirectives()
-        self.structureCode()
+        self.root = self.structureCode()
+        self.root.setLineNumber(1)
 
     def removeBlockComments(self):
         regex = re.compile(r"(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)",
@@ -63,8 +64,8 @@ class SourceCode:
         for directive in self.directives:
             structure.append(StructuredBlock(directive, None, self.forLoops, self.code))
         for structuredBlock in structure:
-            if structuredBlock.elements[0] in unstructuredForLoops:
-                unstructuredForLoops.remove(structuredBlock.body[0])
+            if structuredBlock.elements[1] in unstructuredForLoops:
+                unstructuredForLoops.remove(structuredBlock.elements[1])
         for loop in unstructuredForLoops:
             structure.append(StructuredBlock(None, loop, self.forLoops, self.code))
 
@@ -72,6 +73,12 @@ class SourceCode:
 
         for structuredBlock in structure:
             structuredBlock.fillSpaces(self.code)
+
+        structure.sort(key=lambda x: x.length(), reverse=False)
+        for structuredBlockItr in range(len(structure)):
+            for innerItr in range(structuredBlockItr+1,len(structure)):
+                if structure[structuredBlockItr].isChild(structure[innerItr]):
+                    structure[innerItr].addChild(structure[structuredBlockItr])
 
         out = []
         structure.sort(key=lambda x: x.length(), reverse=True)
@@ -88,27 +95,37 @@ class SourceCode:
         start = 0
         for i in out:
             dif = i.getStartIndex() - start
-            if(dif > 0):
-                rem.append(Block(start,self.code[start: i.getStartIndex()]))
+            if (dif > 0):
+                rem.append(Block(start, self.code[start: i.getStartIndex()]))
             start = i.getEndIndex() + 1
-        rem.append(Block(start,self.code[start:]))
+        rem.append(Block(start, self.code[start:]))
 
         out = out + rem
         out.sort(key=lambda x: x.getStartIndex(), reverse=False)
-        string = ""
-        for i in out:
-            string = string + i.getContent()
 
-        file = open("out.c", "w")
-        file.write(string)
+
+
+
+
+        rootBlock =  Block(0, "")
+        rootBlock.setElements(out)
+        return rootBlock
+
+    def setSchedule(self, mechanism):
+        self.root.setSchedule(mechanism)
+
+    def setScheduleByLine(self, lineNumber, mechanism):
+        self.root.setScheduleByLine(lineNumber, mechanism)
+
+    def getCotent(self):
+        return self.root.getContent()
+
+    def writeToFile(self, file):
+        file = open(file, "w")
+        file.write(self.getCotent())
         file.close()
 
-        structure.sort(key=lambda x: x.length(), reverse=False)
-        nestedStructure = []
-        for structuredBlockItr in range(len(structure)):
-            for innerItr in range(structuredBlockItr+1,len(structure)):
-                if structure[structuredBlockItr].isChild(structure[innerItr]):
-                    structure[innerItr].addChild(structure[structuredBlockItr])
+
 
 
 

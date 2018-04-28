@@ -1,4 +1,5 @@
 import re
+# from Directive import Directive
 
 class Block(object):
     def __init__(self, startIndex, body):
@@ -7,6 +8,7 @@ class Block(object):
         self.innerSpacing = ""
         self.outerSpacing = ""
         self.elements = []
+        self.lineNumber = 0
 
     def setElements(self, elements):
         elements.sort(key=lambda x: x.getStartIndex(), reverse=False)
@@ -23,8 +25,14 @@ class Block(object):
             for n, element in enumerate(self.elements):
                 element.fillSpaces(source)
                 if not n == len(self.elements) - 1:
-                    element.outerSpacing = source[element.getEndIndex()+1:self.elements[n+1].getStartIndex()]
-
+                    spacing = source[element.getEndIndex()+1:self.elements[n+1].getStartIndex()]
+                    element.outerSpacing = spacing
+                    # if "\n" in spacing:
+                    #     breakIndex = spacing.index("\n")
+                    #     element.outerSpacing = spacing[:breakIndex + 1]
+                    #     self.elements[n + 1].preSpacing = spacing[breakIndex+1:]
+                    # else:
+                    #     element.outerSpacing = spacing
 
     def getContent(self):
         string = self.body + self.innerSpacing
@@ -50,4 +58,23 @@ class Block(object):
             return True
         return False
 
+    def setSchedule(self, mechanism):
+        for element in self.elements:
+            element.setSchedule(mechanism)
+
+    def setScheduleByLine(self, lineNumber, mechanism):
+        for element in self.elements:
+            element.setScheduleByLine(lineNumber, mechanism)
+
+    def setLineNumber(self, currentLine):
+        self.lineNumber = currentLine
+        if "\n" in self.body:
+            currentLine = currentLine + self.body.count("\n")
+        if "\n" in self.innerSpacing:
+            currentLine = currentLine + self.innerSpacing.count("\n")
+        for element in self.elements:
+            currentLine = element.setLineNumber(currentLine)
+        if "\n" in self.outerSpacing:
+            currentLine = currentLine + self.outerSpacing.count("\n")
+        return currentLine
 

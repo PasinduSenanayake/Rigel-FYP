@@ -1,6 +1,7 @@
 from FileHandler import FileHandler
 from Clause import Clause
 from Block import Block
+from Parameter import Parameter
 import re
 from pprint import pprint
 
@@ -60,3 +61,22 @@ class Directive(Block):
                     break
                 lineBreaks = lineBreaks - 1
         return startIndex+directiveLength
+
+    def setSchedule(self, mechanism):
+        for clause in self.elements:
+            # print clause.name
+            if clause.name == "schedule":
+                for parameter in clause.elements:
+                    if isinstance(parameter, Parameter):
+                        if len(parameter.enums) > 0 and mechanism in parameter.enums:
+                            parameter.body = mechanism
+
+    def setScheduleByLine(self, lineNumber, mechanism):
+        if self.lineNumber == lineNumber:
+            for clause in self.elements:
+                # print clause.name
+                if clause.name == "schedule":
+                    for parameter in clause.elements:
+                        if isinstance(parameter, Parameter):
+                            if len(parameter.enums) > 0 and mechanism in parameter.enums:
+                                parameter.body = mechanism

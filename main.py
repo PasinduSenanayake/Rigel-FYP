@@ -3,8 +3,10 @@ import logging, sys
 
 
 extractor = Extractor()
-extractor.addSource("omp_hello.c")
-
+sourceObj = extractor.addSource("omp_hello.c")
+sourceObj.setSchedule("static")
+sourceObj.setScheduleByLine(21,"static")
+sourceObj.writeToFile("out.c")
 
 
 

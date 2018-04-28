@@ -49,7 +49,7 @@ class Clause(Block):
                 parameter = Parameter(parametersAndDelimiters[i], parameterList[i], directiveDetails[self.name][str(i)].split("$"), parameterStartIndex)
                 parameterObjList.append(parameter)
             else:
-                parameter = Parameter(parameters[i], parameterList[i], None, parameterStartIndex)
+                parameter = Parameter(parameters[i], parameterList[i], [], parameterStartIndex)
                 parameterObjList.append(parameter)
             parameterStartIndex = parameterStartIndex + len(parameterList[i]) + 1  #assuming single character delimiters
 

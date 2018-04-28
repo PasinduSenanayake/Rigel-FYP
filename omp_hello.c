@@ -18,7 +18,7 @@ int main()
     int dummyVariable = 0;
     #pragma omp parallel  proc_bind(    master)  num_threads(5) reduction(+:dummyVariable) default(shared) if(1>0)
     {
-        #pragma omp for schedule(static     ,1) nowait
+        #pragma omp for schedule(auto,1) nowait
         for (int i = 1; i < 100; i++)
         {
             printf("loop1%d\n",omp_get_num_threads());

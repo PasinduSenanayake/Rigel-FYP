@@ -36,11 +36,12 @@ class ForLoop(Block):
                 if isinstance(item, Block):
                     a = child.getStartIndex() - item.getStartIndex()
                     b = child.getEndIndex() - item.getStartIndex()
-                    # print item.body[:a]
-                    # print "-"
-                    # print item.body[a:a + b - 1]
-                    # print "-"
-                    # print item.body[a + b - 1:]
-                    # print "-----"
+                    block1 = Block(item.getStartIndex(), item.body[:a])
+                    block2 = child
+                    block3 = Block(child.getEndIndex() + 1, item.body[b + 1:])
+                    del self.elements[i]
+                    self.elements.insert(i, block3)
+                    self.elements.insert(i, block2)
+                    self.elements.insert(i, block1)
                 else:
                     item.addChild(child)
