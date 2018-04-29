@@ -1,5 +1,9 @@
 {
   "Linux": {
-    "pathFinder": "pwd"
+    "pathFinder": "pwd",
+    "info":{
+    "cpuinfo":"lscpu",
+    "VGAinfo":"lspci | grep VGA",
+    "3Dcontrollerinfo":"lspci | grep 3D"}
   }
 }

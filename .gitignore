@@ -1,2 +1,3 @@
 Utils/
 DependencyManager/requirementsLocal.json
+*.pyc
