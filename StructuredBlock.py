@@ -35,10 +35,10 @@ class StructuredBlock(Block):
             return self.elements[0]
         return None
 
-    def isChild(self, parent):
-        if parent.getStartIndex() < self.getStartIndex() and self.getStartIndex() < parent.getEndIndex():
-            return True
-        return False
+    # def isChild(self, parent):
+    #     if parent.getStartIndex() < self.getStartIndex() and self.getStartIndex() < parent.getEndIndex():
+    #         return True
+    #     return False
 
     def addChild(self, child):
         for i, item in enumerate(self.elements):
@@ -52,9 +52,9 @@ class StructuredBlock(Block):
                     block2 = child
                     block3 = Block(child.getEndIndex()+1, item.body[b+1:])
                     del self.elements[i]
-                    self.elements.insert(i, block3)
-                    self.elements.insert(i, block2)
-                    self.elements.insert(i, block1)
+                    self.addElement(i, block3)
+                    self.addElement(i, block2)
+                    self.addElement(i, block1)
                 break
 
     def getBlockLength(self, string, startIndex):

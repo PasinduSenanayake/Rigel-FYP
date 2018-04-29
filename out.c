@@ -25,7 +25,7 @@ int main()
         }
     }
 
-    #pragma omp parallel for  
+    #pragma omp parallel for schedule(static,1) 
     for (int i = 2; i < 100; i++)
     {
         printf("loop2%d\n",omp_get_num_threads());

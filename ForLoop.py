@@ -25,10 +25,10 @@ class ForLoop(Block):
                     break
         return {"blockStartIndex":blockStartIndex - 1, "blockEndIndex":startIndex+blockLength}
 
-    def isChild(self, parent):
-        if parent.getStartIndex() < self.getStartIndex() and self.getStartIndex() < parent.getEndIndex():
-            return True
-        return False
+    # def isChild(self, parent):
+    #     if parent.getStartIndex() < self.getStartIndex() and self.getStartIndex() < parent.getEndIndex():
+    #         return True
+    #     return False
 
     def addChild(self, child):
         for i, item in enumerate(self.elements):
@@ -40,8 +40,19 @@ class ForLoop(Block):
                     block2 = child
                     block3 = Block(child.getEndIndex() + 1, item.body[b + 1:])
                     del self.elements[i]
-                    self.elements.insert(i, block3)
-                    self.elements.insert(i, block2)
-                    self.elements.insert(i, block1)
+                    self.addElement(i, block3)
+                    self.addElement(i, block2)
+                    self.addElement(i, block1)
                 else:
                     item.addChild(child)
+
+    # def getNestedLoops(self, loopLines, currentLevel):
+    #     currentLevel = currentLevel + 1
+    #     newLoopLines = loopLines
+    #     if(currentLevel > 1):
+    #         return loopLines
+    #     elif currentLevel == 1:
+    #         for element in self.elements:
+    #             newLoopLines = newLoopLines + element.getNestedLoops(newLoopLines,currentLevel)
+    #         if len(newLoopLines) == len(loopLines):
+    #     return loopLines

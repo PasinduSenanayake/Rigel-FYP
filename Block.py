@@ -9,10 +9,17 @@ class Block(object):
         self.outerSpacing = ""
         self.elements = []
         self.lineNumber = 0
+        self.parent = None
 
     def setElements(self, elements):
         elements.sort(key=lambda x: x.getStartIndex(), reverse=False)
+        for element in elements:
+            element.parent = self
         self.elements = elements
+
+    def addElement(self, index, element):
+        element.parent = self
+        self.elements.insert(index, element)
 
     def haveElements(self):
         if(len(self.elements) > 0):
@@ -34,13 +41,6 @@ class Block(object):
                     # else:
                     #     element.outerSpacing = spacing
 
-    def getContent(self):
-        string = self.body + self.innerSpacing
-        for element in self.elements:
-            string = string + element.getContent()
-        string = string + self.outerSpacing
-        return string
-
     def length(self):
         length = len(self.body + self.innerSpacing + self.outerSpacing)
         for element in self.elements:
@@ -58,13 +58,9 @@ class Block(object):
             return True
         return False
 
-    def setSchedule(self, mechanism):
-        for element in self.elements:
-            element.setSchedule(mechanism)
-
-    def setScheduleByLine(self, lineNumber, mechanism):
-        for element in self.elements:
-            element.setScheduleByLine(lineNumber, mechanism)
+    # def setSchedule(self, lineNumber, mechanism):
+    #     for element in self.elements:
+    #         element.setSchedule(lineNumber, mechanism)
 
     def setLineNumber(self, currentLine):
         self.lineNumber = currentLine
@@ -77,4 +73,30 @@ class Block(object):
         if "\n" in self.outerSpacing:
             currentLine = currentLine + self.outerSpacing.count("\n")
         return currentLine
+
+    def getNext(self, childIndex = 0):
+        if len(self.elements) > childIndex:
+            return self.elements[childIndex]
+        elif self.parent:
+            childIndex = self.parent.elements.index(self)
+            return self.parent.getNext(childIndex+1)
+        return None
+
+    def parent(self):
+        return self.parent
+
+    def getContent(self):
+        string = self.body + self.innerSpacing
+        # if self.parent:
+        #     string = string + self.parent.body + " - parent\n"
+        for element in self.elements:
+            string = string + element.getContent()
+        string = string + self.outerSpacing
+        return string
+
+    # def getNestedLoops(self, loopLines, currentLevel):
+    #     for element in self.elements:
+    #         loopLines = loopLines + element.getNestedLoops(loopLines,currentLevel)
+    #     return loopLines
+
 

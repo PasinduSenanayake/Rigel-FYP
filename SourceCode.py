@@ -102,20 +102,12 @@ class SourceCode:
 
         out = out + rem
         out.sort(key=lambda x: x.getStartIndex(), reverse=False)
-
-
-
-
-
         rootBlock =  Block(0, "")
         rootBlock.setElements(out)
         return rootBlock
 
-    def setSchedule(self, mechanism):
-        self.root.setSchedule(mechanism)
-
-    def setScheduleByLine(self, lineNumber, mechanism):
-        self.root.setScheduleByLine(lineNumber, mechanism)
+    def setSchedule(self, lineNumber, mechanism):
+        self.root.setSchedule(lineNumber, mechanism)
 
     def getCotent(self):
         return self.root.getContent()
@@ -124,6 +116,10 @@ class SourceCode:
         file = open(file, "w")
         file.write(self.getCotent())
         file.close()
+
+    def getNestedLoops(self):
+        nestedLoopLines = []
+        nestedLoopLines = self.root.getNestedLoops(nestedLoopLines, 0)
 
 
 

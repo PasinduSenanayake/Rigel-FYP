@@ -62,21 +62,11 @@ class Directive(Block):
                 lineBreaks = lineBreaks - 1
         return startIndex+directiveLength
 
-    def setSchedule(self, mechanism):
-        for clause in self.elements:
-            # print clause.name
-            if clause.name == "schedule":
-                for parameter in clause.elements:
-                    if isinstance(parameter, Parameter):
-                        if len(parameter.enums) > 0 and mechanism in parameter.enums:
-                            parameter.body = mechanism
-
-    def setScheduleByLine(self, lineNumber, mechanism):
-        if self.lineNumber == lineNumber:
-            for clause in self.elements:
-                # print clause.name
-                if clause.name == "schedule":
-                    for parameter in clause.elements:
-                        if isinstance(parameter, Parameter):
-                            if len(parameter.enums) > 0 and mechanism in parameter.enums:
-                                parameter.body = mechanism
+    # def setSchedule(self, mechanism):
+    #     for clause in self.elements:
+    #         # print clause.name
+    #         if clause.name == "schedule":
+    #             for parameter in clause.elements:
+    #                 if isinstance(parameter, Parameter):
+    #                     if len(parameter.enums) > 0 and mechanism in parameter.enums:
+    #                         parameter.body = mechanism
