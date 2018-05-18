@@ -2,7 +2,7 @@ from Extractor import Extractor
 from ComponentAPIs.setScheduler import setSchedule
 
 
-def setPragmaSchedule(fileName, mechanism, lineNumber = None):
+def setPragmaSchedule(fileName,alteredFileName, mechanism, lineNumber = None):
     response = {
     "returncode":0,
     "error":"",
@@ -11,7 +11,9 @@ def setPragmaSchedule(fileName, mechanism, lineNumber = None):
     if(fileName == None):
         response['error']='FileName is missing'
         return response
-
+    if(alteredFileName == None):
+        response['error']='Altered FileName is missing'
+        return response
     if(mechanism == None):
         response['error']='Schduling mechanism is missing'
         return response
@@ -22,6 +24,6 @@ def setPragmaSchedule(fileName, mechanism, lineNumber = None):
         setSchedule(sourceObj,mechanism)
     else:
         setSchedule(sourceObj,mechanism,lineNumber)
-    sourceObj.writeToFile(fileName.rsplit('.', 1)[0]+"Static.c")
+    sourceObj.writeToFile(alteredFileName)
     response['returncode']=1
     return response;
