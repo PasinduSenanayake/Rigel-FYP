@@ -27,6 +27,8 @@ try:
         response['content'] = responseObj['content']
         response['returncode'] = 1
         print "Optimization Concluded Successfully "
+    else:
+        print responseObj
 except Exception as e:
     print e
     print "Unexpected Error Occured."

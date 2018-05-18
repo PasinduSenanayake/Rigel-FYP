@@ -46,19 +46,19 @@ Output:<br />
 This framework contains a python dependency manager.
 1. Install a new dependency <br/>
 ```sh
-python Handler.py insatll [depName] [specific version]
+python Handler.py install [depName] [specific version]
 ```
 Example :
 ```sh
-    python Handler.py insatll ompp 1.0.1
+    python Handler.py install ompp 1.0.1
 ```
 2. Uninstall a dependency <br/>
 ```sh
-python Handler.py uninsatll [depName] [specific version]
+python Handler.py uninstall [depName] [specific version]
 ```
 Example :
 ```sh
-    python Handler.py uninsatll ompp 1.0.1
+    python Handler.py uninstall ompp 1.0.1
 ```
 
 3. Update the entire dependenies after remote dependency adding( ex: git pull)<br/>
