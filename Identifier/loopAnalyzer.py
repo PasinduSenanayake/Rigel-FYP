@@ -76,10 +76,10 @@ def loopAnalysis(filePath, compTimeArguments, runTimeArguments):
                     response['error'] = ""
                     response['content'] = "Loop is not significant for optimizations"
                     response['returncode'] = 1
-            else :
-                response['error'] = "File path is required"
-                response['content'] = {}
-                response['returncode'] = 0
+        else :
+            response['error'] = "File path is required"
+            response['content'] = {}
+            response['returncode'] = 0
     except Exception as e:
         response['error'] = e
         response['content'] = {}

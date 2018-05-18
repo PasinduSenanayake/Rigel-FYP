@@ -9,7 +9,7 @@ response = {
     }
 
 def trigger(filePath,compTimeArguments,runTimeArguments):
-
+    global response
     try:
         responseObj = __systemInformationIdentifier()
         if responseObj['returncode'] == 1:
@@ -20,11 +20,11 @@ def trigger(filePath,compTimeArguments,runTimeArguments):
                     response['error'] = ""
                     response['content'] = responseObj['content']
                     response['returncode'] = 1
-                else
+                else:
                     response = responseObj
-            else
+            else:
                 response = responseObj
-        else
+        else:
             response = responseObj
     except Exception as e:
         response['error'] = e

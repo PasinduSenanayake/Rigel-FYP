@@ -68,6 +68,9 @@ python Handler.py updateAll
 ### 2. OmpP profiler
 [OmpP](http://www.ompp-tool.com/) profiler is a [OpenMp](http://www.openmp.org/) related profiling tool. [OmpP](https://github.com/PasinduSenanayake/Rigel-FYP/tree/ompppackage) repository contains API documentation.
 
+### 3. C - Pragma Modifier
+A Tool supports for modifications of Openmp pragma within a C source code. [cPragmaModifier](https://github.com/PasinduSenanayake/Rigel-FYP/tree/cPragmaModifierpackage) repository contains API documentation.
+
 ## Questions
 
 For *how-to* questions and other non-issues,
