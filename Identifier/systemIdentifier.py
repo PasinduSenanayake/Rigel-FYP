@@ -2,6 +2,9 @@ import subprocess
 import os
 import json
 
+NVIDIA_TAG = "NVIDIA"
+DEVICE_QUERY_END_ATTRIBUTE = "Maximum number of threads per block"
+NVIDIA_NVCC_COMMAND = "nvcc deviceQuery.cpp -o deviceQuery && ./deviceQuery "
 
 response = {
     "returncode":0,
@@ -21,6 +24,21 @@ cpu_info_list={"num_cores":"",
                "vectorization":"",
                "cpu_average_speed":"",
                "architecture":""}
+gpu_info_list={}
+
+nvidia_info_list = {"compute_capability":"",
+                    "warp_size":"",
+                    "num_SM":"",
+                    "cuda_cores_per_SM":"",
+                    "global_memory":"",
+                    "L2_cache":"",
+                    "constant_memory":"",
+                    "shared_memory_per_block":"",
+                    "registers_per_block":"",
+                    "max_threads_per_block":""}
+
+systemInforDictionary = {"cpuinfo":cpu_info_list,
+                       "gpuinfo":gpu_info_list}
 
 # dictionary used to map json mapping attribute names with system hardware details
 cpu_json_mapping={"Core(s) per socket":"num_cores",
@@ -37,10 +55,17 @@ cpu_json_mapping={"Core(s) per socket":"num_cores",
 gpu_json_mapping={"VGA compatible controller":"VGAinfo",
                   "3D controller":"3Dcontrollerinfo"}
 
-gpu_info_list={"VGAinfo":[],"3Dcontrollerinfo":[]}
-
-systemInforDictionary = {"cpuinfo":cpu_info_list,
-                       "gpuinfo":gpu_info_list}
+# dictionary used to map nvidia GPU device query output to accelerator details
+nvidia_json_mapping ={"CUDA Capability Major/Minor version number":"compute_capability",
+                      "Multiprocessors":"num_SM",
+                      "CUDA Cores/MP":"cuda_cores_per_SM",
+                      "Warp size":"warp_size",
+                      "Total amount of global memory":"global_memory",
+                      "L2 Cache Size":"L2_cache",
+                      "Total amount of constant memory":"constant_memory",
+                      "Total amount of shared memory per block":"shared_memory_per_block",
+                      "Total number of registers available per block":"registers_per_block",
+                      "Maximum number of threads per block":"max_threads_per_block"}
 
 systemCommandDictionary = {}
 
@@ -66,16 +91,21 @@ def __extracGpuInformation(sysoutput,key):
     list_output = sysoutput.splitlines()
     for acc in list_output:
         if key in acc:
-            tempList = gpu_info_list[gpu_json_mapping[key]]
-            tempList.append(acc.split(":")[2].strip())
-            gpu_info_list[gpu_json_mapping[key]] = tempList
+            s = acc.split(":")[2].strip()
+
+            if NVIDIA_TAG in s:
+
+                if "[" in s and "]" in s:
+                    s = NVIDIA_TAG + "-" + s[s.find("[")+1:s.find("]")]
+
+            if s not in gpu_info_list:
+                gpu_info_list[s] = {}
 
 
 # function can be used to extract extra details from original details
 def __extractDetails(value,splitCharacter,key):
     global cpu_info_list
     cpu_info_list[key]=value.split(splitCharacter)[1].strip()
-
 
 
 def __extractVectorizationinfo():
@@ -89,10 +119,51 @@ def __extractVectorizationinfo():
     for inst in instructionset_list:
         if inst.lower() in [flag.lower() for flag in tempFlag_list]:
             vector_inst_list.append(inst.lower())
-
     cpu_info_list["vectorization"] = vector_inst_list
 
 
+
+def __extractNvidiaGPUinfo():
+    global nvidia_info_list
+    global gpu_info_list
+    gpu_name_list = []
+    isNVIDIA = False
+
+    for acc in gpu_info_list :
+        if NVIDIA_TAG in acc:
+            gpu_name_list.append(acc)
+            isNVIDIA = True #at least one nvidia GPU in the machine
+
+    if isNVIDIA:
+        p = subprocess.Popen(NVIDIA_NVCC_COMMAND , shell=True, stdout=subprocess.PIPE)
+        (output, err) = p.communicate() # Need to check for errors
+        deviceQuery_list = output.splitlines()
+        temp_dictionary = {}
+        for name in gpu_name_list:
+            name_ = name.split("-")[1]
+            start , end = index_containing_substring(deviceQuery_list,name_,DEVICE_QUERY_END_ATTRIBUTE )
+            if start is not -1:
+                temp_list = deviceQuery_list[start:end]
+                for key in nvidia_json_mapping:
+                    for value in temp_list:
+                        if key in value:
+                            nvidia_info_list[nvidia_json_mapping[key]] = value.split(":")[1].strip()
+                            break
+                gpu_info_list[name] = nvidia_info_list
+                deviceQuery_list = deviceQuery_list[end:]
+
+def index_containing_substring(the_list, substring,substring2):
+    start_index = -1
+    end_index = -1
+    for start, s in enumerate(the_list):
+        if substring in s:
+              start_index = start
+              break
+    for end, s in enumerate(the_list[start_index:]):
+        if substring2 in s:
+            end_index =start_index + end + 1
+            break
+    return start_index, end_index
 
 def __systemInformationIdentifier():
     global systemCommandDictionary
@@ -120,6 +191,7 @@ def __systemInformationIdentifier():
                 __extracGpuInformation(output, "VGA compatible controller")
             elif infocmd == "3Dcontrollerinfo":
                 __extracGpuInformation(output,"3D controller")
+    __extractNvidiaGPUinfo() #extract nvidia gpu information finally
         except Exception as e:
             response['error'] = e
             response['content'] = {}
@@ -127,6 +199,7 @@ def __systemInformationIdentifier():
             return response
 
     try:
+
         with open(outputFilepath, 'w') as outfile:
             json.dump(systemInforDictionary, outfile)
         response['returncode'] = 1
