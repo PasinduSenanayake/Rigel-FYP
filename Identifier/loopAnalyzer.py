@@ -33,9 +33,9 @@ def loopAnalysis(filePath, compTimeArguments, runTimeArguments):
                                 response['content'] = "Change into Guided - Reverse the Loop"
                                 response['returncode'] = 1
                             else:
-                                print "change into dynamic"
+                                print "Change into dynamic"
                                 response['error'] = ""
-                                response['content'] = "change into dynamic"
+                                response['content'] = "Change into dynamic"
                                 response['returncode'] = 1
                         else:
                             print "Keep Static - increament of number of threads by 1 is favourable"
@@ -76,10 +76,10 @@ def loopAnalysis(filePath, compTimeArguments, runTimeArguments):
                     response['error'] = ""
                     response['content'] = "Loop is not significant for optimizations"
                     response['returncode'] = 1
-            else :
-                response['error'] = "File path is required"
-                response['content'] = {}
-                response['returncode'] = 0
+        else :
+            response['error'] = "File path is required"
+            response['content'] = {}
+            response['returncode'] = 0
     except Exception as e:
         response['error'] = e
         response['content'] = {}

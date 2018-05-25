@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[OpenMp](http://www.openmp.org/) Optimizer for C codes. ( This project is still under development )
+[OpenMp](http://www.openmp.org/) Optimizer for C codes. ( This research project is still under development )
 
 
 </div>
@@ -46,19 +46,19 @@ Output:<br />
 This framework contains a python dependency manager.
 1. Install a new dependency <br/>
 ```sh
-python Handler.py insatll [depName] [specific version]
+python Handler.py install [depName] [specific version]
 ```
 Example :
 ```sh
-    python Handler.py insatll ompp 1.0.1
+    python Handler.py install ompp 1.0.1
 ```
 2. Uninstall a dependency <br/>
 ```sh
-python Handler.py uninsatll [depName] [specific version]
+python Handler.py uninstall [depName] [specific version]
 ```
 Example :
 ```sh
-    python Handler.py uninsatll ompp 1.0.1
+    python Handler.py uninstall ompp 1.0.1
 ```
 
 3. Update the entire dependenies after remote dependency adding( ex: git pull)<br/>
@@ -67,6 +67,9 @@ python Handler.py updateAll
 ```
 ### 2. OmpP profiler
 [OmpP](http://www.ompp-tool.com/) profiler is a [OpenMp](http://www.openmp.org/) related profiling tool. [OmpP](https://github.com/PasinduSenanayake/Rigel-FYP/tree/ompppackage) repository contains API documentation.
+
+### 3. C - Pragma Modifier
+A Tool supports for modifications of Openmp pragma within a C source code. [cPragmaModifier](https://github.com/PasinduSenanayake/Rigel-FYP/tree/cPragmaModifierpackage) repository contains API documentation.
 
 ## Questions
 

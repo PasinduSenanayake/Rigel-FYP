@@ -1,2 +1,4 @@
 Utils/
 DependencyManager/requirementsLocal.json
+*.pyc
+Identifier/sysinfo/*.json
