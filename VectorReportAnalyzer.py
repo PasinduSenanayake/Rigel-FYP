@@ -78,7 +78,9 @@ def findLoopBlocks(report):
     for i in range(0,len(report)):
         regex1 = re.compile(r"#15300", re.DOTALL)
         match = regex1.search(report[i])
-        if match:
+        regex2 = re.compile(r"#15301", re.DOTALL)
+        match1 = regex2.search(report[i])
+        if match or match1:
             vectorData = getVectorData(i,report)
             if vectorData not in vectorDataList :
                 vectorDataList.append(vectorData)
@@ -104,7 +106,7 @@ try:
     report = readVectorReport(filename)
     vectorList = removeDuplicateLoops(findLoopBlocks(report))
     for vector in vectorList:
-        print(vector.line)
+        print(vector.line ,vector.speedup ,vector.vectorLen)
     # if (responseObj['returncode'] == 1):
     #     response['error'] = ""
     #     response['content'] = responseObj['content']
