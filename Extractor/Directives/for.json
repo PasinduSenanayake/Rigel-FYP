@@ -1,0 +1,83 @@
+{
+  "general":{
+    "type": "ForStructured",
+    "clauses": "private,firstprivate,lastprivate,linear,reduction,schedule,collapse,ordered,nowait"
+  },
+
+  "clauses":{
+    "private": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "firstprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "lastprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "linear": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2:0"
+    },
+
+    "reduction": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "1:2",
+      "0": "+$*"
+    },
+
+    "schedule": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1,0",
+      "0": "static$dynamic$guided$auto$runtime"
+    },
+
+    "schedule+": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1:1,0",
+      "0": "monotonic$nonmonotonic$nonmonotonic",
+      "1": "static$dynamic$guided$auto$runtime"
+    },
+
+    "schedule++": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1",
+      "0": "static$dynamic$guided$auto$runtime"
+    },
+
+    "collapse": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "0"
+    },
+
+    "ordered": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "0"
+    },
+
+    "ordered+": {
+      "optimizable": false,
+      "haveParameters": false
+    },
+
+    "nowait": {
+      "optimizable": false,
+      "haveParameters": false
+    }
+  }
+}
