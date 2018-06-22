@@ -62,7 +62,7 @@ def createFinalSourceCode(fileName,loopStartLine,loopEndline):
         for i, item in enumerate(fin, 1):
             if(i-loopStartLine==1):
                 fout.write(globleString)
-                fout.write('profileHook('+parameterSet+'); \n')
+                fout.write('profileHook('+parameterSet+');exit(0); \n')
                 fout.write(globleReString)
                 fout.write(reappendData)
             if (i > loopStartLine) and (i < loopEndline) :
