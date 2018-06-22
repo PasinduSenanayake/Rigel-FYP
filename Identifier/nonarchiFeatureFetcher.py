@@ -15,7 +15,7 @@ loggerError = logging.getLogger("error:")
 loggerSuccess = logging.getLogger("success:")
 
 
-def hotspotsProfiler(mainFilePath,subFilesPath,compileCommand,arguments,segmentArray,initLocation):
+def hotspotsProfiler(codeName,mainFilePath,subFilesPath,compileCommand,arguments,segmentArray,initLocation):
     loggerInfo.debug("File coping started")
     isCopySuccessful = True
     if (os.path.isfile(mainFilePath)):
@@ -48,7 +48,7 @@ def hotspotsProfiler(mainFilePath,subFilesPath,compileCommand,arguments,segmentA
                     if(pinresult):
                         loggerSuccess.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" completed")
                         loggerInfo.debug("Information extraction for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                        pinDataresult = dataCollect(loggerSuccess,loggerError,loggerInfo,initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv")
+                        pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),loggerSuccess,loggerError,loggerInfo,initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv")
                         if(pinDataresult):
                             loggerSuccess.debug("Data collect for "+str(segment[0])+"-"+str(segment[1])+" completed")
                         else:

@@ -9,7 +9,7 @@ dataRow =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 global tOps
 global total_sp_float_ops
 
-def dataCollect(loggerSuccess,loggerError,loggerInfo,csvPath):
+def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,csvPath):
     isCollectSuccess = True
     loggerInfo.debug("Check for new CSV")
     row_count = 0
@@ -27,7 +27,7 @@ def dataCollect(loggerSuccess,loggerError,loggerInfo,csvPath):
         with open(csvPath, 'r') as csvfile:
             row_count = sum(1 for row in csvfile)
 
-    dataRow[0] = row_count
+    dataRow[0] = str(row_count)+". "+codeName+': '+initLine+'-'+endLine
 
     loggerInfo.debug("Fetching ILP data initiated")
     if(os.path.isfile(fileLocation+'ilp_full_int_pin.out')):
@@ -37,7 +37,8 @@ def dataCollect(loggerSuccess,loggerError,loggerInfo,csvPath):
         dataRow[2]= float(separatedLines[0])/float(separatedLines[1])
         dataRow[3]= float(separatedLines[0])/float(separatedLines[2])
         dataRow[4]= float(separatedLines[0])/float(separatedLines[3])
-        dataRow[5]= float(separatedLines[0])/float(separatedLines[4])
+        dataRow[5]= float(separatedLines[0])/float(separatedLines[5])
+        dataRow[21]= float(separatedLines[1])/float(separatedLines[4])
         loggerSuccess.debug("Fetching ILP data completed")
     else:
         isCollectSuccess = False
