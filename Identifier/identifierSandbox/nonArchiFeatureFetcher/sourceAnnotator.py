@@ -16,7 +16,7 @@ parameterNames = []
 innerGlobales = []
 fullGloableSet = ""
 appendableFunction = ""
-fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
+fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
 
 
@@ -331,6 +331,10 @@ def findVariables(fileName,loopStartLine,loopEndline):
 def targetDataMap(fileName,compilerOptinsPassed,loopStartLine,loopEndline):
     global compilerOptins
     compilerOptins =  compilerOptinsPassed
+    global fileLocation
+    fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
+    fileName = "/"+fileName.rsplit('/', 1)[1]
+
     findVariables(fileName,loopStartLine,loopEndline)
     innerVaribales(fileName,loopStartLine,loopEndline)
     findVariableTypeAttempt1(fileName,loopStartLine)

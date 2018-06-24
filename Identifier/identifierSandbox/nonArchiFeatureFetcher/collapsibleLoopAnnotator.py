@@ -4,7 +4,7 @@ from subprocess import Popen, PIPE
 from shutil import copyfile
 global pragmaLine
 global compilerOptins
-fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
+fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
 def copyFile(filename):
     copyfile(fileLocation+filename, fileLocation+"withCollapse.c")
@@ -122,6 +122,9 @@ def collapseAnnotator(fileName,compilerOptions):
     global compilerOptins
     compilerOptins = compilerOptions
     try:
+        global fileLocation
+        fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
+        fileName = "/finalCode.c"
         copyFile(fileName)
         addCollapes()
         results = runCode()

@@ -2,14 +2,19 @@
 import os,csv
 
 
-fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
+fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 dataRow =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
 
-global tOps
-global total_sp_float_ops
+tOps = 0
+total_sp_float_ops = 0
 
-def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,csvPath):
+def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,csvPath,fileName):
+    global fileLocation
+    global tOps
+    global total_sp_float_ops
+
+    fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     isCollectSuccess = True
     loggerInfo.debug("Check for new CSV")
     row_count = 0
@@ -106,7 +111,6 @@ def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,c
         memOps = int(totalOps[1])+int(totalOps[2])
         ctrlOps = int(totalOps[3])
         intOps = int(totalOps[4])
-        global tOps
         tOps = int(totalOps[0])
         dataRow[6]= float(memOps)/float(tOps)
         dataRow[7]= float(ctrlOps)/float(tOps)
@@ -122,7 +126,6 @@ def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,c
         lines = [line.rstrip('\n') for line in open(fileLocation+'flop_count.out','r')]
         total_float_ops = lines[0].split(" ")[1]
         total_arith_float_ops = lines[1].split(" ")[1]
-        global total_sp_float_ops
         total_sp_float_ops = lines[2].split(" ")[1]
         total_arith_sp_float_ops = lines[3].split(" ")[1]
         total_dp_float_ops = lines[4].split(" ")[1]

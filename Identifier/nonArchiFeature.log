@@ -1,0 +1,37 @@
+DEBUG:info::File coping started
+DEBUG:success::File coping completed
+DEBUG:info::source code Annotation for 259-301 initiated
+DEBUG:success::Source code Annotation for 259-301 completed
+DEBUG:info::source code with collapse Annotation for 259-301 initiated
+DEBUG:success::Source code with collapse Annotation for 259-301 completed
+DEBUG:info::Pin profile for 259-301 initiated
+DEBUG:info::ILP and instruction count extraction initiated
+DEBUG:success::ILP and instruction count extraction completed
+DEBUG:info::Operation count extraction initiated
+DEBUG:success::Operation count extraction completed
+DEBUG:info::Cold ref and reuse distance extraction initiated
+DEBUG:success::Cold ref and reuse distance extraction completed
+DEBUG:info::Pages and Blocks extraction initiated
+DEBUG:success::Pages and Blocks extraction completed
+DEBUG:info::Memory access extraction initiated
+DEBUG:success::Memory access extraction completed
+DEBUG:info::Memory access reordering initiated
+DEBUG:success::Memory access reordering completed
+DEBUG:info::Branch info extraction initiated
+DEBUG:success::Branch info extraction completed
+DEBUG:info::Branch info reordering initiated
+DEBUG:success::Branch info reordering completed
+DEBUG:info::Collapse Branch info extraction initiated
+DEBUG:success::Collapse Branch info extraction completed
+DEBUG:info::Collapse Branch info reordering initiated
+DEBUG:success::Collapse Branch info reordering completed
+DEBUG:info::Final Branch info reordering initiated
+DEBUG:success::Final Branch info reordering completed
+DEBUG:info::Floating point info extraction initiated
+DEBUG:success::Floating point info extraction completed
+DEBUG:info::Special function info extraction initiated
+DEBUG:success::Pin profile for 259-301 completed
+DEBUG:info::Information extraction for 259-301 initiated
+DEBUG:info::Check for new CSV
+DEBUG:info::CSV contains previos data
+DEBUG:info::Fetching ILP data initiated

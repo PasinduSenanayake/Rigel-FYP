@@ -2,6 +2,7 @@
 import logging
 import os
 from shutil import copyfile
+import shutil
 from identifierSandbox.nonArchiFeatureFetcher.sourceAnnotator import targetDataMap
 from identifierSandbox.nonArchiFeatureFetcher.collapsibleLoopAnnotator import collapseAnnotator
 from identifierSandbox.nonArchiFeatureFetcher.pinProfilerExecutor import runPinProf
@@ -15,40 +16,36 @@ loggerError = logging.getLogger("error:")
 loggerSuccess = logging.getLogger("success:")
 
 
-def hotspotsProfiler(codeName,mainFilePath,subFilesPath,compileCommand,arguments,segmentArray,initLocation):
+def hotspotsProfiler(codeName,mainFilePath,compileCommand,arguments,segmentArray,initLocation):
     loggerInfo.debug("File coping started")
     isCopySuccessful = True
+    subFilePath = ""
     if (os.path.isfile(mainFilePath)):
-        copyfile(mainFilePath, os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/profileCode.c")
+        subFilePath = mainFilePath.split("Sandbox")[1]
+        if(os.path.exists(os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")):
+            shutil.rmtree(os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")
+        shutil.copytree("./Sandbox", os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")
     else:
         loggerError.debug("No " + mainFilePath +" found. Process stopped" )
         isCopySuccessful = False
-    if(isCopySuccessful):
-        for fileName in subFilesPath:
-            if (os.path.isfile(fileName)):
-                copyfile(fileName, os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/"+os.path.basename(fileName))
-            else:
-                loggerError.debug("No " + fileName +" found. Process stopped")
-                isCopySuccessful = False
-                break
     if(isCopySuccessful):
         isprocessSuccesful = True
         loggerSuccess.debug("File coping completed")
         for segment in segmentArray:
             loggerInfo.debug("source code Annotation for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-            result = targetDataMap("profileCode.c",compileCommand,segment[0],segment[1])
+            result = targetDataMap(subFilePath,compileCommand,segment[0],segment[1])
             if(result == "success"):
                 loggerSuccess.debug("Source code Annotation for "+str(segment[0])+"-"+str(segment[1])+" completed")
                 loggerInfo.debug("source code with collapse Annotation for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                result = collapseAnnotator("finalCode.c",compileCommand)
+                result = collapseAnnotator(subFilePath,compileCommand)
                 if(result == "success"):
                     loggerSuccess.debug("Source code with collapse Annotation for "+str(segment[0])+"-"+str(segment[1])+" completed")
                     loggerInfo.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                    pinresult = runPinProf(loggerSuccess,loggerError,loggerInfo,arguments)
+                    pinresult = runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,subFilePath)
                     if(pinresult):
                         loggerSuccess.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" completed")
                         loggerInfo.debug("Information extraction for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                        pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),loggerSuccess,loggerError,loggerInfo,initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv")
+                        pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),loggerSuccess,loggerError,loggerInfo,initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv",subFilePath)
                         if(pinDataresult):
                             loggerSuccess.debug("Data collect for "+str(segment[0])+"-"+str(segment[1])+" completed")
                         else:

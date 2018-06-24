@@ -2,9 +2,11 @@ import pandas as pd
 import math,os,json
 
 branchDataList = []
-fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
+fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
-def preCollapseBranchDataFetch(loggerError):
+def preCollapseBranchDataFetch(loggerError,fileName):
+    global fileLocation
+    fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
         df = pd.read_csv(fileLocation+"branch_profiling.csv")
         dataSet = {}

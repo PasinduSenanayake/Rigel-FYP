@@ -6,7 +6,7 @@ with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as
 
 def nonArchi():
     commadName = commandJson['command']['nonArchiFeatureFetch']
-    result = hotspotsProfiler(commadName['codeName'],commadName['mainFile'],commadName['subFiles'],commadName['compilerOprtions'],commadName['arguments'],commadName['loopSegments'],os.path.dirname(os.path.realpath(__file__)))
+    result = hotspotsProfiler(commadName['codeName'],commadName['mainFile'],commadName['compilerOprtions'],commadName['arguments'],commadName['loopSegments'],os.path.dirname(os.path.realpath(__file__)))
     if (result):
         print "Feature extraction concluded successfully"
     else:

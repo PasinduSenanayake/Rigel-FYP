@@ -2,13 +2,15 @@
 import json,os
 
 
-fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
+fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 finalCount = [0,0,0,0,0,0,0]
 iterations = ['16','32','64','128','256','512','1024']
 
 
 
-def finalBranchCounter(loggerError):
+def finalBranchCounter(loggerError,fileName):
+    global fileLocation
+    fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
         with open(fileLocation+"branching.json", "r") as fin:
             mainData = json.load(fin)
