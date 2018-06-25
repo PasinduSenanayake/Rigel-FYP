@@ -1,11 +1,11 @@
 {
   "command":{
     "nonArchiFeatureFetch":{
-      "mainFile":"/home/pasindu/Documents/Framework/Sandbox/test/openmp/srad_v1/main.c",
-      "compilerOprtions":"-lm",
-      "arguments":"100 0.5 10 10 4",
-      "codeName":"testName",
-      "loopSegments":[[259,301]]
+      "mainFile":"/home/pasindu/Documents/Framework/Sandbox/test_convo/3DConvolution.c",
+      "compilerOprtions":"",
+      "arguments":"",
+      "codeName":"TestData",
+      "loopSegments":[[59,74]]
     }
 
   }

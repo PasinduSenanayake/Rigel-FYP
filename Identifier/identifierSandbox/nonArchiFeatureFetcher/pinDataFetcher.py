@@ -38,12 +38,15 @@ def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,c
     if(os.path.isfile(fileLocation+'ilp_full_int_pin.out')):
         lines = [line.rstrip('\n') for line in open(fileLocation+'ilp_full_int_pin.out','r')]
         separatedLines = lines[0].split(' ')
+        for ite in range (1,6):
+            if(separatedLines[ite]=='0'):
+                separatedLines[ite]='1'
         dataRow[1]= int(separatedLines[0])
         dataRow[2]= float(separatedLines[0])/float(separatedLines[1])
         dataRow[3]= float(separatedLines[0])/float(separatedLines[2])
         dataRow[4]= float(separatedLines[0])/float(separatedLines[3])
         dataRow[5]= float(separatedLines[0])/float(separatedLines[5])
-        dataRow[21]= float(separatedLines[1])/float(separatedLines[4])
+        dataRow[21]= float(separatedLines[4])/float(separatedLines[1])
         loggerSuccess.debug("Fetching ILP data completed")
     else:
         isCollectSuccess = False
