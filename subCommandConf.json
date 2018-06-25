@@ -1,0 +1,13 @@
+{
+  "command":{
+    "nonArchiFeatureFetch":{
+      "mainFile":"/home/pasindu/Documents/Framework/Sandbox/test_convo/3DConvolution.c",
+      "compilerOprtions":"",
+      "arguments":"",
+      "codeName":"TestData",
+      "loopSegments":[[59,74]]
+    }
+
+  }
+
+}

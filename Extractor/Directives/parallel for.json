@@ -1,0 +1,111 @@
+{
+  "general":{
+    "type": "ForStructured",
+    "clauses": "if,num_threads,default,shared,copyin,proc_bind,private,firstprivate,lastprivate,linear,reduction,schedule,collapse,ordered"
+  },
+
+  "clauses":{
+    "if": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "num_threads": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "0"
+    },
+
+    "default": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "1",
+      "0": "shared$none"
+    },
+
+    "shared": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "copyin": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "proc_bind": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1",
+      "0": "master$close$spread"
+    },
+
+    "private": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "firstprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "lastprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "linear": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2:0"
+    },
+
+    "reduction": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "1:2",
+      "0": "+$*"
+    },
+
+    "schedule": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1,0",
+      "0": "static$dynamic$guided$auto$runtime"
+    },
+
+    "schedule+": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1:1,0",
+      "0": "monotonic$nonmonotonic$nonmonotonic",
+      "1": "static$dynamic$guided$auto$runtime"
+    },
+
+    "schedule++": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "1",
+      "0": "static$dynamic$guided$auto$runtime"
+    },
+
+    "collapse": {
+      "optimizable": true,
+      "haveParameters": true,
+      "parameterPattern": "0"
+    },
+
+    "ordered": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "0"
+    }
+  }
+}
