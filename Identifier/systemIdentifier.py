@@ -2,15 +2,20 @@ import subprocess
 import os
 import json
 
-NVIDIA_TAG = "NVIDIA"
-DEVICE_QUERY_END_ATTRIBUTE = "Maximum number of threads per block"
-NVIDIA_NVCC_COMMAND = "nvcc deviceQuery.cpp -o deviceQuery && ./deviceQuery "
-
 response = {
     "returncode":0,
     "error":"",
     "content":{}
 }
+
+inputfilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "command.json"
+outputFilepath =str(os.path.dirname(os.path.realpath(__file__))) + os.sep +"sysinfo"+os.sep + "systemInfo.json"
+hwdFilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "storage.json"
+deviceQueryPath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "deviceQuery.cpp"
+
+NVIDIA_TAG = "NVIDIA"
+DEVICE_QUERY_END_ATTRIBUTE = "Maximum number of threads per block"
+NVIDIA_NVCC_COMMAND = "nvcc " + deviceQueryPath + " -o deviceQuery && ./deviceQuery "
 
 # dictionary used to map data to Json information holder
 cpu_info_list={"num_cores":"",
@@ -71,10 +76,6 @@ systemCommandDictionary = {}
 
 hdwInfoDictionary = {}
 
-inputfilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "command.json"
-outputFilepath =str(os.path.dirname(os.path.realpath(__file__))) + os.sep +"sysinfo"+os.sep + "systemInfo.json"
-hwdFilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "storage.json"
-
 # function can be used to organize stdoutput from shell output
 def __extractCpuInformation(sysoutput):
     global cpu_info_list
@@ -127,30 +128,36 @@ def __extractNvidiaGPUinfo():
     global nvidia_info_list
     global gpu_info_list
     gpu_name_list = []
-    isNVIDIA = False
+    hasNVIDIA = False
 
     for acc in gpu_info_list :
         if NVIDIA_TAG in acc:
             gpu_name_list.append(acc)
-            isNVIDIA = True #at least one nvidia GPU in the machine
+            hasNVIDIA = True #at least one nvidia GPU in the machine
 
-    if isNVIDIA:
-        p = subprocess.Popen(NVIDIA_NVCC_COMMAND , shell=True, stdout=subprocess.PIPE)
-        (output, err) = p.communicate() # Need to check for errors
-        deviceQuery_list = output.splitlines()
-        temp_dictionary = {}
-        for name in gpu_name_list:
-            name_ = name.split("-")[1]
-            start , end = index_containing_substring(deviceQuery_list,name_,DEVICE_QUERY_END_ATTRIBUTE )
-            if start is not -1:
-                temp_list = deviceQuery_list[start:end]
-                for key in nvidia_json_mapping:
-                    for value in temp_list:
-                        if key in value:
-                            nvidia_info_list[nvidia_json_mapping[key]] = value.split(":")[1].strip()
-                            break
-                gpu_info_list[name] = nvidia_info_list
-                deviceQuery_list = deviceQuery_list[end:]
+    if hasNVIDIA:
+        p = subprocess.Popen(NVIDIA_NVCC_COMMAND , shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        (output, err) = p.communicate() #to check for errors
+        if len(err) == 0:
+            deviceQuery_list = output.splitlines()
+            for name in gpu_name_list:
+                name_ = name.split("-")[1]
+                start , end = index_containing_substring(deviceQuery_list,name_,DEVICE_QUERY_END_ATTRIBUTE )
+                if start is not -1:
+                    temp_list = deviceQuery_list[start:end]
+                    for key in nvidia_json_mapping:
+                        for value in temp_list:
+                            if key in value:
+                                nvidia_info_list[nvidia_json_mapping[key]] = value.split(":")[1].strip()
+                                break
+                    gpu_info_list[name] = nvidia_info_list
+                    deviceQuery_list = deviceQuery_list[end:]
+        else:
+            response['error'] = err
+            response['content'] = {}
+            response['returncode'] = 0
+            return response
+
 
 def index_containing_substring(the_list, substring,substring2):
     start_index = -1
@@ -164,6 +171,7 @@ def index_containing_substring(the_list, substring,substring2):
             end_index =start_index + end + 1
             break
     return start_index, end_index
+
 
 def __systemInformationIdentifier():
     global systemCommandDictionary
@@ -191,7 +199,7 @@ def __systemInformationIdentifier():
                 __extracGpuInformation(output, "VGA compatible controller")
             elif infocmd == "3Dcontrollerinfo":
                 __extracGpuInformation(output,"3D controller")
-    __extractNvidiaGPUinfo() #extract nvidia gpu information finally
+            __extractNvidiaGPUinfo() #extract nvidia gpu information finally
         except Exception as e:
             response['error'] = e
             response['content'] = {}
@@ -205,7 +213,7 @@ def __systemInformationIdentifier():
         response['returncode'] = 1
         response['returncode']
         response['error'] = ""
-        response['content'] = "System Data Fetcher successfully executed"
+        response['content'] = "System Data Identifier successfully executed"
     except Exception as e:
         response['error'] = e
         response['content'] = {}
