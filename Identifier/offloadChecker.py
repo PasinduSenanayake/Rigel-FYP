@@ -37,7 +37,7 @@ def __floor(a, b):
     c = a / float(b)
     return math.floor(c) * b
 
-
+#change here
 input = {
     "registersPerThread": 42,  # should come from information Json
     "sharedMemoryPerBlock": 932
@@ -52,7 +52,7 @@ def __readGPUData():
         global config
         global threadsPerWarp
 
-        config = data["3.5"]
+        config = data["3.5"]    #change here
         threadsPerWarp = config['threadsPerWarp']
 
 
@@ -190,3 +190,6 @@ def __loadLoopData(looporder, loopmetadata):
 # in case of vectorization we can reduce number of loop levels by 1 to remove inner most loop from collapsing
 # in case number of threads are greater than iteration space
 # hint from more teams with less threads
+__readGPUData()
+threadsPerTeam = __occupancyCalculator()
+print(threadsPerTeam)
