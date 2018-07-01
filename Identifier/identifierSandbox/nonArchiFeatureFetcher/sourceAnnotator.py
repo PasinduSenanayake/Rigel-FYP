@@ -2,6 +2,7 @@
 
 from subprocess import Popen, PIPE
 import re,os
+from shutil import copyfile
 
 compilerOptins =""
 undefinedVariables = {}
@@ -17,13 +18,17 @@ innerGlobales = []
 fullGloableSet = ""
 appendableFunction = ""
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
+makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
 
-
-def makeObjectCode():
-    processOutput = Popen('clang -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'finalCode.c -o '+fileLocation+'runnable',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+def makeObjectCode(fileName):
+    processOutput = Popen('cd '+makeFileLocation +' && make && make clean ',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
-    if error=="":
+    if not "error" in error:
+        copyfile(fileLocation+fileName,fileLocation+'finalCode.c')
+        os.remove(fileLocation+fileName)
+        copyfile(fileLocation+'originalCode.c',fileLocation+fileName)
+        os.remove(fileLocation+'originalCode.c')
         return "success"
     else:
         return error
@@ -58,7 +63,10 @@ def createFinalSourceCode(fileName,loopStartLine,loopEndline):
         else:
             reappendData = reappendData+' '+ dataType+" "+innerglobalVar.split(' ')[-1][8:].split(';')[0]+' = '+innerglobalVar.split(' ')[-1]+'\n'
     addedHookFunction = False
-    with open(fileLocation+fileName) as fin, open(fileLocation+'finalCode.c', 'w') as fout:
+
+    copyfile(fileLocation+fileName, fileLocation+'originalCode.c')
+    os.remove(fileLocation+fileName)
+    with open(fileLocation+'originalCode.c') as fin, open(fileLocation+fileName, 'w') as fout:
         for i, item in enumerate(fin, 1):
             if(i-loopStartLine==1):
                 fout.write(globleString)
@@ -128,7 +136,7 @@ def addGlobaleDataSet():
     f.close()
 
 def mapVariables():
-    processOutput = Popen('clang -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'target.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'target.c -o '+fileLocation+'target.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -144,7 +152,7 @@ def mapVariables():
             break
 
 def mapVariablesFixer():
-    processOutput = Popen('clang -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'target.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'target.c -o '+fileLocation+'target.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -196,7 +204,7 @@ def findInnerVariableTypeAttempt1(fileName,loopEndline):
                 for key in undefinedInnerVariables.keys():
                     item = 'printf("%p",'+key+');\n'+item
             fout.write(item)
-    processOutput = Popen('clang '+compilerOptins +' '+fileLocation+'targetInnerChanged1.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c '+compilerOptins +' '+fileLocation+'targetInnerChanged1.c -o '+fileLocation+'targetInnerChanged1.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -215,7 +223,7 @@ def findInnerVariableTypeAttempt2(fileName,loopEndline):
                 for key in undefinedInnerVariables.keys():
                     item = 'printf("%f",'+key+');\n'+item
             fout.write(item)
-    processOutput = Popen('clang '+compilerOptins +' '+fileLocation+'targetInnerChanged2.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c '+compilerOptins +' '+fileLocation+'targetInnerChanged2.c -o '+fileLocation+'targetInnerChanged2.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -236,7 +244,7 @@ def findVariableTypeAttempt1(fileName,loopStartLine):
                 for key in undefinedVariables.keys():
                     item = item + 'printf("%p",'+key+');\n'
             fout.write(item)
-    processOutput = Popen('clang '+compilerOptins +' '+fileLocation+'targetChanged1.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c '+compilerOptins +' '+fileLocation+'targetChanged1.c -o '+fileLocation+'targetChanged1.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -255,10 +263,11 @@ def findVariableTypeAttempt2(fileName,loopStartLine):
                 for key in undefinedVariables.keys():
                     item = item + 'printf("%f",'+key+');\n'
             fout.write(item)
-    processOutput = Popen('clang '+compilerOptins +' '+fileLocation+'targetChanged2.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c '+compilerOptins +' '+fileLocation+'targetChanged2.c -o '+fileLocation+'targetChanged2.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
+
             lineCode = line.rstrip()
             if('warning:' in lineCode):
                 variableType  = re.findall(r"'\s*([^']+?)\s*'", lineCode)[1]
@@ -277,7 +286,7 @@ def innerVaribales(fileName,loopStartLine,loopEndline):
             else:
                 fout.write(item)
 
-    processOutput = Popen('clang -ferror-limit=1000 '+compilerOptins+' '+fileLocation+'subTarget.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c -ferror-limit=1000 '+compilerOptins+' '+fileLocation+'subTarget.c -o '+fileLocation+'subTarget.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     nextLineUseful = False
     while True:
         line = processOutput.stderr.readline()
@@ -300,7 +309,7 @@ def innerVaribales(fileName,loopStartLine,loopEndline):
 def findVariables(fileName,loopStartLine,loopEndline):
     with open(fileLocation+fileName) as fin, open(fileLocation+'target.c', 'w') as fout:
         for i, item in enumerate(fin, 1):
-            if 'include' in item:
+            if '#include' in item:
                 fout.write(item)
             if (i == loopStartLine):
                 fout.write('int main() { \n /////######################################################///// \n')
@@ -308,7 +317,7 @@ def findVariables(fileName,loopStartLine,loopEndline):
                 fout.write(item)
             if (loopEndline - i == 1):
                 fout.write(' /////----------------------------------------------------///// \n}')
-    processOutput = Popen('clang -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'target.c -o '+fileLocation+'testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'target.c -o '+fileLocation+'target.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     nextLineUseful = False
     while True:
         line = processOutput.stderr.readline()
@@ -328,12 +337,14 @@ def findVariables(fileName,loopStartLine,loopEndline):
         else:
             break
 
-def targetDataMap(fileName,compilerOptinsPassed,loopStartLine,loopEndline):
+def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopEndline):
     global compilerOptins
     compilerOptins =  compilerOptinsPassed
     global fileLocation
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     fileName = "/"+fileName.rsplit('/', 1)[1]
+    global makeFileLocation
+    makeFileLocation = makeFileLocation+makeFilePath.rsplit('/', 1)[0]+"/"
 
     findVariables(fileName,loopStartLine,loopEndline)
     innerVaribales(fileName,loopStartLine,loopEndline)
@@ -347,7 +358,7 @@ def targetDataMap(fileName,compilerOptinsPassed,loopStartLine,loopEndline):
     mapVariables()
     addFunctionHook()
     createFinalSourceCode(fileName,loopStartLine,loopEndline)
-    result = makeObjectCode()
+    result = makeObjectCode(fileName)
 
     if (result == "success"):
     # Remove intermediate files
@@ -357,7 +368,6 @@ def targetDataMap(fileName,compilerOptinsPassed,loopStartLine,loopEndline):
         os.remove(fileLocation+'targetChanged1.c')
         os.remove(fileLocation+'targetInnerChanged2.c')
         os.remove(fileLocation+'targetInnerChanged1.c')
-        os.remove(fileLocation+'testCpu')
 
     return result
 

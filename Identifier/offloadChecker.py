@@ -10,7 +10,7 @@ import re
         getting input for iteration space not implemented
         ThreadsPerTeam is calculated which have highest Occupancy and least number of threads
         for not-colllapsible loops split and parallel method is used
-        
+
   """
 
 TARGET_PRAGMA_COLLAPSE = "#pragma omp target teams num_teams($teams) thread_limit($threads)" \
@@ -46,13 +46,13 @@ input = {
 def __readClangVerbose():
     print ""
 
-def __readGPUData():
+def __readGPUData(computeCapability):
     with open(GPUData_File, 'r') as gpuDataFile:
         data = json.load(gpuDataFile)
         global config
         global threadsPerWarp
 
-        config = data["3.5"]    #change here
+        config = data[computeCapability]    #change here
         threadsPerWarp = config['threadsPerWarp']
 
 
@@ -127,7 +127,7 @@ def __occupancyCalculator():
 
     maxOccupancy = max(list(occupancyDic))
     print occupancyDic[maxOccupancy]
-    return min(occupancyDic[maxOccupancy])
+    return max(occupancyDic[maxOccupancy])
 
 
 # find collapsible depth
@@ -190,6 +190,12 @@ def __loadLoopData(looporder, loopmetadata):
 # in case of vectorization we can reduce number of loop levels by 1 to remove inner most loop from collapsing
 # in case number of threads are greater than iteration space
 # hint from more teams with less threads
-__readGPUData()
-threadsPerTeam = __occupancyCalculator()
-print(threadsPerTeam)
+
+def occupancyCalculation(computeCapability,registersPerThread,sharedMemoryPerBlock):
+    global input
+    input["registersPerThread"] = float(registersPerThread)
+    input["sharedMemoryPerBlock"] = float(sharedMemoryPerBlock)
+    __readGPUData(computeCapability)
+    threadsPerTeam = __occupancyCalculator()
+    return threadsPerTeam
+# print(threadsPerTeam)
