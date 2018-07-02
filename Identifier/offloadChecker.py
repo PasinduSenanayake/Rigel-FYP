@@ -190,6 +190,7 @@ def __loadLoopData(looporder, loopmetadata):
 # in case of vectorization we can reduce number of loop levels by 1 to remove inner most loop from collapsing
 # in case number of threads are greater than iteration space
 # hint from more teams with less threads
+
 __readGPUData()
 threadsPerTeam = __occupancyCalculator()
 print(threadsPerTeam)
