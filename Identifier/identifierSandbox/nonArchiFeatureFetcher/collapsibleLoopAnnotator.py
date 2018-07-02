@@ -5,6 +5,7 @@ from shutil import copyfile
 global pragmaLine
 global compilerOptins
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
+makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
 def copyFile(filename):
     copyfile(fileLocation+filename, fileLocation+"withCollapse.c")
@@ -19,16 +20,29 @@ def addCollapes():
     out.writelines(lines)
     out.close()
 
-def makeObjectCode():
-    processOutput = Popen('clang -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c -o '+fileLocation+'runnableSecond',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+def makeObjectCode(fileName,originalFileName,makeFilePath):
+    copyfile(fileLocation+originalFileName, fileLocation+"tempOriginal.c")
+    os.remove(fileLocation+originalFileName)
+    copyfile(fileLocation+'withCollapse.c', fileLocation+originalFileName)
+
+    with open(makeFileLocation+makeFilePath, 'r') as file :
+        filedata = file.read()
+    filedata = filedata.replace('runnable', 'runnableSecond')
+    with open(makeFileLocation+makeFilePath, 'w') as file:
+        file.write(filedata)
+
+    processOutput = Popen('cd '+makeFileLocation +' && make && make clean ',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
-    if error=="":
+    if not "error" in error:
+        os.remove(fileLocation+originalFileName)
+        copyfile(fileLocation+"tempOriginal.c",fileLocation+originalFileName)
+        os.remove(fileLocation+"tempOriginal.c")
         return "success"
     else:
         return error
 
 def runCode():
-    processOutput = Popen('clang -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c -o '+fileLocation+'withCollapse',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c -o '+fileLocation+'withCollapse.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
     if error =="":
         return "success"
@@ -45,7 +59,7 @@ def removePragma():
     out.close()
 
 def captureAndFix(numofLoops):
-    processOutput = Popen('clang -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c -o '+fileLocation+'withCollapse',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c  -o '+fileLocation+'withCollapse.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     iniIndex = 0
@@ -114,25 +128,25 @@ def incrementAndRun(numofLoops):
     else:
         captureAndFix(numofLoops)
 
-def removeFiles():
-    os.remove(fileLocation+'withCollapse')
 
-
-def collapseAnnotator(fileName,compilerOptions):
+def collapseAnnotator(fileName,makeFilePath,compilerOptions):
     global compilerOptins
     compilerOptins = compilerOptions
+    global makeFileLocation
+    makeFileLocation = makeFileLocation+makeFilePath.rsplit('/', 1)[0]+"/"
+    makeFilePath = "/"+makeFilePath.rsplit('/', 1)[1]
     try:
         global fileLocation
         fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
+        originalFileName = "/"+fileName.rsplit('/', 1)[1]
         fileName = "/finalCode.c"
         copyFile(fileName)
         addCollapes()
         results = runCode()
         if(results=="success"):
             incrementAndRun(2)
-            results = makeObjectCode()
+            results = makeObjectCode(fileName,originalFileName,makeFilePath)
             if(results=="success"):
-                removeFiles()
                 return "success"
             else:
                 return results

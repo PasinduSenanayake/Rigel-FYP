@@ -16,12 +16,14 @@ loggerError = logging.getLogger("error:")
 loggerSuccess = logging.getLogger("success:")
 
 
-def hotspotsProfiler(codeName,mainFilePath,compileCommand,arguments,segmentArray,initLocation):
+def hotspotsProfiler(codeName,mainFilePath,annotatedFile,makeFile,compileCommand,arguments,segmentArray,initLocation):
     loggerInfo.debug("File coping started")
     isCopySuccessful = True
     subFilePath = ""
     if (os.path.isfile(mainFilePath)):
         subFilePath = mainFilePath.split("Sandbox")[1]
+        makeFilePath = makeFile.split("Sandbox")[1]
+        annotatedFilePath = annotatedFile.split("Sandbox")[1]
         if(os.path.exists(os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")):
             shutil.rmtree(os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")
         shutil.copytree("./Sandbox", os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")
@@ -33,11 +35,11 @@ def hotspotsProfiler(codeName,mainFilePath,compileCommand,arguments,segmentArray
         loggerSuccess.debug("File coping completed")
         for segment in segmentArray:
             loggerInfo.debug("source code Annotation for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-            result = targetDataMap(subFilePath,compileCommand,segment[0],segment[1])
+            result = targetDataMap(annotatedFilePath,makeFilePath,compileCommand,segment[0],segment[1])
             if(result == "success"):
                 loggerSuccess.debug("Source code Annotation for "+str(segment[0])+"-"+str(segment[1])+" completed")
                 loggerInfo.debug("source code with collapse Annotation for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                result = collapseAnnotator(subFilePath,compileCommand)
+                result = collapseAnnotator(annotatedFilePath,makeFilePath,compileCommand)
                 if(result == "success"):
                     loggerSuccess.debug("Source code with collapse Annotation for "+str(segment[0])+"-"+str(segment[1])+" completed")
                     loggerInfo.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" initiated")
