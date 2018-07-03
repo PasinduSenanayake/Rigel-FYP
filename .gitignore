@@ -1,6 +1,7 @@
 Utils/
 DependencyManager/requirementsLocal.json
 *.pyc
+subCommandConf.json
 Identifier/sysinfo/*.json
 Sandbox/*
 !Sandbox/.gitkeep 

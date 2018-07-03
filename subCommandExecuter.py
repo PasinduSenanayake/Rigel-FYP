@@ -29,7 +29,7 @@ def occupancyCal():
 def runCommand(command):
     commandSegments = {
         'nonArchiFeatureFetch': lambda : nonArchi(),
-        'occupencyCalulation': lambda : occupancyCal()
+        'occupencyCalculate': lambda : occupancyCal()
     }[command]()
 
 
