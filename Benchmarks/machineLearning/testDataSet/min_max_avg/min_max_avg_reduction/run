@@ -8,12 +8,3 @@
 ./min_max_avg_reduction_gpu 131072
 ./min_max_avg_reduction_gpu 262144
 
-./min_max_avg_cpu 32768
-./min_max_avg_cpu 65536
-./min_max_avg_cpu 131072
-./min_max_avg_cpu 262144
-
-./min_max_avg_gpu 32768
-./min_max_avg_gpu 65536
-./min_max_avg_gpu 131072
-./min_max_avg_gpu 262144
