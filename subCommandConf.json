@@ -11,7 +11,7 @@
     },
     "occupencyCalculate":{
       "computeCapability":"5.0",
-      "registersPerThread":"87",
+      "registersPerThread":"47",
       "sharedMemoryPerBlock":"932"
     }
 

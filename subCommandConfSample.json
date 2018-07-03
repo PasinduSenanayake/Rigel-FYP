@@ -1,0 +1,20 @@
+{
+  "command":{
+    "nonArchiFeatureFetch":{
+      "mainFile":"",
+      "annotatedFile":"",
+      "makeFile":"",
+      "compilerOprtions":"",
+      "arguments":"",
+      "codeName":"",
+      "loopSegments":[]
+    },
+    "occupencyCalculate":{
+      "computeCapability":"",
+      "registersPerThread":"",
+      "sharedMemoryPerBlock":""
+    }
+
+  }
+
+}
