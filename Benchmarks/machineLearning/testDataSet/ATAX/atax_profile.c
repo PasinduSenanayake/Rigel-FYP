@@ -23,8 +23,8 @@
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.5
 
 /* Problem size. */
-#define NX 8192
-#define NY 8192
+#define NX 16384
+#define NY 16384
 
 #define GPU 1
 
