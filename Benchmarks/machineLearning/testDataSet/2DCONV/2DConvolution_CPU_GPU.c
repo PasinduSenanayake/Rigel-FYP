@@ -24,8 +24,8 @@
 #define ERROR_THRESHOLD 0.05
 
 /* Problem size */
-#define NI 15360
-#define NJ 15360
+#define NI 10360
+#define NJ 10360
 
 /* Can switch DATA_TYPE between float and double */
 typedef float DATA_TYPE;
