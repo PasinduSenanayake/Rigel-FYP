@@ -18,15 +18,15 @@
 #include <string.h>
 #include <omp.h>
 
-#include "../../common/polybenchUtilFuncts.h"
+#include "./polybenchUtilFuncts.h"
 
 //define the error threshold for the results "not matching"
 #define ERROR_THRESHOLD 0.5
 
 /* Problem size */
-#define NI 512
-#define NJ 512
-#define NK 512
+#define NI 256
+#define NJ 256
+#define NK 256
 
 /* Can switch DATA_TYPE between float and double */
 typedef float DATA_TYPE;

@@ -23,10 +23,10 @@
 #define ERROR_THRESHOLD 0.05
 
 /* Problem size. */
-# define NI 1024
-# define NJ 1024
-# define NK 1024
-# define NL 1024
+# define NI 2048
+# define NJ 2048
+# define NK 2048
+# define NL 2048
 
 /* Can switch DATA_TYPE between float and double */
 typedef float DATA_TYPE;

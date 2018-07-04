@@ -13,6 +13,12 @@
       "computeCapability":"",
       "registersPerThread":"",
       "sharedMemoryPerBlock":""
+    },
+    "sourceCodeAnnotation":{
+      "annotatedFile":"",
+      "annotationStartLine":0,
+      "annotationEndLine":0
+
     }
 
   }
