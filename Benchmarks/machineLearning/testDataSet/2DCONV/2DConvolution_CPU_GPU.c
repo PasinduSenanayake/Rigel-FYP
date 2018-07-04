@@ -18,7 +18,7 @@
 #include <string.h>
 #include <omp.h>
 
-#include "../../common/polybenchUtilFuncts.h"
+#include "./polybenchUtilFuncts.h"
 
 //define the error threshold for the results "not matching"
 #define ERROR_THRESHOLD 0.05
@@ -62,7 +62,7 @@ void conv2D_OMP(DATA_TYPE* A, DATA_TYPE* B)
 
   #pragma omp target data map(to:A[0:NI*NJ]) map(from:B[0:NI*NJ])
   #pragma omp target teams thread_limit(512)
-  #pragma omp distribute //parallel for schedule(static,1) collapse(2)
+  #pragma omp distribute parallel for schedule(static,1) collapse(2)
   for (int i = 1; i < NI - 1; ++i)
   {
 //  #pragma omp parallel for schedule(static,1)
