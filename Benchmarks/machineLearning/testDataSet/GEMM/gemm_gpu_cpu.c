@@ -26,9 +26,9 @@
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.05
 
 /* Problem size */
-#define NI 1024
-#define NJ 1024
-#define NK 1024
+#define NI 512
+#define NJ 512
+#define NK 512
 
 /* Declared constant values for ALPHA and BETA (same as values in PolyBench 2.0) */
 #define ALPHA 32412.0f
