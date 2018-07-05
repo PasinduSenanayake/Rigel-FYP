@@ -17,14 +17,14 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "../../common/polybenchUtilFuncts.h"
+#include "./polybenchUtilFuncts.h"
 
 // define the error threshold for the results "not matching"
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.10
 
 /* Problem size */
-#define N 1024
-#define M 1024
+#define N 512
+#define M 512
 
 #define GPU 1
 
