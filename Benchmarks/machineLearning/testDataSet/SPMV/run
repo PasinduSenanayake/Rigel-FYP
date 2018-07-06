@@ -1,0 +1,20 @@
+To run the offloading code
+
+compile parboil.c with
+clang -fopenmp -fopenmp-targets=nvptx64-nvidia-cuda  parboil.c -c
+
+compile convert_dataset.c with
+clang -fopenmp -fopenmp-targets=nvptx64-nvidia-cuda  convert_dataset.c -c
+
+compile mmio.c with
+clang -fopenmp -fopenmp-targets=nvptx64-nvidia-cuda  mmio.c -c
+
+link and run main file
+clang -fopenmp -fopenmp-targets=nvptx64-nvidia-cuda mainCFile parboil.o convert_dataset.o mmio.o -o runnable -lm
+
+to run the file , data set inside zip file
+./runnable -i path/Dubcova3.mtx.bin,path/vector.bin
+eg ./runnable -i /home/piyumi/FYP/code_fragments/samples/Unibench/benchmarks/Parboil/spmv/src/Dubcova3.mtx.bin,/home/piyumi/FYP/code_fragments/samples/Unibench/benchmarks/Parboil/spmv/src/vector.bin
+
+change input size at
+#define NK 2048     // K_ELEMS_PER_GRID //Input size changed from here
