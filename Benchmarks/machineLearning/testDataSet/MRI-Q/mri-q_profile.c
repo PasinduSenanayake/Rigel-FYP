@@ -261,6 +261,8 @@ double mriqCPU(int argc, char *argv[]) {
   return t_end - t_start;
 }
 
+//----> AdditionalCodeHook
+
 int main (int argc, char *argv[]) {
   double t_GPU, t_CPU;
 
