@@ -16,8 +16,8 @@
 
 
 /* Problem size. */
-# define NI 12000
-# define NK 12000
+# define NI 4098
+# define NK 4098
 
 
 /* Can switch DATA_TYPE between float and double */
@@ -68,9 +68,9 @@ printf("========================================================================
 void Tranpose_GPU(DATA_TYPE* A,DATA_TYPE* B){
 #pragma omp target data map(to:A[0:NI*NK]) map(tofrom:B[0:NI*NK])
 #pragma omp target teams thread_limit(512)
-#pragma omp distribute parallel for
 for (int i = 0; i < NI; i++)
 {
+  #pragma omp distribute parallel for
   for (int j = 0; j < NK; j++)
   {
   B[j*NI + i]  = A[i*NI + j] ;
