@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <assert.h>
 #include <unistd.h>
@@ -104,8 +105,9 @@ void syrkGPU() {
 
   t_start = rtclock();
 
-#pragma omp target data map(to: A) map(tofrom: D)
-#pragma omp parallel for //collapse(2)
+#pragma omp target data map(to: A[0:N][0:M]) map(tofrom: D[0:N][0:M])
+#pragma omp target teams
+#pragma omp distribute parallel for collapse(2)
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < M; j++) {
       D[i][j] *= beta;
@@ -122,7 +124,9 @@ void syrkGPU() {
 
 int main() {
   double t_start, t_end;
-
+  memset(A, 0, N * M * sizeof(float));
+  memset(C, 0, N * M * sizeof(float));
+  memset(D, 0, N * M * sizeof(float));
   init_arrays();
   syrkGPU();
   t_start = rtclock();
