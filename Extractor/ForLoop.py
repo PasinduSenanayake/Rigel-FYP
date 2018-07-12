@@ -1,4 +1,5 @@
 from Block import Block
+from Directive import Directive
 
 class ForLoop(Block):
     def __init__(self, startIndex, sourceCode):
@@ -8,6 +9,10 @@ class ForLoop(Block):
         super(ForLoop, self).__init__(loopHeader, startIndex)
         super(ForLoop, self).setElements(elements)
         self.iterationCount = 0
+
+    def hasPragma(self):
+        if isinstance(self.getParent().directive(), Directive):
+            return True
 
     def getBlockLength(self, string, startIndex):
         openedBracketCount = 0
@@ -45,6 +50,9 @@ class ForLoop(Block):
                     self.addElement(i, block1)
                 else:
                     item.addChild(child)
+
+    def isNested(self):
+        
 
     # def getNestedLoops(self, loopLines, currentLevel):
     #     currentLevel = currentLevel + 1

@@ -35,6 +35,8 @@ class StructuredBlock(Block):
             return self.elements[0]
         return None
 
+
+
     # def isChild(self, parent):
     #     if parent.getStartIndex() < self.getStartIndex() and self.getStartIndex() < parent.getEndIndex():
     #         return True
@@ -56,6 +58,16 @@ class StructuredBlock(Block):
                     self.addElement(i, block2)
                     self.addElement(i, block1)
                 break
+
+    def hasAssociatedLoop(self):
+        if self.directive():
+            if isinstance(self.elements[1], ForLoop):
+                return True
+        else:
+            if isinstance(self.elements[0], ForLoop):
+                return True
+        return False
+
 
     def getBlockLength(self, string, startIndex):
         openedBracketCount = 0

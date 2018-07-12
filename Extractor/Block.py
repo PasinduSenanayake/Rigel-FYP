@@ -10,6 +10,11 @@ class Block(object):
         self.elements = []
         self.lineNumber = 0
         self.parent = None
+        self.enabled = True
+        self.endLineNumber = 0
+
+    def isEnabled(self):
+        return self.enabled
 
     def setElements(self, elements):
         elements.sort(key=lambda x: x.getStartIndex(), reverse=False)
@@ -83,6 +88,7 @@ class Block(object):
             currentLine = element.setLineNumber(currentLine)
         if "\n" in self.outerSpacing:
             currentLine = currentLine + self.outerSpacing.count("\n")
+        self.endLineNumber = currentLine
         return currentLine
 
     def getNext(self, childIndex = 0):
@@ -113,9 +119,18 @@ class Block(object):
         # if self.parent:
         #     string = string + self.parent.body + " - parent\n"
         for element in self.elements:
-            string = string + element.getContent()
+            if element.isEnabled():
+                string = string + element.getContent()
         string = string + self.outerSpacing
         return string
+
+    def remove(self):
+        parent = self.getParent()
+        # index = parent.elements.index(self)
+        parent.removeChild(self)
+
+    def removeChild(self, child):
+        self.elements.remove(child)
 
     # def getNestedLoops(self, loopLines, currentLevel):
     #     for element in self.elements:

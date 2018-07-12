@@ -4,6 +4,7 @@ from Directive import Directive
 from StructuredBlock import StructuredBlock
 from Block import Block
 from pprint import pprint
+import copy
 
 class SourceCode:
     def __init__(self, code):
@@ -11,38 +12,46 @@ class SourceCode:
         self.forLoops = []
         self.directives = []
         self.structure = []
-        self.removeBlockComments()
-        self.removeLineComments()
+        # self.removeBlockComments()
+        # self.removeLineComments()
         self.searchForLoops()
         self.searchDirectives()
         self.root = self.structureCode()
         self.root.setLineNumber(1)
+        self.serialroot = self.getSerialCode(self.root)
+        self.serialparalleMapping = self.serialParallelMap()
 
-    def removeBlockComments(self):
+    def isBlockComments(self, index):
+        tempSource = self.code
         regex = re.compile(r"(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)",
                            re.DOTALL)  # error if block comment syntax found in a string construct or in a line comment
-        matching = regex.search(self.code)
+        matching = regex.search(tempSource)
         while (matching):
-            self.code = self.code[:matching.start()] + self.code[matching.end():]
-            matching = regex.search(self.code)
+            if matching.start() <= index <= matching.end():
+                return True
+            tempSource = tempSource[:matching.start()] + tempSource[matching.end():]
+            matching = regex.search(tempSource)
 
-    def removeLineComments(self):
+    def isLineComments(self, index):
+        tempSource = self.code
         regex = re.compile(r"(//.*)", re.DOTALL)  # error if line comment syntax found in a string construct or in a block comment
-        matching = regex.search(self.code)
+        matching = regex.search(tempSource)
         while (matching):
             commentLength = 0
-            for char in self.code[matching.start():]:
+            for char in tempSource[matching.start():]:
                 commentLength += 1
                 if char == "\n":
                     break
-            self.code = self.code[:matching.start()] + self.code[matching.start() + commentLength - 1:]
-            matching = regex.search(self.code)
+            if matching.start() <= index <= matching.start() + commentLength - 1:
+                return True
+            tempSource = tempSource[:matching.start()] + tempSource[matching.start() + commentLength - 1:]
+            matching = regex.search(tempSource)
 
     def searchForLoops(self):
         sourceCode = self.code
         regex = re.compile(r"for[^\S]*\(", re.DOTALL)  # playfor() method will be caught too
         matching = regex.search(sourceCode)
-        while (matching):
+        while (matching and not self.isBlockComments(matching.start()) and not self.isLineComments(matching.start())):
             loop = ForLoop(matching.start(),sourceCode)
             self.forLoops.append(loop)
             sourceCode = sourceCode[:matching.start()] + "@" * 3 + sourceCode[matching.start() + 3:]
@@ -52,8 +61,8 @@ class SourceCode:
         sourceCode = self.code
         regex = re.compile(r"#[^\S]*pragma[^\S]*omp", re.DOTALL)
         matching = regex.search(sourceCode)
-        while (matching):
-            directive = Directive(matching.start(),sourceCode)
+        while (matching and not self.isBlockComments(matching.start()) and not self.isLineComments(matching.start())):
+            directive = Directive(matching.start(), sourceCode)
             self.directives.append(directive)
             sourceCode = sourceCode[:matching.start()] + "@@@" + sourceCode[matching.start() + 3:]
             matching = regex.search(sourceCode)
@@ -112,29 +121,46 @@ class SourceCode:
     def getCotent(self):
         return self.root.getContent()
 
-    def writeToFile(self, file):
+    def writeToFile(self, file, root):
         file = open(file, "w")
-        file.write(self.getCotent())
+        file.write(root.getContent())
         file.close()
+
+    def getSerialCode(self, root):
+        serialRoot = copy.deepcopy(self.root)
+        nextObj = serialRoot
+        while nextObj:
+            if isinstance(nextObj, StructuredBlock):
+                if nextObj.directive():
+                    nextObj.directive().remove()
+                    if not nextObj.hasAssociatedLoop():
+                        nextObj.elements[1].body = nextObj.elements[1].body[1:]
+                        nextObj.elements[-1].body = nextObj.elements[-1].body[:-1]
+                    # if not isinstance(nextObj.elements[1], ForLoop):
+                    #     print nextObj.elements[1].body[0]
+                    #     print "---"
+            nextObj = nextObj.getNext()
+        serialRoot.setLineNumber(1)
+        return serialRoot
+
+    def serialParallelMap(self):
+        nextObj = self.root
+        mapping = []
+        while nextObj:
+            if isinstance(nextObj, ForLoop):
+                mapping.append({"parallel": [nextObj.lineNumber, nextObj.endLineNumber]})
+            nextObj = nextObj.getNext()
+
+        nextObj = self.serialroot
+        counter = 0
+        while nextObj:
+            if isinstance(nextObj, ForLoop):
+                mapping[counter]["serial"] = [nextObj.lineNumber, nextObj.endLineNumber]
+                counter += 1
+            nextObj = nextObj.getNext()
+        return mapping
 
     def getNestedLoops(self):
         nestedLoopLines = []
         nestedLoopLines = self.root.getNestedLoops(nestedLoopLines, 0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
