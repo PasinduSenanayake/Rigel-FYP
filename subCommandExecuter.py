@@ -5,6 +5,7 @@ from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Identifier.offloadChecker import occupancyCalculation
 from Identifier.systemIdentifier import __systemInformationIdentifier
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
+from Identifier.identifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
     with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as f:
@@ -61,13 +62,31 @@ def sourceAnnotation():
         else:
             print "unable to find file : " + commadName['annotatedFile']
 
+def arrayInfomationFetch():
+    if(checkSubCommandConf()):
+        commadName = commandJson['command']['arrayInfoFetch']
+        if (os.path.isfile(commadName['annotatedFile'])):
+            subFilePath = commadName['annotatedFile'].split("Sandbox")[1]
+            if(os.path.exists(os.path.dirname(os.path.realpath(__file__))+"/Identifier/identifierSandbox/arrayInfoIdentifier/Sandbox")):
+                shutil.rmtree(os.path.dirname(os.path.realpath(__file__))+"/Identifier/identifierSandbox/arrayInfoIdentifier/Sandbox")
+            shutil.copytree("./Sandbox", os.path.dirname(os.path.realpath(__file__))+"/Identifier/identifierSandbox/arrayInfoIdentifier/Sandbox")
+            result = arrayInfoFetch(subFilePath,commadName['infoFetchStartLine'],commadName['infoFetchEndLine'])
+            if (result["code"]):
+                print "Information Fetch Concluded Successfully"
+                print result["data"]
+            else:
+                print "Information Fetch failed."
+        else:
+            print "unable to find file : " + commadName['annotatedFile']
+
 
 def runCommand(command):
     commandSegments = {
         'nonArchiFeatureFetch': lambda : nonArchi(),
         'occupencyCalculate': lambda : occupancyCal(),
         'systemIdentify':lambda : systemIdentify(),
-        'sourceAnnotation': lambda : sourceAnnotation()
+        'sourceAnnotation': lambda : sourceAnnotation(),
+        'arrayInfoFetch':lambda : arrayInfomationFetch(),
     }[command]()
 
 
