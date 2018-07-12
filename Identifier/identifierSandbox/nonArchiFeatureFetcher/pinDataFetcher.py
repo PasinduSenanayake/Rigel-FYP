@@ -3,7 +3,7 @@ import os,csv
 
 
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
-dataRow =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+dataRow =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
 
 tOps = 0
@@ -24,7 +24,7 @@ def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,c
         loggerInfo.debug("Writing headers to CSV initiated")
         with open(csvPath, 'wb') as csvfile:
             inswriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            inswriter.writerow(['dataSet', 'instructionCount','ilp32','ilp256','ilp2048','ilp65536','memops','ctrlops','intops','flops','coldref','reuseDist2','sfp','dfp','noconflict','broadCast','coalesced','shMemBw','gMemBw','blocks','pages','lipRate','mulf','divf','specialFn','lbdiv16','lbdiv32','lbdiv64','lbdiv128','lbdiv256','lbdiv512','lbdiv1024'])
+            inswriter.writerow(['dataSet', 'instructionCount','ilp32','ilp256','ilp2048','ilp65536','memops','ctrlops','intops','flops','coldref','reuseDist2','sfp','dfp','noconflict','broadCast','coalesced','shMemBw','gMemBw','blocks','pages','lipRate','mulf','divf','specialFn','lbdiv16','lbdiv32','lbdiv64','lbdiv128','lbdiv256','lbdiv512','lbdiv1024','probsize'])
         loggerSuccess.debug("Writing headers to CSV completed")
         row_count = 1
     else:
@@ -41,12 +41,16 @@ def dataCollect(codeName,initLine,endLine,loggerSuccess,loggerError,loggerInfo,c
         for ite in range (1,6):
             if(separatedLines[ite]=='0'):
                 separatedLines[ite]='1'
-        dataRow[1]= int(separatedLines[0])
+        if(os.path.isfile(fileLocation+'itypes_full_int_pin.out')):
+            lines = [line.rstrip('\n') for line in open(fileLocation+'itypes_full_int_pin.out','r')]
+            totalOperations =  lines[0].split(" ")
+        dataRow[1]= int(totalOperations[0])
         dataRow[2]= float(separatedLines[0])/float(separatedLines[1])
         dataRow[3]= float(separatedLines[0])/float(separatedLines[2])
         dataRow[4]= float(separatedLines[0])/float(separatedLines[3])
         dataRow[5]= float(separatedLines[0])/float(separatedLines[5])
         dataRow[21]= float(separatedLines[4])/float(separatedLines[1])
+        dataRow[32] = int(totalOperations[0])/int(separatedLines[0])
         loggerSuccess.debug("Fetching ILP data completed")
     else:
         isCollectSuccess = False

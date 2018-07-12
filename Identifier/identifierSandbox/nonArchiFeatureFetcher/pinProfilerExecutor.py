@@ -12,13 +12,13 @@ def runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,filePath):
     global baseFileLocation
     baseFileLocation = baseFileLocation+filePath.rsplit('/', 1)[0]
     resultPin = "success"
-    loggerInfo.debug("ILP and instruction count extraction initiated")
+    loggerInfo.debug("ILP and extraction initiated")
     with open(baseFileLocation+'/mica.conf','w') as confFile:
         confFile.write("analysis_type: ilp\ninterval_size: full")
         confFile.close
-    resultPin = profileInPin("mica.so",arguments)
+    resultPin = profileILPInPin("mica.so",arguments)
     if(resultPin == "success"):
-        loggerSuccess.debug("ILP and instruction count extraction completed")
+        loggerSuccess.debug("ILP extraction completed")
         loggerInfo.debug("Operation count extraction initiated")
         with open(baseFileLocation+'/mica.conf','w') as confFile:
             confFile.write("analysis_type: itypes\ninterval_size: full")
@@ -123,7 +123,8 @@ def runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,filePath):
         else:
             loggerError.debug("Operation count extraction Failed Error: "+resultPin)
     else:
-        loggerError.debug("ILP and instruction count extraction Failed Error: "+resultPin)
+        loggerError.debug("ILP  extraction Failed Error: "+resultPin)
+
 
     if(resultPin == "success"):
         return True
@@ -143,6 +144,17 @@ def profileInPin(soFile,arguments):
 
 def profileTwoInPin(soFile,arguments):
     executeString = 'cd '+baseFileLocation +' && '+fileLocation+'pin -t '+fileLocation+''+soFile+' -- '+baseFileLocation+'/runnableSecond'+" "+arguments
+    processOutput = Popen(executeString,shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    output,error=processOutput.communicate()
+    if error=="":
+        return "success"
+    elif "All done reading" in error:
+        return "success"
+    else:
+        return error
+
+def profileILPInPin(soFile,arguments):
+    executeString = 'cd '+baseFileLocation +' && '+fileLocation+'pin -t '+fileLocation+''+soFile+' -- '+baseFileLocation+'/runnableILP'+" "+arguments
     processOutput = Popen(executeString,shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
     if error=="":
