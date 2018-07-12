@@ -18,7 +18,11 @@
       "annotatedFile":"",
       "annotationStartLine":0,
       "annotationEndLine":0
-
+    },
+    "arrayInfoFetch":{
+      "annotatedFile":"",
+      "infoFetchStartLine":0,
+      "infoFetchEndLine":0
     }
 
   }

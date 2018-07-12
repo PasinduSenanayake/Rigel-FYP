@@ -23,13 +23,15 @@
 #define ERROR_THRESHOLD 0.05
 
 /* Problem size. */
-# define NI 1024
-# define NJ 1024
-# define NK 1024
-# define NL 1024
+# define NI 256
+# define NJ 256
+# define NK 256
+# define NL 256
 
 /* Can switch DATA_TYPE between float and double */
 typedef float DATA_TYPE;
+
+//----> AdditionalCodeHook
 
 void init_array(DATA_TYPE* A, DATA_TYPE* B, DATA_TYPE* C, DATA_TYPE* D)
 {
@@ -116,14 +118,14 @@ int main(int argc, char** argv)
   D = (DATA_TYPE*)malloc(NJ*NL*sizeof(DATA_TYPE));
   E_GPU = (DATA_TYPE*)malloc(NI*NL*sizeof(DATA_TYPE));
 
-  fprintf(stdout, "<< Linear Algebra: 2 Matrix Multiplications (D=A.B; E=C.D) >>\n");
+  // fprintf(stdout, "<< Linear Algebra: 2 Matrix Multiplications (D=A.B; E=C.D) >>\n");
 
   init_array(A, B, C, D);
 
   t_start_GPU = rtclock();
   mm2_OMP(A, B, C, D, E_GPU);
   t_end_GPU = rtclock();
-  fprintf(stdout, "GPU Runtime: %0.6lfs\n", t_end_GPU - t_start_GPU);
+  // fprintf(stdout, "GPU Runtime: %0.6lfs\n", t_end_GPU - t_start_GPU);
 
 
   free(C);
