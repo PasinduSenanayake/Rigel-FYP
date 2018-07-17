@@ -4,6 +4,7 @@ import os
 from shutil import copyfile
 import shutil
 from identifierSandbox.nonArchiFeatureFetcher.sourceAnnotator import targetDataMap
+from identifierSandbox.nonArchiFeatureFetcher.sourceAnnotatorILP import targetDataMapILP
 from identifierSandbox.nonArchiFeatureFetcher.collapsibleLoopAnnotator import collapseAnnotator
 from identifierSandbox.nonArchiFeatureFetcher.pinProfilerExecutor import runPinProf
 from identifierSandbox.nonArchiFeatureFetcher.pinDataFetcher import dataCollect
@@ -42,20 +43,28 @@ def hotspotsProfiler(codeName,mainFilePath,annotatedFile,makeFile,compileCommand
                 result = collapseAnnotator(annotatedFilePath,makeFilePath,compileCommand)
                 if(result == "success"):
                     loggerSuccess.debug("Source code with collapse Annotation for "+str(segment[0])+"-"+str(segment[1])+" completed")
-                    loggerInfo.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                    pinresult = runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,subFilePath)
-                    if(pinresult):
-                        loggerSuccess.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" completed")
-                        loggerInfo.debug("Information extraction for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                        pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),loggerSuccess,loggerError,loggerInfo,initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv",subFilePath)
-                        if(pinDataresult):
-                            loggerSuccess.debug("Data collect for "+str(segment[0])+"-"+str(segment[1])+" completed")
+                    loggerInfo.debug("source code with ILP Annotation for "+str(segment[0])+"-"+str(segment[1])+" initiated")
+                    result = targetDataMapILP(annotatedFilePath,makeFilePath,compileCommand,segment[0],segment[1])
+                    if(result == "success"):
+                        loggerSuccess.debug("Source code with ILP Annotation for "+str(segment[0])+"-"+str(segment[1])+" completed")
+                        loggerInfo.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" initiated")
+                        pinresult = runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,subFilePath)
+                        if(pinresult):
+                            loggerSuccess.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" completed")
+                            loggerInfo.debug("Information extraction for "+str(segment[0])+"-"+str(segment[1])+" initiated")
+                            pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),loggerSuccess,loggerError,loggerInfo,initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv",subFilePath)
+                            if(pinDataresult):
+                                loggerSuccess.debug("Data collect for "+str(segment[0])+"-"+str(segment[1])+" completed")
+                            else:
+                                loggerError.debug("Data collect for "+str(segment[0])+"-"+str(segment[1])+" failed")
+                                isprocessSuccesful = False
+                                break
                         else:
-                            loggerError.debug("Data collect for "+str(segment[0])+"-"+str(segment[1])+" failed")
+                            loggerError.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" failed")
                             isprocessSuccesful = False
                             break
                     else:
-                        loggerError.debug("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" failed")
+                        loggerError.debug("Source code with ILP Annotation for "+str(segment[0])+"-"+str(segment[1])+" failed with Error : "+result)
                         isprocessSuccesful = False
                         break
                 else:
