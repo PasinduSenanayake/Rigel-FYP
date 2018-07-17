@@ -1,5 +1,7 @@
 import json
 from pprint import pprint
+import os
+import codecs
 
 class FileHandler:
 
@@ -18,16 +20,18 @@ class FileHandler:
             FileHandler.instance = self
 
     def readSource(self, sourcePath):
-        with open(sourcePath, 'r') as myfile:
+        with codecs.open(sourcePath, 'r', 'utf-8') as myfile:
             source = myfile.read()
         return source
 
     def readDirectives(self):
         directiveDataDict = {}
-        directivesList = json.load(open("Directives/main.json"))
+        dirname = os.path.dirname(__file__)
+        filename = os.path.join(dirname, 'Directives/main.json')
+        directivesList = json.load(open(filename))
         directivesList = directivesList["directives"].split(",")
         for directive in directivesList:
-            filePath = "Directives/" + directive + ".json"
+            filePath = os.path.join(dirname, "Directives/" + directive + ".json")
             directiveData = json.load(open(filePath))
             directiveDataDict[directive] = directiveData
         return directiveDataDict

@@ -52,7 +52,12 @@ class ForLoop(Block):
                     item.addChild(child)
 
     def isNested(self):
-        
+        parent = self.getParent()
+        while parent:
+            if isinstance(parent, ForLoop):
+                return True
+            parent = parent.getParent()
+        return False
 
     # def getNestedLoops(self, loopLines, currentLevel):
     #     currentLevel = currentLevel + 1

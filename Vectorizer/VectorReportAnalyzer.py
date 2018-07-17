@@ -24,21 +24,30 @@ response = {
     "content":{}
     }
 arguments = {
-    "fileAbsPath":args.fpath,
-    "runTimeArguments":args.farguments,
-    "compTimeArguments":args.carguments
+    "fileAbsPath": args.fpath,
+    "runTimeArguments": args.farguments,
+    "compTimeArguments": args.carguments
     }
 
-class VectorReportAnaLyzer:
-    def __init__(self):
-        self.source = ''
+class VectorReportAnalyzer:
+    def __init__(self, sources):
+        self.sources = []
         self.vectors = {}
+        self.addSources(sources)
+        self.execute()
 
-    def addSource(self, sourcePath):
-        self.source = sourcePath
+    def addSources(self, sources):
+        self.sources = sources
+
     def compileFile(self):
-        command = 'icc -o2 -qopt-report=5 -qopt-report-phase=all '+self.source
-        print(command)
+        # command = "icc -o2 -qopt-report=5 -qopt-report-phase=all '" + "' '".join(self.sources) + "'"
+        sourcePaths = []
+        for source in self.sources:
+            tempSource = source.replace(" ", "\ ")
+            sourcePaths.append(tempSource)
+        command = "icc -o2 -qopt-report=5 -qopt-report-phase=all " + " ".join(sourcePaths)
+        # command.replace("'", "\"")
+        # print(command)
         processOutput = Popen(command,shell=True)
         stdout, stderr = processOutput.communicate()
         if(stderr==None):
@@ -46,8 +55,8 @@ class VectorReportAnaLyzer:
         else:
             print stderr
 
-    def getFileName(self):
-        fullname=self.source.split("/")[-1]
+    def getFileName(self, source):
+        fullname = source.split("/")[-1]
         # print(fullname)
         return fullname
 
@@ -88,7 +97,10 @@ class VectorReportAnaLyzer:
                 speedup = fullLine.split(':')[-1].split(' ')[1]
                 break
         # print(str(line)+" "+str(vectorLen)+" "+str(speedup))
-        loop = Loop(line,vectorLen,speedup,overhead)
+        # loop = Loop(line,vectorLen,speedup,overhead)
+        loop = {"type": "vectorized_loop", "line": line,
+                "vectorLen": vectorLen, "speedup": speedup,
+                "overhead": overhead}
         return loop
 
     def getPermutedVectorData(self,lineNo, report ):
@@ -111,9 +123,10 @@ class VectorReportAnaLyzer:
                 filter(str.isalnum, fullLine)
                 overhead = float(fullLine[-5:])
             if match2:
-                fullLine = report[i][:-1]
-                filter(str.isalnum, fullLine)
-                vectorLen = int(fullLine[-1:])
+                fullLine = report[i][:-1].strip()
+                words = re.compile("\s").split(fullLine)
+                # filter(str.isalnum, fullLine)
+                vectorLen = int(words[6])
             if match1:
                 val =report[i].split('(', 1)[1].split(')')[0]
                 line = int(val.split(',')[0])
@@ -134,7 +147,10 @@ class VectorReportAnaLyzer:
                 speedup = fullLine.split(':')[-1].split(' ')[1]
                 break
         # print(str(line)+" "+str(vectorLen)+" "+str(speedup))
-        loop = PermutedLoop(line, vectorLen, speedup, overhead,permutation)
+        loop = {"type": "permuted_loop", "line": line,
+                "vectorLen": vectorLen, "speedup": speedup,
+                "overhead": overhead, "permutation": permutation}
+        # loop = PermutedLoop(line, vectorLen, speedup, overhead,permutation)
         return loop
 
     def findLoopBlocks(self,report):
@@ -160,7 +176,7 @@ class VectorReportAnaLyzer:
             duplicateList.append(vector1)
             count =0
             for vector2 in duplicateList:
-                if vector1.line == vector2.line:
+                if vector1["line"] == vector2["line"]:
                     count +=1
                 if count >1 :
                     duplicateList.pop()
@@ -168,11 +184,12 @@ class VectorReportAnaLyzer:
 
     def execute(self):
         try:
-            filename = self.getFileName()
             self.compileFile()
-            report = self.readVectorReport(filename)
-            vectorList = self.removeDuplicateLoops(self.findLoopBlocks(report))
-            self.vectors =vectorList
+            for source in self.sources:
+                filename = self.getFileName(source)
+                report = self.readVectorReport(filename)
+                vectorList = self.removeDuplicateLoops(self.findLoopBlocks(report))
+                self.vectors[source] = vectorList
         except Exception as e:
             print e
             traceback.print_exc()
@@ -183,14 +200,17 @@ class VectorReportAnaLyzer:
 
 
 
-def main():
-    analyzer = VectorReportAnaLyzer()
-    analyzer.addSource(arguments['fileAbsPath'])
-    analyzer.execute()
-    for vec in analyzer.vectors:
-        if isinstance(vec,PermutedLoop):
-            print(vec.line, vec.overhead, vec.permutation)
+# def main():
+    # analyzer = VectorReportAnaLyzer()
+    # analyzer.addSources(arguments['fileAbsPath'].split("|"))
+    # analyzer.execute()
+    # for source, vectors in analyzer.vectors.items():
+    #     print len(vectors)
+        # for vector in vectors:
+        #     print vector
+            # if vector["type"] == "permuted_loop":
+            #     print(vector["line"], vector["overhead"], vector["permutation"])
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

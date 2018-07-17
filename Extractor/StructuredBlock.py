@@ -35,6 +35,10 @@ class StructuredBlock(Block):
             return self.elements[0]
         return None
 
+    def vectorize(self, vectorLen=None, alignment=None):
+        if not self.directive():
+            self.elements.insert(0, Block("pragma\n", 0))
+
 
 
     # def isChild(self, parent):

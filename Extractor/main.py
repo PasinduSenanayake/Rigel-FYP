@@ -49,8 +49,15 @@ def setSchedule(sourceObj, mechanism, lineNumber = None):
 # print sourceObj.root.getContent()
 
 extractor = Extractor()
-sourceObj = extractor.addSource("omp_hello.c")
+sourceObj = extractor.addSource("/home/praveen/FYP/OpenMP/Exercise/simd.c")
+
+nextObj = sourceObj.root
+while nextObj:
+    if isinstance(nextObj, ForLoop):
+        print(nextObj.lineNumber)
+    nextObj = nextObj.getNext()
 
 sourceObj.writeToFile("serial.c", sourceObj.serialroot)
 sourceObj.writeToFile("parallel.c", sourceObj.root)
-print(sourceObj.serialparalleMapping)
+print(sourceObj.getLoopMapping())
+# print(sourceObj.serialparallelOuterLoopMapping)
