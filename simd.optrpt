@@ -1,0 +1,221 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 18.0.2.199 Build 20180210
+
+Compiler options: -o2 -qopt-report=5 -qopt-report-phase=all
+
+    Report from: Interprocedural optimizations [ipo]
+
+  WHOLE PROGRAM (SAFE) [EITHER METHOD]: false
+  WHOLE PROGRAM (SEEN) [TABLE METHOD]: true
+  WHOLE PROGRAM (READ) [OBJECT READER METHOD]: false
+
+INLINING OPTION VALUES:
+  -inline-factor: 100
+  -inline-min-size: 30
+  -inline-max-size: 230
+  -inline-max-total-size: 2000
+  -inline-max-per-routine: 10000
+  -inline-max-per-compile: 500000
+
+In the inlining report below:
+   "sz" refers to the "size" of the routine. The smaller a routine's size,
+      the more likely it is to be inlined.
+   "isz" refers to the "inlined size" of the routine. This is the amount
+      the calling routine will grow if the called routine is inlined into it.
+      The compiler generally limits the amount a routine can grow by having
+      routines inlined into it.
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (main(int, char **)) [1/3=33.3%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(20,1)
+  -> INLINE (MANUAL): (21,10) atoi(const char *) (isz = 4) (sz = 11)
+    -> EXTERN: /usr/include/stdlib.h:(280,16) strtol(const char *__restrict__, char **__restrict__, int)
+  -> INLINE (MANUAL): (31,32) _mm_malloc(size_t, size_t) (isz = 23) (sz = 34)
+    -> EXTERN: /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h:(42,12) malloc(size_t)
+    -> EXTERN: /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h:(45,7) posix_memalign(void **, size_t, size_t)
+  -> INLINE (MANUAL): (32,32) _mm_malloc(size_t, size_t) (isz = 23) (sz = 34)
+    -> EXTERN: /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h:(42,12) malloc(size_t)
+    -> EXTERN: /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h:(45,7) posix_memalign(void **, size_t, size_t)
+  -> INLINE (MANUAL): (33,32) _mm_malloc(size_t, size_t) (isz = 23) (sz = 34)
+    -> EXTERN: /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h:(42,12) malloc(size_t)
+    -> EXTERN: /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h:(45,7) posix_memalign(void **, size_t, size_t)
+  -> EXTERN: (121,5) printf(const char *, ...)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(39,2)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=1
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(39,2)
+   remark #15389: vectorization support: reference array_A[i] has unaligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(41,6) ]
+   remark #15388: vectorization support: reference array_B[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(43,6) ]
+   remark #15388: vectorization support: reference array_C[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(45,6) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.386
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 2 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 5.500 
+   remark #15478: estimated potential speedup: 2.120 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(39,2)
+<Alternate Alignment Vectorized Loop>
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(39,2)
+<Remainder loop for vectorization>
+   remark #15389: vectorization support: reference array_A[i] has unaligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(41,6) ]
+   remark #15389: vectorization support: reference array_B[i] has unaligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(43,6) ]
+   remark #15388: vectorization support: reference array_C[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(45,6) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: remainder loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.842
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(99,13)
+   remark #25444: Loopnest Interchanged: ( 1 2 3 ) --> ( 3 1 2 )
+   remark #15542: loop was not vectorized: inner loop was already vectorized   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(99,13) ]
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(85,5)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(95,9)
+         remark #15305: vectorization support: vector length 2
+         remark #15399: vectorization support: unroll factor set to 4
+         remark #15309: vectorization support: normalized vectorization overhead 0.100
+         remark #15301: PERMUTED LOOP WAS VECTORIZED
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 11 
+         remark #15477: vector cost: 2.500 
+         remark #15478: estimated potential speedup: 4.190 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(95,9)
+      <Remainder loop for vectorization>
+         remark #15305: vectorization support: vector length 2
+         remark #15309: vectorization support: normalized vectorization overhead 6.200
+         remark #15301: REMAINDER LOOP WAS VECTORIZED
+      LOOP END
+
+      LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(95,9)
+      <Remainder loop for vectorization>
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(114,5)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=1
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(114,5)
+   remark #15388: vectorization support: reference array_C[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(116,15) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 1.450
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 6 
+   remark #15477: vector cost: 2.500 
+   remark #15478: estimated potential speedup: 2.260 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(114,5)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c(20,1):remark #34051: REGISTER ALLOCATION : [main] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/simd/simd.c:20
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   19[ rax rdx rcx rbx rsi rdi r8-r9 r12-r15 zmm0-zmm6]
+        
+    Routine temporaries
+        Total         :     127
+            Global    :      64
+            Local     :      63
+        Regenerable   :      23
+        Spilled       :       5
+        
+    Routine stack
+        Variables     :      28 bytes*
+            Reads     :       5 [4.70e+00 ~ 0.1%]
+            Writes    :       2 [2.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: _mm_malloc(size_t, size_t)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (_mm_malloc(size_t, size_t)) [3/3=100.0%] /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h(39,1)
+  -> EXTERN: (42,12) malloc(size_t)
+  -> EXTERN: (45,7) posix_memalign(void **, size_t, size_t)
+
+
+    Report from: Code generation optimizations [cg]
+
+/usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h(39,1):remark #34051: REGISTER ALLOCATION : [_mm_malloc] /usr/lib/gcc/x86_64-linux-gnu/5/include/mm_malloc.h:39
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    4[ rax rdx rsi rdi]
+        
+    Routine temporaries
+        Total         :      18
+            Global    :       8
+            Local     :      10
+        Regenerable   :       4
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       8 bytes*
+            Reads     :       1 [9.01e-01 ~ 4.4%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================

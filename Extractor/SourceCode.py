@@ -202,14 +202,13 @@ class SourceCode:
         return mapping
 
     def vectorize(self, lineNumber, vectorLen=None, alignment=None):
-        nextObj = self.serialroot
+        nextObj = self.root
         while nextObj:
-            if nextObj.lineNumber == lineNumber and isinstance(nextObj, ForLoop):
+            if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
                 structuredBlock = nextObj.getParent()
                 structuredBlock.vectorize(vectorLen, alignment)
                 break
             nextObj = nextObj.getNext()
-        self.serialroot.setLineNumber(1)
 
     # def getNestedLoops(self):
     #     nestedLoopLines = []

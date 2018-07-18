@@ -1,0 +1,69 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 18.0.2.199 Build 20180210
+
+Compiler options: -o2 -qopt-report=5 -qopt-report-phase=all
+
+    Report from: Interprocedural optimizations [ipo]
+
+  WHOLE PROGRAM (SAFE) [EITHER METHOD]: false
+  WHOLE PROGRAM (SEEN) [TABLE METHOD]: false
+  WHOLE PROGRAM (READ) [OBJECT READER METHOD]: false
+
+INLINING OPTION VALUES:
+  -inline-factor: 100
+  -inline-min-size: 30
+  -inline-max-size: 230
+  -inline-max-total-size: 2000
+  -inline-max-per-routine: 10000
+  -inline-max-per-compile: 500000
+
+In the inlining report below:
+   "sz" refers to the "size" of the routine. The smaller a routine's size,
+      the more likely it is to be inlined.
+   "isz" refers to the "inlined size" of the routine. This is the amount
+      the calling routine will grow if the called routine is inlined into it.
+      The compiler generally limits the amount a routine can grow by having
+      routines inlined into it.
+
+Begin optimization report for: dummy(float *, float *, float *, float *, float *, float (*)[500], float (*)[500], float (*)[500], float)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (dummy(float *, float *, float *, float *, float *, float (*)[500], float (*)[500], float (*)[500], float)) [1/1=100.0%] /home/praveen/FYP/Benchmarks/Vectorization Benchmark/TSVC/test/dummy.c(4,155)
+
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Benchmarks/Vectorization Benchmark/TSVC/test/dummy.c(4,155):remark #34051: REGISTER ALLOCATION : [dummy] /home/praveen/FYP/Benchmarks/Vectorization Benchmark/TSVC/test/dummy.c:4
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    8[ rax rdx rcx rsi rdi r8-r9 zmm0]
+        
+    Routine temporaries
+        Total         :      14
+            Global    :       0
+            Local     :      14
+        Regenerable   :       1
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================

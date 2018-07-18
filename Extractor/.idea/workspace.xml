@@ -2,22 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa40ee2a-00cd-4663-8955-d8c06265182d" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/Rigel-FYP.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/FileHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ForLoop.py" beforeDir="false" afterPath="$PROJECT_DIR$/ForLoop.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SourceCode.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StructuredBlock.py" beforeDir="false" afterPath="$PROJECT_DIR$/StructuredBlock.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parallel.c" beforeDir="false" afterPath="$PROJECT_DIR$/parallel.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serial.c" beforeDir="false" afterPath="$PROJECT_DIR$/serial.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Initializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Initializer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Loop.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PermutedLoop.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VectorReportAnalyzer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VectorReportAnalyzerExample.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Vectorizer/VectorReportAnalyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Vectorizer/VectorReportAnalyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Vectorizer/Vectorizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Vectorizer/Vectorizer.py" afterDir="false" />
     </list>
     <ignored path="Extractor.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,8 +40,8 @@
       <file leaf-file-name="SourceCode.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SourceCode.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2448">
-              <caret line="21" column="35" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="35" />
+            <state relative-caret-position="3180">
+              <caret line="219" column="41" selection-start-line="219" selection-start-column="41" selection-end-line="219" selection-end-column="41" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -53,10 +49,19 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="Block.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Block.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="21" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="477">
+            <state relative-caret-position="825">
               <caret line="60" column="15" selection-start-line="60" selection-start-column="15" selection-end-line="60" selection-end-column="15" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
@@ -65,19 +70,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="omp_hello.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/omp_hello.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="21" column="4" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="VectorReportAnalyzer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Vectorizer/VectorReportAnalyzer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-243">
+            <state relative-caret-position="1500">
               <caret line="111" column="30" selection-start-line="111" selection-start-column="30" selection-end-line="111" selection-end-column="30" />
             </state>
           </provider>
@@ -86,7 +82,7 @@
       <file leaf-file-name="ForLoop.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ForLoop.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="328">
+            <state relative-caret-position="870">
               <caret line="59" column="20" selection-start-line="59" selection-start-column="20" selection-end-line="59" selection-end-column="20" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
@@ -95,11 +91,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StructuredBlock.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="StructuredBlock.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/StructuredBlock.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="37" column="8" selection-start-line="37" selection-start-column="8" selection-end-line="37" selection-end-column="8" />
+            <state relative-caret-position="195">
+              <caret line="41" column="45" selection-start-line="41" selection-start-column="45" selection-end-line="41" selection-end-column="45" />
             </state>
           </provider>
         </entry>
@@ -116,17 +112,20 @@
       <file leaf-file-name="Vectorizer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Vectorizer/Vectorizer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="8" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+            <state relative-caret-position="225">
+              <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#53#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Initializer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Initializer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Initializer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-348">
-              <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
+            <state relative-caret-position="105">
+              <caret line="12" column="30" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -137,8 +136,8 @@
       <file leaf-file-name="Extractor.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Extractor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="24" column="38" selection-start-line="24" selection-start-column="38" selection-end-line="24" selection-end-column="38" />
+            <state relative-caret-position="195">
+              <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -195,11 +194,11 @@
         <option value="$PROJECT_DIR$/../Vectorizer/VectorReportAnalyzer.py" />
         <option value="$PROJECT_DIR$/../Vectorizer/vectorizer.py" />
         <option value="$PROJECT_DIR$/ForLoop.py" />
-        <option value="$PROJECT_DIR$/SourceCode.py" />
-        <option value="$PROJECT_DIR$/StructuredBlock.py" />
+        <option value="$PROJECT_DIR$/../Initializer.py" />
         <option value="$PROJECT_DIR$/Extractor.py" />
         <option value="$PROJECT_DIR$/../Vectorizer/Vectorizer.py" />
-        <option value="$PROJECT_DIR$/../Initializer.py" />
+        <option value="$PROJECT_DIR$/SourceCode.py" />
+        <option value="$PROJECT_DIR$/StructuredBlock.py" />
       </list>
     </option>
   </component>
@@ -241,7 +240,7 @@
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///home/praveen/FYP/Repo/Rigel-FYP/Extractor/main.py" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/serial.c" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/serial.c" />
   </component>
@@ -350,10 +349,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="64" y="-11" width="1303" height="780" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50038433" side_tool="true" weight="0.30873495" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50038433" side_tool="true" visible="true" weight="0.30873495" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.3289689" />
@@ -561,13 +559,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Block.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="8" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/FileHandler.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -608,26 +599,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ForLoop.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="59" column="20" selection-start-line="59" selection-start-column="20" selection-end-line="59" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/StructuredBlock.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="37" column="8" selection-start-line="37" selection-start-column="8" selection-end-line="37" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
+        <state relative-caret-position="825">
           <caret line="60" column="15" selection-start-line="60" selection-start-column="15" selection-end-line="60" selection-end-column="15" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
@@ -635,20 +609,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Vectorizer/VectorReportAnalyzer.py">
+    <entry file="file://$PROJECT_DIR$/Extractor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-243">
-          <caret line="111" column="30" selection-start-line="111" selection-start-column="30" selection-end-line="111" selection-end-column="30" />
+        <state relative-caret-position="195">
+          <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode.py">
+    <entry file="file://$PROJECT_DIR$/../Initializer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2448">
-          <caret line="21" column="35" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="35" />
+        <state relative-caret-position="105">
+          <caret line="12" column="30" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Vectorizer/VectorReportAnalyzer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="111" column="30" selection-start-line="111" selection-start-column="30" selection-end-line="111" selection-end-column="30" />
         </state>
       </provider>
     </entry>
@@ -659,30 +643,47 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Extractor.py">
+    <entry file="file://$PROJECT_DIR$/../Vectorizer/Vectorizer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="38" selection-start-line="24" selection-start-column="38" selection-end-line="24" selection-end-column="38" />
+        <state relative-caret-position="225">
+          <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
           <folding>
-            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#0#53#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Vectorizer/Vectorizer.py">
+    <entry file="file://$PROJECT_DIR$/ForLoop.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="8" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+        <state relative-caret-position="870">
+          <caret line="59" column="20" selection-start-line="59" selection-start-column="20" selection-end-line="59" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Initializer.py">
+    <entry file="file://$PROJECT_DIR$/SourceCode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-348">
-          <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
+        <state relative-caret-position="3180">
+          <caret line="219" column="41" selection-start-line="219" selection-start-column="41" selection-end-line="219" selection-end-column="41" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="21" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/StructuredBlock.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="41" column="45" selection-start-line="41" selection-start-column="45" selection-end-line="41" selection-end-column="45" />
         </state>
       </provider>
     </entry>

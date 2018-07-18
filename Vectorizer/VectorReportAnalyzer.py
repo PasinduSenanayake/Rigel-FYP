@@ -13,21 +13,21 @@ from PermutedLoop import PermutedLoop
 
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 
-parser = argparse.ArgumentParser(description='Initilizer of analyzer')
-parser.add_argument('-fp', '--fpath', type=str, help='Absolute file path', required=False)
-parser.add_argument('-ca', '--carguments', type=str, help='Compiler time arguments', required=False, default="")
-parser.add_argument('-fa', '--farguments', type=str, help='Run time arguments', required=False, default="")
-args = parser.parse_args()
-response = {
-    "returncode":0,
-    "error":"",
-    "content":{}
-    }
-arguments = {
-    "fileAbsPath": args.fpath,
-    "runTimeArguments": args.farguments,
-    "compTimeArguments": args.carguments
-    }
+# parser = argparse.ArgumentParser(description='Initilizer of analyzer')
+# parser.add_argument('-fp', '--fpath', type=str, help='Absolute file path', required=False)
+# parser.add_argument('-ca', '--carguments', type=str, help='Compiler time arguments', required=False, default="")
+# parser.add_argument('-fa', '--farguments', type=str, help='Run time arguments', required=False, default="")
+# args = parser.parse_args()
+# response = {
+#     "returncode":0,
+#     "error":"",
+#     "content":{}
+#     }
+# arguments = {
+#     "fileAbsPath": args.fpath,
+#     "runTimeArguments": args.farguments,
+#     "compTimeArguments": args.carguments
+#     }
 
 class VectorReportAnalyzer:
     def __init__(self, sources):

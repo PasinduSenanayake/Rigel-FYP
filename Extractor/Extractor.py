@@ -12,14 +12,13 @@ class Extractor:
                 if file.endswith(".c"):
                     self.addSource(filePath)
 
-
     def addSource(self, sourcePath):
         source = SourceCode(FileHandler.getInstance().readSource(sourcePath))
         self.sourceCodes[sourcePath] = source
         return source
 
     def getSource(self, filePath):
-        return self.sourceCodes["filePath"]
+        return self.sourceCodes[filePath]
 
     def getSourcePathList(self):
         return self.sourceCodes.keys()

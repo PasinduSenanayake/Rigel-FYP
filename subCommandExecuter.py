@@ -11,6 +11,8 @@ if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.j
     with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as f:
         commandJson = json.load(f)
 
+result = None
+
 def checkSubCommandConf():
     if not (os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
         shutil.copyfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConfSample.json",os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")
@@ -35,11 +37,13 @@ def occupancyCal():
         print result
 
 def systemIdentify():
+    global result
     if(__systemInformationIdentifier()['returncode']==1):
         print "System data indentification Completed \n"
         with open(os.path.dirname(os.path.realpath(__file__))+"/Identifier/sysinfo/systemInfo.json", 'r') as handle:
             parsed = json.load(handle)
-        print json.dumps(parsed, indent=4, sort_keys=True)
+        # print json.dumps(parsed, indent=4, sort_keys=True)
+        result = parsed
 
     else:
         print "System data indentification Failed"
@@ -62,7 +66,8 @@ def sourceAnnotation():
         else:
             print "unable to find file : " + commadName['annotatedFile']
 
-def arrayInfomationFetch():
+def arrayInformationFetch():
+    global result
     if(checkSubCommandConf()):
         commadName = commandJson['command']['arrayInfoFetch']
         if (os.path.isfile(commadName['annotatedFile'])):
@@ -71,9 +76,10 @@ def arrayInfomationFetch():
                 shutil.rmtree(os.path.dirname(os.path.realpath(__file__))+"/Identifier/identifierSandbox/arrayInfoIdentifier/Sandbox")
             shutil.copytree("./Sandbox", os.path.dirname(os.path.realpath(__file__))+"/Identifier/identifierSandbox/arrayInfoIdentifier/Sandbox")
             result = arrayInfoFetch(subFilePath,commadName['infoFetchStartLine'],commadName['infoFetchEndLine'])
+
             if (result["code"]):
                 print "Information Fetch Concluded Successfully"
-                print result["data"]
+                # print result["data"]
             else:
                 print "Information Fetch failed."
         else:
@@ -81,6 +87,7 @@ def arrayInfomationFetch():
 
 
 def runCommand(command):
+
     commandSegments = {
         'nonArchiFeatureFetch': lambda : nonArchi(),
         'occupencyCalculate': lambda : occupancyCal(),
@@ -89,5 +96,18 @@ def runCommand(command):
         'arrayInfoFetch':lambda : arrayInfomationFetch(),
     }[command]()
 
+# if len(argv) > 0:
+#     runCommand(sys.argv[1])
 
-runCommand(sys.argv[1])
+
+def runCommandProg (command):
+    commandSegments = {
+        'nonArchiFeatureFetch': lambda : nonArchi(),
+        'occupencyCalculate': lambda : occupancyCal(),
+        'systemIdentify':lambda : systemIdentify(),
+        'sourceAnnotation': lambda : sourceAnnotation(),
+        'arrayInfoFetch':lambda : arrayInformationFetch(),
+    }[command]()
+    return result
+
+

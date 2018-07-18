@@ -6,6 +6,7 @@ from Vectorizer.Vectorizer import Vectorizer
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 from Identifier.ini  import trigger
 from shutil import copyfile
+import shutil
 
 parser = argparse.ArgumentParser(description='Initializer of optimizer')
 parser.add_argument('-fd', '--fdirectory', type=str, help='Absolute file directory', required=True)
@@ -47,9 +48,11 @@ extractor = Extractor(args.fdirectory)
 
 ##profiling init
 directoryName = args.fdirectory.split("/")[-1]
-workingDir = args.fdirectory + "/" + directoryName + "_profiling"
-if not os.path.exists(workingDir):
-    os.makedirs(workingDir)
+workingDir = args.fdirectory + "/_profiling"
+if os.path.exists(workingDir):
+    shutil.rmtree(workingDir)
+os.makedirs(workingDir)
+
 for file in os.listdir(args.fdirectory):
     filePath = args.fdirectory + "/" + file
     if os.path.isfile(filePath):
@@ -62,7 +65,7 @@ for file in os.listdir(args.fdirectory):
 
 ### VECTORIZING ###
 
-vectorizer = Vectorizer(extractor)
+vectorizer = Vectorizer(extractor, args.fdirectory)
 
 
 
