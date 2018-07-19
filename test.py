@@ -1,3 +1,3 @@
-from subCommandExecuter import runCommandProg
+from subCommandExecuter import runCommand
 
-print runCommandProg("systemIdentify")
+print runCommand("systemIdentify")

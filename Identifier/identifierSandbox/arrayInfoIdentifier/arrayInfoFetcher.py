@@ -74,7 +74,6 @@ def findVariablesWithArray(errorArray,loopStartLine,lineCount):
         errorCodeLine = ""
         errorCodeLineFormer = ""
         variableBeginChar = 0
-        print len(errorArray)
         for error in errorArray:
 
             line = error['errorData']
