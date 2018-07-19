@@ -20,7 +20,7 @@ args = parser.parse_args()
 #     "content":{}
 #     }
 # arguments = {
-#     "fileAbsPath":args.fpath,
+#     "fileAbsPath":args.fpath,getDataSize
 #     "runTimeArguments":args.farguments,
 #     "compTimeArguments":args.carguments
 #     }
@@ -42,9 +42,9 @@ args = parser.parse_args()
 #     response['returncode'] = 0
 
 ### EXTRACTOR ###
-
-
 extractor = Extractor(args.fdirectory)
+
+
 
 ##profiling init
 directoryName = args.fdirectory.split("/")[-1]
@@ -66,7 +66,3 @@ for file in os.listdir(args.fdirectory):
 ### VECTORIZING ###
 
 vectorizer = Vectorizer(extractor, args.fdirectory)
-
-
-
-

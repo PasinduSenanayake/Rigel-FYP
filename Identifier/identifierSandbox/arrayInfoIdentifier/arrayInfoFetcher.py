@@ -6,17 +6,17 @@ from shutil import copyfile
 
 undefinedVariables = {}
 
-fileLocation = os.path.dirname(os.path.realpath(__file__))+'/Sandbox'
+fileLocationNew = os.path.dirname(os.path.realpath(__file__))+'/Sandbox'
 
 #Identify the pointer variables in the code
 def findVariableTypeAttempt1(fileName,loopStartLine):
-    with open(fileLocation+fileName) as fin, open(fileLocation+'targetChanged1.c', 'w') as fout:
+    with open(fileLocationNew+fileName) as fin, open(fileLocationNew+'targetChanged1.c', 'w') as fout:
         for i, item in enumerate(fin, 1):
             if i == loopStartLine:
                 for key in undefinedVariables.keys():
                     item = item + 'printf("%p",'+key+');\n'
             fout.write(item)
-    processOutput = Popen('clang -c '+fileLocation+'targetChanged1.c -o '+fileLocation+'targetChanged1.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c '+fileLocationNew+'targetChanged1.c -o '+fileLocationNew+'targetChanged1.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -30,13 +30,13 @@ def findVariableTypeAttempt1(fileName,loopStartLine):
 
 
 def findVariableTypeAttempt2(fileName,loopStartLine):
-    with open(fileLocation+fileName) as fin, open(fileLocation+'targetChanged2.c', 'w') as fout:
+    with open(fileLocationNew+fileName) as fin, open(fileLocationNew+'targetChanged2.c', 'w') as fout:
         for i, item in enumerate(fin, 1):
             if i == loopStartLine:
                 for key in undefinedVariables.keys():
                     item = item + 'printf("%f",'+key+');\n'
             fout.write(item)
-    processOutput = Popen('clang -c '+fileLocation+'targetChanged2.c -o '+fileLocation+'targetChanged2.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c '+fileLocationNew+'targetChanged2.c -o '+fileLocationNew+'targetChanged2.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -110,7 +110,7 @@ def findVariablesWithArray(errorArray,loopStartLine,lineCount):
 
 def findVariables(fileName,loopStartLine,loopEndline):
     lineCount = 0
-    with open(fileLocation+fileName) as fin, open(fileLocation+'target.c', 'w') as fout:
+    with open(fileLocationNew+fileName) as fin, open(fileLocationNew+'target.c', 'w') as fout:
         for i, item in enumerate(fin, 1):
             if '#include' in item:
                 fout.write(item)
@@ -122,7 +122,7 @@ def findVariables(fileName,loopStartLine,loopEndline):
                 fout.write(item)
             if (loopEndline - i == 1):
                 fout.write(' /////----------------------------------------------------///// \n}')
-    processOutput = Popen('clang -c -ferror-limit=1000 '+fileLocation+'target.c -o '+fileLocation+'target.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -c -ferror-limit=1000 '+fileLocationNew+'target.c -o '+fileLocationNew+'target.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     errorCodeLine = ""
     errorList = []
     errorArray = []
@@ -146,8 +146,9 @@ def findVariables(fileName,loopStartLine,loopEndline):
     findVariablesWithArray(errorArray,loopStartLine,lineCount)
 
 def arrayInfoFetch(fileName,loopStartLine,loopEndline):
-    global fileLocation
-    fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
+    global fileLocationNew
+    fileLocationNew = os.path.dirname(os.path.realpath(__file__))+'/Sandbox'
+    fileLocationNew = fileLocationNew+fileName.rsplit('/', 1)[0]+"/"
     fileName = "/"+fileName.rsplit('/', 1)[1]
     findVariables(fileName,loopStartLine,loopEndline)
     findVariableTypeAttempt1(fileName,loopStartLine)
@@ -155,19 +156,16 @@ def arrayInfoFetch(fileName,loopStartLine,loopEndline):
 
     isSuccess = True
     # Remove intermediate files
-    if (os.path.isfile(fileLocation+'target.c')):
-        os.remove(fileLocation+'target.c')
+    if (os.path.isfile(fileLocationNew+'target.c')):
+        os.remove(fileLocationNew+'target.c')
     else:
         isSuccess = False
-    if (os.path.isfile(fileLocation+'targetChanged1.o')):
-        os.remove(fileLocation+'targetChanged1.o')
-        os.remove(fileLocation+'targetChanged1.c')
+    if (os.path.isfile(fileLocationNew+'targetChanged1.c')):
+        os.remove(fileLocationNew+'targetChanged1.c')
     else:
         isSuccess = False
-    if (os.path.isfile(fileLocation+'targetChanged2.o')):
-        os.remove(fileLocation+'targetChanged2.o')
-        os.remove(fileLocation+'targetChanged2.c')
+    if (os.path.isfile(fileLocationNew+'targetChanged2.c')):
+        os.remove(fileLocationNew+'targetChanged2.c')
     else:
         isSuccess = False
-
     return {'code':isSuccess, 'data':undefinedVariables}

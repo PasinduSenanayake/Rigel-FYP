@@ -113,7 +113,6 @@ def arrayInformationFetch():
                 shutil.rmtree(os.path.dirname(os.path.realpath(__file__))+"/Identifier/identifierSandbox/arrayInfoIdentifier/Sandbox")
             shutil.copytree("./Sandbox", os.path.dirname(os.path.realpath(__file__))+"/Identifier/identifierSandbox/arrayInfoIdentifier/Sandbox")
             resultLocal = arrayInfoFetch(subFilePath,commadName['infoFetchStartLine'],commadName['infoFetchEndLine'])
-
             if (resultLocal["code"]):
                 result['code']=0
                 result['content']=resultLocal['data']
@@ -141,15 +140,15 @@ def runCommand(command):
 
     return result
 
-if len(sys.argv) > 1:
-    runCommand(sys.argv[1])
-    if(result['code']==0):
-        if not result['successMessage'] == "":
-            print result['successMessage']
-        if not result['content'] == []:
-            print result['content']
-    if(result['code']==1):
-        if not result['error'] == "":
-            print result['error']
-        else :
-            print "Unknow error occured. Process failed."
+# if len(sys.argv) > 1:
+#     runCommand(sys.argv[1])
+#     if(result['code']==0):
+#         if not result['successMessage'] == "":
+#             print result['successMessage']
+#         if not result['content'] == []:
+#             print result['content']
+#     if(result['code']==1):
+#         if not result['error'] == "":
+#             print result['error']
+#         else :
+#             print "Unknow error occured. Process failed."

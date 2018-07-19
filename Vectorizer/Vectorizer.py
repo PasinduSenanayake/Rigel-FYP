@@ -7,6 +7,7 @@ import subCommandExecuter
 import shutil
 import json
 import pprint
+import os.path
 
 class Vectorizer():
     def __init__(self, extractor, directory):
@@ -24,6 +25,7 @@ class Vectorizer():
         sourcePaths = extractor.getSourcePathList()
         self.analyzer = VectorReportAnalyzer(sourcePaths)
         for filePath, vectorList in self.analyzer.vectors.items():
+
             source = extractor.getSource(filePath)
             loopMapping = source.getLoopMapping()
             fileName = filePath.split("/")[-1]
@@ -41,7 +43,7 @@ class Vectorizer():
 
 
     def getLatestInstrucionSet(self):
-        systemDetails = subCommandExecuter.runCommandProg("systemIdentify")
+        systemDetails = subCommandExecuter.runCommand("systemIdentify")['content']
         instructionSets = systemDetails["cpuinfo"]["vectorization"]
         for set in instructionSets:
             if "avx-512" in set:
@@ -54,7 +56,7 @@ class Vectorizer():
                 return "sse"
 
     def getDataSize(self, startLine, endLine, filePath):
-        import os.path
+        print filePath
         with open(os.path.dirname(__file__) + '/../subCommandConf.json', 'r+') as fileObj:
             data = json.load(fileObj)
             data["command"]["arrayInfoFetch"]["annotatedFile"] = filePath
@@ -63,11 +65,5 @@ class Vectorizer():
             fileObj.seek(0)
             json.dump(data, fileObj, indent=4)
             fileObj.truncate()
-        loopDetails = subCommandExecuter.runCommandProg("arrayInfoFetch")
+        loopDetails = subCommandExecuter.runCommand("arrayInfoFetch")
         print loopDetails
-
-
-
-
-
-
