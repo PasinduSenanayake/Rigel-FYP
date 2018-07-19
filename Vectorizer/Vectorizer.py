@@ -3,7 +3,7 @@ import os
 import sys
 from shutil import copyfile
 sys.path.append('..')
-import subCommandExecuter
+#import subCommandExecuter
 import shutil
 import json
 import pprint
@@ -56,7 +56,6 @@ class Vectorizer():
                 return "sse"
 
     def getDataSize(self, startLine, endLine, filePath):
-        print filePath
         with open(os.path.dirname(__file__) + '/../subCommandConf.json', 'r+') as fileObj:
             data = json.load(fileObj)
             data["command"]["arrayInfoFetch"]["annotatedFile"] = filePath

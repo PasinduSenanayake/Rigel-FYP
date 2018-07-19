@@ -1,11 +1,11 @@
 import json,os,sys
 import shutil
-
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Identifier.offloadChecker import occupancyCalculation
 from Identifier.systemIdentifier import __systemInformationIdentifier
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Identifier.identifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
+
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
     with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as f:
@@ -24,6 +24,7 @@ def checkSubCommandConf():
         shutil.copyfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConfSample.json",os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")
         result['code']=1
         result['content']=[]
+        logger.loggerError("This command requires some parameters to be filled in subCommandConf.json. Operation Concluded.")
         result['error']='This command requires some parameters to be filled in subCommandConf.json'
         result['successMessage']=''
         return False
@@ -32,6 +33,7 @@ def checkSubCommandConf():
 
 def nonArchi():
     global result
+    logger.loggerInfo("nonArchiFeatureFetch command Initiated")
     if(checkSubCommandConf()):
         commadName = commandJson['command']['nonArchiFeatureFetch']
         resultLocal = hotspotsProfiler(commadName['codeName'],commadName['mainFile'],commadName['annotatedFile'],commadName['makeFile'],commadName['compilerOprtions'],commadName['arguments'],commadName['loopSegments'],os.path.dirname(os.path.realpath(__file__)))
@@ -40,14 +42,17 @@ def nonArchi():
             result['content']=resultLocal
             result['error']=''
             result['successMessage']='Feature extraction concluded successfully'
+            logger.loggerSuccess("Feature extraction concluded and nonArchiFeatureFetch command concluded successfully")
         else:
             result['code']=1
             result['content']=[]
             result['error']='Feature extraction failed'
             result['successMessage']=''
+            logger.loggerError("Feature extraction failed and nonArchiFeatureFetch command concluded")
 
 def occupancyCal():
     global result
+    logger.loggerInfo("occupancyCal Command Initiated")
     if(checkSubCommandConf()):
         commadName = commandJson['command']['occupencyCalculate']
         resultLocal = occupancyCalculation(commadName['computeCapability'],commadName['registersPerThread'],commadName['sharedMemoryPerBlock'])
@@ -55,9 +60,11 @@ def occupancyCal():
         result['content']=resultLocal
         result['error']=''
         result['successMessage']=''
+        logger.loggerSuccess("occupancyCal command concluded successfully")
 
 def systemIdentify():
     global result
+    logger.loggerInfo("System Data Identifier Command Initiated")
     if(__systemInformationIdentifier()['returncode']==1):
         with open(os.path.dirname(os.path.realpath(__file__))+"/Identifier/sysinfo/systemInfo.json", 'r') as handle:
             parsed = json.load(handle)
@@ -65,18 +72,21 @@ def systemIdentify():
         result['code']=0
         result['content']=parsed
         result['error']=''
-        result['successMessage']='System data indentification Completed'
+        result['successMessage']='System data identification Completed'
+        logger.loggerSuccess("System data identification Completed and System Data Identifier command concluded successfully")
     else:
         result['code']=1
         result['content']=[]
-        result['error']='System data indentification Failed'
+        result['error']='System data identification Failed'
         result['successMessage']=''
+        logger.loggerError("System data identification failed and System Data Identifier command concluded")
 
     if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/deviceQuery") ):
         os.remove(os.path.dirname(os.path.realpath(__file__))+"/deviceQuery")
 
 def sourceAnnotation():
     global result
+    logger.loggerInfo("Source Code Annotation Command Initiated")
     if(checkSubCommandConf()):
         commadName = commandJson['command']['sourceCodeAnnotation']
         if (os.path.isfile(commadName['annotatedFile'])):
@@ -105,6 +115,7 @@ def sourceAnnotation():
 
 def arrayInformationFetch():
     global result
+    logger.loggerInfo("Array Information Fetch Command Initiated")
     if(checkSubCommandConf()):
         commadName = commandJson['command']['arrayInfoFetch']
         if (os.path.isfile(commadName['annotatedFile'])):
@@ -140,15 +151,22 @@ def runCommand(command):
 
     return result
 
-# if len(sys.argv) > 1:
-#     runCommand(sys.argv[1])
-#     if(result['code']==0):
-#         if not result['successMessage'] == "":
-#             print result['successMessage']
-#         if not result['content'] == []:
-#             print result['content']
-#     if(result['code']==1):
-#         if not result['error'] == "":
-#             print result['error']
-#         else :
-#             print "Unknow error occured. Process failed."
+if __name__ == "__main__":
+    sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
+    import logger
+    logger.createLog()
+    logger.loggerInfo("Individual Command executer initiated")
+    runCommand(sys.argv[1])
+    if(result['code']==0):
+        if not result['successMessage'] == "":
+            print result['successMessage']
+        if not result['content'] == []:
+            print result['content']
+        logger.loggerSuccess("Individual Command executer completed successfully")
+    if(result['code']==1):
+        if not result['error'] == "":
+            print result['error']
+            logger.loggerError("Individual Command executer completed with error : "+str(result['error']))
+        else :
+            print "Unknown Error"
+            logger.loggerError("Individual Command executer completed with unknown Error")

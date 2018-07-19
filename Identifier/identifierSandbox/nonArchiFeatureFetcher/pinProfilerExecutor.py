@@ -3,48 +3,48 @@ from branchingDataFetcher import preBranchDataFetch,fetchBranchInfo
 from branchingFinalDataFetcher import finalBranchCounter
 from collapseBranchingDataFetcher import preCollapseBranchDataFetch,fetchCollapseBranchInfo
 from subprocess import Popen, PIPE
-import re,os
+import re,os,logger
 
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
 baseFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
-def runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,filePath):
+def runPinProf(arguments,filePath):
     global baseFileLocation
     baseFileLocation = baseFileLocation+filePath.rsplit('/', 1)[0]
     resultPin = "success"
-    loggerInfo.debug("ILP and extraction initiated")
+    logger.loggerInfo("ILP and extraction initiated")
     with open(baseFileLocation+'/mica.conf','w') as confFile:
         confFile.write("analysis_type: ilp\ninterval_size: full")
         confFile.close
     resultPin = profileILPInPin("mica.so",arguments)
     if(resultPin == "success"):
-        loggerSuccess.debug("ILP extraction completed")
-        loggerInfo.debug("Operation count extraction initiated")
+        logger.loggerSuccess("ILP extraction completed")
+        logger.loggerInfo("Operation count extraction initiated")
         with open(baseFileLocation+'/mica.conf','w') as confFile:
             confFile.write("analysis_type: itypes\ninterval_size: full")
             confFile.close
         resultPin = profileInPin("mica.so",arguments)
         if(resultPin == "success"):
-            loggerSuccess.debug("Operation count extraction completed")
-            loggerInfo.debug("Cold ref and reuse distance extraction initiated")
+            logger.loggerSuccess("Operation count extraction completed")
+            logger.loggerInfo("Cold ref and reuse distance extraction initiated")
             with open(baseFileLocation+'/mica.conf','w') as confFile:
                 confFile.write("analysis_type: memstackdist\ninterval_size: full\nblock_size: 7")
                 confFile.close
             resultPin = profileInPin("mica.so",arguments)
             if(resultPin == "success"):
-                loggerSuccess.debug("Cold ref and reuse distance extraction completed")
-                loggerInfo.debug("Pages and Blocks extraction initiated")
+                logger.loggerSuccess("Cold ref and reuse distance extraction completed")
+                logger.loggerInfo("Pages and Blocks extraction initiated")
                 with open(baseFileLocation+'/mica.conf','w') as confFile:
                     confFile.write("analysis_type: memfootprint\ninterval_size: full\nblock_size: 7")
                     confFile.close
                 resultPin = profileInPin("mica.so",arguments)
                 if(resultPin == "success"):
-                    loggerSuccess.debug("Pages and Blocks extraction completed")
-                    loggerInfo.debug("Memory access extraction initiated")
+                    logger.loggerSuccess("Pages and Blocks extraction completed")
+                    logger.loggerInfo("Memory access extraction initiated")
                     resultPin = profileInPin("strides_count.so",arguments)
                     if(resultPin == "success"):
-                        loggerSuccess.debug("Memory access extraction completed")
-                        loggerInfo.debug("Memory access reordering initiated")
+                        logger.loggerSuccess("Memory access extraction completed")
+                        logger.loggerInfo("Memory access reordering initiated")
                         isCompleted = preMemoryMapping(loggerError,filePath)
                         if(isCompleted):
                             isCompleted = sharedMemoryMapping(loggerError,filePath)
@@ -57,12 +57,12 @@ def runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,filePath):
                         else:
                             resultPin = "failed"
                         if(resultPin == "success"):
-                            loggerSuccess.debug("Memory access reordering completed")
-                            loggerInfo.debug("Branch info extraction initiated")
+                            logger.loggerSuccess("Memory access reordering completed")
+                            logger.loggerInfo("Branch info extraction initiated")
                             resultPin = profileInPin("branchFinder.so",arguments)
                             if(resultPin == "success"):
-                                loggerSuccess.debug("Branch info extraction completed")
-                                loggerInfo.debug("Branch info reordering initiated")
+                                logger.loggerSuccess("Branch info extraction completed")
+                                logger.loggerInfo("Branch info reordering initiated")
                                 isCompleted = preBranchDataFetch(loggerError,filePath)
                                 if(isCompleted):
                                     isCompleted = fetchBranchInfo(loggerError)
@@ -71,12 +71,12 @@ def runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,filePath):
                                 else:
                                     resultPin = "failed"
                                 if(resultPin == "success"):
-                                    loggerSuccess.debug("Branch info reordering completed")
-                                    loggerInfo.debug("Collapse Branch info extraction initiated")
+                                    logger.loggerSuccess("Branch info reordering completed")
+                                    logger.loggerInfo("Collapse Branch info extraction initiated")
                                     resultPin = profileTwoInPin("branchFinder.so",arguments)
                                     if(resultPin == "success"):
-                                        loggerSuccess.debug("Collapse Branch info extraction completed")
-                                        loggerInfo.debug("Collapse Branch info reordering initiated")
+                                        logger.loggerSuccess("Collapse Branch info extraction completed")
+                                        logger.loggerInfo("Collapse Branch info reordering initiated")
                                         isCompleted = preCollapseBranchDataFetch(loggerError,filePath)
                                         if(isCompleted):
                                             isCompleted = fetchCollapseBranchInfo(loggerError)
@@ -85,45 +85,45 @@ def runPinProf(loggerSuccess,loggerError,loggerInfo,arguments,filePath):
                                         else:
                                             resultPin = "failed"
                                         if(resultPin == "success"):
-                                            loggerSuccess.debug("Collapse Branch info reordering completed")
-                                            loggerInfo.debug("Final Branch info reordering initiated")
+                                            logger.loggerSuccess("Collapse Branch info reordering completed")
+                                            logger.loggerInfo("Final Branch info reordering initiated")
                                             isCompleted = finalBranchCounter(loggerError,filePath)
                                             if not isCompleted:
                                                 resultPin = "failed"
                                             if(resultPin == "success"):
-                                                loggerSuccess.debug("Final Branch info reordering completed")
-                                                loggerInfo.debug("Floating point info extraction initiated")
+                                                logger.loggerSuccess("Final Branch info reordering completed")
+                                                logger.loggerInfo("Floating point info extraction initiated")
                                                 resultPin = profileInPin("flop_counter.so",arguments)
                                                 if(resultPin == "success"):
-                                                    loggerSuccess.debug("Floating point info extraction completed")
-                                                    loggerInfo.debug("Special function info extraction initiated")
+                                                    logger.loggerSuccess("Floating point info extraction completed")
+                                                    logger.loggerInfo("Special function info extraction initiated")
                                                     resultPin = profileInPin("special_function_counter.so",arguments)
                                                     if not (resultPin == "success"):
-                                                        loggerError.debug("Special function info extraction Failed Error: "+resultPin)
+                                                        logger.loggerError("Special function info extraction Failed Error: "+resultPin)
                                                 else:
-                                                    loggerError.debug("Floating point info extraction Failed Error: "+resultPin)
+                                                    logger.loggerError("Floating point info extraction Failed Error: "+resultPin)
                                             else:
-                                                loggerError.debug("Final Branch info reordering Failed")
+                                                logger.loggerError("Final Branch info reordering Failed")
                                         else:
-                                            loggerError.debug("Collapse Branch info reordering Failed")
+                                            logger.loggerError("Collapse Branch info reordering Failed")
                                     else:
-                                        loggerError.debug("Collapse Branch info extraction Failed Error: "+resultPin)
+                                        logger.loggerError("Collapse Branch info extraction Failed Error: "+resultPin)
                                 else:
-                                    loggerError.debug("Branch info reordering Failed")
+                                    logger.loggerError("Branch info reordering Failed")
                             else:
-                                loggerError.debug("Branch info extraction Failed Error: "+resultPin)
+                                logger.loggerError("Branch info extraction Failed Error: "+resultPin)
                         else:
-                            loggerError.debug("Memory access reordering Failed")
+                            logger.loggerError("Memory access reordering Failed")
                     else:
-                        loggerError.debug("Memory access extraction Failed Error: "+resultPin)
+                        logger.loggerError("Memory access extraction Failed Error: "+resultPin)
                 else:
-                    loggerError.debug("Pages and Blocks extraction Failed Error: "+resultPin)
+                    logger.loggerError("Pages and Blocks extraction Failed Error: "+resultPin)
             else:
-                loggerError.debug("Cold ref and reuse distance extraction Failed Error: "+resultPin)
+                logger.loggerError("Cold ref and reuse distance extraction Failed Error: "+resultPin)
         else:
-            loggerError.debug("Operation count extraction Failed Error: "+resultPin)
+            logger.loggerError("Operation count extraction Failed Error: "+resultPin)
     else:
-        loggerError.debug("ILP  extraction Failed Error: "+resultPin)
+        logger.loggerError("ILP  extraction Failed Error: "+resultPin)
 
 
     if(resultPin == "success"):
