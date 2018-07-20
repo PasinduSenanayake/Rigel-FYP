@@ -1,4 +1,5 @@
 Utils/
+.idea/
 DependencyManager/requirementsLocal.json
 *.pyc
 subCommandConf.json
