@@ -1,19 +1,21 @@
 import os,sys
 from Extractor.Extractor import Extractor
-from Vectorizer.Vectorizer import Vectorizer
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
-from Identifier.ini  import trigger
+from Identifier.initializer  import identify
+from Modifier.initializer  import modify
 from shutil import copyfile
 import shutil,datetime,logger
 
 def processInitializer():
     logger.createLog()
+    isMetaDataExists = False
     extractor = None
     directoryList = os.listdir(os.path.dirname(os.path.realpath(__file__))+"/Sandbox")
     if ".gitkeep" in directoryList:
         directoryList.remove(".gitkeep")
     if "metadata" in directoryList:
+        isMetaDataExists = True
         directoryList.remove("metadata")
 
     if not len(directoryList)==1:
@@ -21,14 +23,28 @@ def processInitializer():
         logger.loggerError("There are more than one folder in Sandbox.")
         exit()
     else:
-        logger.loggerInfo("Source Code Identification Process Initiated")
-        if (os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
-            os.remove(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json"))
-        shutil.copyfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConfSample.json",os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")
 
+        #Identifier Begins
+        logger.loggerInfo("Source Code Identification Process Initiated")
         logger.loggerInfo("Extracting Source Code Initiated")
-        extractor = Extractor(os.path.dirname(os.path.realpath(__file__))+"/Sandbox/"+directoryList[0])
+        sourceDirectry = os.path.dirname(os.path.realpath(__file__))+"/Sandbox/"+directoryList[0]
+        extractor = Extractor(sourceDirectry)
         logger.loggerSuccess("Extracting Source Code concluded successfully")
+
+        if(isMetaDataExists):
+            logger.loggerInfo("Meta data insertion Initiated")
+
+            logger.loggerSuccess("Meta data insertion Completed")
+
+        identify(extractor,sourceDirectry)
+
+        logger.loggerInfo("Source Code Identification Process Completed Successfully")
+        #Identifier Completed
+
+        #Modifier Begins
+        logger.loggerInfo("Source Code Modification Process Initiated")
+        modify(extractor,sourceDirectry)
+
 
 processInitializer()
 #

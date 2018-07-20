@@ -8,7 +8,7 @@ response = {
     "content":{}
     }
 
-def trigger(filePath,compTimeArguments,runTimeArguments):
+def identify(extractor,directory):
     global response
     try:
         k = 10

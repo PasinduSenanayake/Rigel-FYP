@@ -2,12 +2,12 @@ from VectorReportAnalyzer import VectorReportAnalyzer
 import os
 import sys
 from shutil import copyfile
-sys.path.append('..')
-#import subCommandExecuter
+from ..modifierSandbox.arrayInfoIdentifier.arrayInfoExtractor import arrayInfoExtract
 import shutil
 import json
 import pprint
 import os.path
+import logger
 
 class Vectorizer():
     def __init__(self, extractor, directory):
@@ -43,26 +43,27 @@ class Vectorizer():
 
 
     def getLatestInstrucionSet(self):
-        systemDetails = subCommandExecuter.runCommand("systemIdentify")['content']
-        instructionSets = systemDetails["cpuinfo"]["vectorization"]
-        for set in instructionSets:
-            if "avx-512" in set:
-                return "avx-512"
-        for set in instructionSets:
-            if "avx" in set:
-                return "avx"
-        for set in instructionSets:
-            if "sse" in set:
-                return "sse"
+        a=10202
+        # systemDetails = subCommandExecuter.runCommand("systemIdentify")['content']
+        # instructionSets = systemDetails["cpuinfo"]["vectorization"]
+        # for set in instructionSets:
+        #     if "avx-512" in set:
+        #         return "avx-512"
+        # for set in instructionSets:
+        #     if "avx" in set:
+        #         return "avx"
+        # for set in instructionSets:
+        #     if "sse" in set:
+        #         return "sse"
 
     def getDataSize(self, startLine, endLine, filePath):
-        with open(os.path.dirname(__file__) + '/../subCommandConf.json', 'r+') as fileObj:
-            data = json.load(fileObj)
-            data["command"]["arrayInfoFetch"]["annotatedFile"] = filePath
-            data["command"]["arrayInfoFetch"]["infoFetchStartLine"] = startLine
-            data["command"]["arrayInfoFetch"]["infoFetchEndLine"] = endLine
-            fileObj.seek(0)
-            json.dump(data, fileObj, indent=4)
-            fileObj.truncate()
-        loopDetails = subCommandExecuter.runCommand("arrayInfoFetch")
+        logger.loggerInfo("Array Informaton Fetcher Initiated for lines " + str(startLine)+ "-" + str(endLine) )
+        response = arrayInfoExtract(filePath,startLine,endLine)
+        loopDetails = None
+        if(response['code']==0):
+            loopDetails = response['content']
+        else:
+            logger.loggerError("Array Informaton Fetcher Failed for lines " + str(startLine)+ "-" + str(endLine) +" with error "+response['error'])
+            exit()
+        logger.loggerSuccess("Array Informaton Fetcher Completed Successfully for lines " + str(startLine)+ "-" + str(endLine))
         print loopDetails

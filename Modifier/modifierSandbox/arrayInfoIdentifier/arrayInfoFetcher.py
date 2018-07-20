@@ -146,26 +146,29 @@ def findVariables(fileName,loopStartLine,loopEndline):
     findVariablesWithArray(errorArray,loopStartLine,lineCount)
 
 def arrayInfoFetch(fileName,loopStartLine,loopEndline):
-    global fileLocationNew
-    fileLocationNew = os.path.dirname(os.path.realpath(__file__))+'/Sandbox'
-    fileLocationNew = fileLocationNew+fileName.rsplit('/', 1)[0]+"/"
-    fileName = "/"+fileName.rsplit('/', 1)[1]
-    findVariables(fileName,loopStartLine,loopEndline)
-    findVariableTypeAttempt1(fileName,loopStartLine)
-    findVariableTypeAttempt2(fileName,loopStartLine)
+    try:
+        global fileLocationNew
+        fileLocationNew = os.path.dirname(os.path.realpath(__file__))+'/Sandbox'
+        fileLocationNew = fileLocationNew+fileName.rsplit('/', 1)[0]+"/"
+        fileName = "/"+fileName.rsplit('/', 1)[1]
+        findVariables(fileName,loopStartLine,loopEndline)
+        findVariableTypeAttempt1(fileName,loopStartLine)
+        findVariableTypeAttempt2(fileName,loopStartLine)
 
-    isSuccess = True
-    # Remove intermediate files
-    if (os.path.isfile(fileLocationNew+'target.c')):
-        os.remove(fileLocationNew+'target.c')
-    else:
-        isSuccess = False
-    if (os.path.isfile(fileLocationNew+'targetChanged1.c')):
-        os.remove(fileLocationNew+'targetChanged1.c')
-    else:
-        isSuccess = False
-    if (os.path.isfile(fileLocationNew+'targetChanged2.c')):
-        os.remove(fileLocationNew+'targetChanged2.c')
-    else:
-        isSuccess = False
-    return {'code':isSuccess, 'data':undefinedVariables}
+        isSuccess = True
+        # Remove intermediate files
+        if (os.path.isfile(fileLocationNew+'target.c')):
+            os.remove(fileLocationNew+'target.c')
+        else:
+            isSuccess = False
+        if (os.path.isfile(fileLocationNew+'targetChanged1.c')):
+            os.remove(fileLocationNew+'targetChanged1.c')
+        else:
+            isSuccess = False
+        if (os.path.isfile(fileLocationNew+'targetChanged2.c')):
+            os.remove(fileLocationNew+'targetChanged2.c')
+        else:
+            isSuccess = False
+        return {'code':isSuccess, 'data':undefinedVariables,'error':""}
+    except Exception as e:
+        return {'code':False, 'data':[],'error':e}
