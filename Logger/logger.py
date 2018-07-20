@@ -21,7 +21,7 @@ def createLog():
 
     if fileName == "subCommandExecuter.py":
         LOG_FILENAME = os.path.dirname(os.path.realpath(__file__))+"/logfiles/"+str(datetime.datetime.now())+"_command_process.log"
-        logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',filename=LOG_FILENAME, filemode="w", level=logging.DEBUG)
+        logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s',filename=LOG_FILENAME, filemode="w", level=logging.DEBUG)
         loggerInfoData = logging.getLogger("info:")
         loggerErrorData = logging.getLogger("error:")
         loggerSuccessData = logging.getLogger("success:")

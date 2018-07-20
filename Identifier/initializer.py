@@ -1,7 +1,8 @@
 from Identifier.nestedLoopChecker import nestedloopAnalysis
 from loopAnalyzer import loopAnalysis
-from systemIdentifier import __systemInformationIdentifier
-# import cPragmaModifier
+from systemIdentifier.systemIdentifier import __systemInformationIdentifier
+import dbManager,logger
+
 response = {
     "returncode":0,
     "error":"",
@@ -11,22 +12,14 @@ response = {
 def identify(extractor,directory):
     global response
     try:
-        k = 10
-        # responseObj = __systemInformationIdentifier()
-        # if responseObj['returncode'] == 1:
-        #     responseObj = cPragmaModifier.setPragmaSchedule(filePath,filePath.rsplit('.',1)[0]+'Static.c','static')
-        #     if responseObj['returncode'] == 1:
-        #         responseObj = loopAnalysis(filePath.rsplit('.',1)[0]+'Static.c',compTimeArguments,runTimeArguments)
-        #         if (responseObj['returncode'] == 1):
-        #             response['error'] = ""
-        #             response['content'] = responseObj['content']
-        #             response['returncode'] = 1
-        #         else:
-        #             response = responseObj
-        #     else:
-        #         response = responseObj
-        # else:
-        #     response = responseObj
+        logger.loggerInfo("System Information Fetcher Initiated")
+        responseObj = __systemInformationIdentifier()
+        if(responseObj['returncode']==1):
+            dbManager.write('systemData',responseObj['content'])
+            logger.loggerSuccess("System Information Fetcher completed successfully")
+        else:
+            logger.loggerError("System Information Fetcher Failed")
+
     except Exception as e:
         response['error'] = e
         response['content'] = {}

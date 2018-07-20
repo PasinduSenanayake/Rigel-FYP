@@ -1,3 +1,4 @@
+pickleDB==0.6.2
 beautifulsoup4==4.4.1
 cPragmaModifier==1.0.1
 ompp==1.0.3

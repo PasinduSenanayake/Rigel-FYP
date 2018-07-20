@@ -1,52 +1,92 @@
 import os,sys
-from Extractor.Extractor import Extractor
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
-from Identifier.initializer  import identify
-from Modifier.initializer  import modify
+sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
+from Handler import updateAllInit
+from Initialize import moduleInit
 from shutil import copyfile
 import shutil,datetime,logger
 
+directoryList = []
+
 def processInitializer():
-    logger.createLog()
-    isMetaDataExists = False
-    extractor = None
+    from Identifier.initializer import identify
+    from Extractor.Extractor import Extractor
+    from Modifier.initializer import modify
+    import dbManager
+
+    #Identifier Begins
+    logger.loggerInfo("Extracting Source Code Initiated")
+    sourceDirectry = os.path.dirname(os.path.realpath(__file__))+"/Sandbox/"+directoryList[0]
+    extractor = Extractor(sourceDirectry)
+    logger.loggerSuccess("Extracting Source Code concluded successfully")
+
+    if "metadata" in os.listdir(os.path.dirname(os.path.realpath(__file__))+"/Sandbox"):
+        logger.loggerInfo("Meta data insertion Initiated")
+        logger.loggerSuccess("Meta data insertion Completed")
+    else:
+        logger.loggerInfo("No Meta data found. Meta data insertion skipped")
+
+    identify(extractor,sourceDirectry)
+
+    logger.loggerInfo("Source Code Identification Process Completed Successfully")
+    #Identifier Completed
+
+    #Modifier Begins
+    logger.loggerInfo("Source Code Modification Process Initiated")
+    modify(extractor,sourceDirectry)
+
+def dependencyChecker():
+    if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+'/DatabaseManager/rigel.db')):
+        os.remove(os.path.dirname(os.path.realpath(__file__))+'/DatabaseManager/rigel.db')
+    if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+'/DependencyManager/requirementsLocal.json')):
+        updateResponse = updateAllInit()
+        if(updateResponse):
+            logger.loggerSuccess("Dependecies updated")
+            return True
+        else:
+            return False
+    else:
+        initResponse = moduleInit()
+        if(initResponse['code']==0):
+            logger.loggerSuccess("Dependecies updated")
+            return True
+        else:
+            logger.loggerError("Dependecies update failed with error : "+initResponse['error'])
+            return False
+
+def sourceIntegrityChecker():
+    global directoryList
     directoryList = os.listdir(os.path.dirname(os.path.realpath(__file__))+"/Sandbox")
     if ".gitkeep" in directoryList:
         directoryList.remove(".gitkeep")
     if "metadata" in directoryList:
-        isMetaDataExists = True
         directoryList.remove("metadata")
 
     if not len(directoryList)==1:
         print "There are more than one folder in Sandbox. Please keep only one folder."
         logger.loggerError("There are more than one folder in Sandbox.")
-        exit()
+        return False
+    return True
+
+
+if __name__ == "__main__":
+    logger.createLog()
+    logger.loggerInfo("Dependency Validation Process Initiated")
+    if(dependencyChecker()):
+        logger.loggerSuccess("All Dependencies are Validated")
+        logger.loggerInfo("Source Code Integrity Validation Process Initiated")
+        if(sourceIntegrityChecker()):
+            logger.loggerSuccess("Source Code Validated")
+            logger.loggerInfo("Source Code Identification Process Initiated")
+            processInitializer()
+        else:
+            logger.loggerError("Source Code Integrity Validation Failed")
     else:
-
-        #Identifier Begins
-        logger.loggerInfo("Source Code Identification Process Initiated")
-        logger.loggerInfo("Extracting Source Code Initiated")
-        sourceDirectry = os.path.dirname(os.path.realpath(__file__))+"/Sandbox/"+directoryList[0]
-        extractor = Extractor(sourceDirectry)
-        logger.loggerSuccess("Extracting Source Code concluded successfully")
-
-        if(isMetaDataExists):
-            logger.loggerInfo("Meta data insertion Initiated")
-
-            logger.loggerSuccess("Meta data insertion Completed")
-
-        identify(extractor,sourceDirectry)
-
-        logger.loggerInfo("Source Code Identification Process Completed Successfully")
-        #Identifier Completed
-
-        #Modifier Begins
-        logger.loggerInfo("Source Code Modification Process Initiated")
-        modify(extractor,sourceDirectry)
+        logger.loggerError("Dependency Validation Process Falied")
 
 
-processInitializer()
+
 #
 # exit()
 #

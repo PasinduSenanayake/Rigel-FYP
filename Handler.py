@@ -3,9 +3,8 @@ import platform
 import json
 import subprocess
 import os
-import shutil
-sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+'/DependencyManager/')
-from InternalManager import *
+import shutil,logger
+from DependencyManager.InternalManager import *
 
 depPath = str(os.path.dirname(os.path.realpath(__file__)))+"/Utils"
 print "Making SystemDependencies persistance."
@@ -247,39 +246,98 @@ def updateDep(module,version):
         isSuccess = False
     return isSuccess
 
-if len(sys.argv)>1:
-    if(sys.argv[1]=="install"):
-        if len(sys.argv) == 4:
-            if not (sys.argv[2].isspace() or sys.argv[3].isspace()):
-                installDep(sys.argv[2],sys.argv[3])
+def updateAllInit():
+    finalState = True
+    refreshedData = updateCheck()
+    process = True
+    for key in refreshedData['info']['upgrade'].keys():
+        process = updateDepInit(key, refreshedData['info']['upgrade'][key])
+        if not (process):
+            reverseback()
+    if process:
+        for key in refreshedData['info']['install'].keys():
+            process = updateDepInit(key, refreshedData['info']['install'][key])
+            if not (process):
+                reverseback()
+    if process:
+        responseStatus = issuccessUp()
+        if(responseStatus['code']==1):
+            shutil.rmtree(dst)
+        else :
+            shutil.rmtree(src)
+            shutil.copytree(dst, src)
+            shutil.rmtree(dst)
+            finalState = False
+            reverseback()
+
+    else:
+        shutil.rmtree(src)
+        shutil.copytree(dst, src)
+        shutil.rmtree(dst)
+        finalState = False
+        reverseback()
+    removeTemp()
+    return finalState
+
+
+def updateDepInit(module,version):
+    isSuccess = True
+    try:
+        response = moduleUpdateCheck(module, version)
+        if not (response['code'] == 0):
+            if(response['code']==2):
+                processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' '+module+'=='+version+' --upgrade',shell=True, stderr=subprocess.PIPE)
+                stdout, stderr = processOutput.communicate()
+                if not (stderr== ""):
+                    logger.loggerError("Update Faile with error : "+stderr)
+                    isSuccess = False
+            elif(response['code']==3):
+                processOutput = subprocess.Popen('pip --disable-pip-version-check install --target='+depPath+' '+module+'=='+version+'',shell=True, stderr=subprocess.PIPE)
+                stdout, stderr = processOutput.communicate()
+                if not (stderr== ""):
+                    logger.loggerError("Update Faile with error : "+stderr)
+                    isSuccess = False
+        else:
+            isSuccess = False
+    except Exception as e:
+        logger.loggerError("Update Faile with error : "+str(e))
+        isSuccess = False
+    return isSuccess
+
+if __name__ == "__main__":
+    if len(sys.argv)>1:
+        if(sys.argv[1]=="install"):
+            if len(sys.argv) == 4:
+                if not (sys.argv[2].isspace() or sys.argv[3].isspace()):
+                    installDep(sys.argv[2],sys.argv[3])
+                else:
+                    print "Install requires [Module Name] [Version]. Please enter arguments correctly"
+                    shutil.rmtree(dst)
+                    removeTemp()
             else:
                 print "Install requires [Module Name] [Version]. Please enter arguments correctly"
                 shutil.rmtree(dst)
                 removeTemp()
-        else:
-            print "Install requires [Module Name] [Version]. Please enter arguments correctly"
-            shutil.rmtree(dst)
-            removeTemp()
-    elif(sys.argv[1]=="uninstall"):
-        if len(sys.argv) == 4:
-            if not (sys.argv[2].isspace() or sys.argv[3].isspace()):
-                uninstallDep(sys.argv[2],sys.argv[3])
+        elif(sys.argv[1]=="uninstall"):
+            if len(sys.argv) == 4:
+                if not (sys.argv[2].isspace() or sys.argv[3].isspace()):
+                    uninstallDep(sys.argv[2],sys.argv[3])
+                else:
+                    print "Uninstall requires [Module Name] [Version]. Please enter arguments correctly"
+                    shutil.rmtree(dst)
+                    removeTemp()
             else:
                 print "Uninstall requires [Module Name] [Version]. Please enter arguments correctly"
                 shutil.rmtree(dst)
                 removeTemp()
+
+        elif(sys.argv[1]=="updateAll"):
+            updateAll()
         else:
-            print "Uninstall requires [Module Name] [Version]. Please enter arguments correctly"
+            print "Please enter arguments correctly"
             shutil.rmtree(dst)
             removeTemp()
-
-    elif(sys.argv[1]=="updateAll"):
-        updateAll()
     else:
-        print "Please enter arguments correctly"
+        print "Required parameters are missing. Please follow the API documentation in github."
         shutil.rmtree(dst)
         removeTemp()
-else:
-    print "Required parameters are missing. Please follow the API documentation in github."
-    shutil.rmtree(dst)
-    removeTemp()

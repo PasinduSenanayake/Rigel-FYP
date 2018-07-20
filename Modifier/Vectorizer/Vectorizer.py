@@ -8,6 +8,7 @@ import json
 import pprint
 import os.path
 import logger
+import dbManager
 
 class Vectorizer():
     def __init__(self, extractor, directory):
@@ -43,18 +44,17 @@ class Vectorizer():
 
 
     def getLatestInstrucionSet(self):
-        a=10202
-        # systemDetails = subCommandExecuter.runCommand("systemIdentify")['content']
-        # instructionSets = systemDetails["cpuinfo"]["vectorization"]
-        # for set in instructionSets:
-        #     if "avx-512" in set:
-        #         return "avx-512"
-        # for set in instructionSets:
-        #     if "avx" in set:
-        #         return "avx"
-        # for set in instructionSets:
-        #     if "sse" in set:
-        #         return "sse"
+        systemDetails = dbManager.read("systemData")
+        instructionSets = systemDetails["cpuinfo"]["vectorization"]
+        for set in instructionSets:
+            if "avx-512" in set:
+                return "avx-512"
+        for set in instructionSets:
+            if "avx" in set:
+                return "avx"
+        for set in instructionSets:
+            if "sse" in set:
+                return "sse"
 
     def getDataSize(self, startLine, endLine, filePath):
         logger.loggerInfo("Array Informaton Fetcher Initiated for lines " + str(startLine)+ "-" + str(endLine) )

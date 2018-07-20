@@ -8,10 +8,10 @@ response = {
     "content":{}
 }
 
-inputfilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "command.json"
+inputfilepath = str(os.path.dirname(os.path.realpath(__file__))) +os.sep +"SystemDependencies"+os.sep + "command.json"
 outputFilepath =str(os.path.dirname(os.path.realpath(__file__))) + os.sep +"sysinfo"+os.sep + "systemInfo.json"
-hwdFilepath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "storage.json"
-deviceQueryPath = str(os.path.dirname((os.path.dirname(os.path.realpath(__file__))))) + os.sep +"SystemDependencies"+os.sep + "deviceQuery.cpp"
+hwdFilepath = str(os.path.dirname(os.path.realpath(__file__))) +os.sep +"SystemDependencies"+os.sep + "storage.json"
+deviceQueryPath = str(os.path.dirname(os.path.realpath(__file__))) +os.sep +"SystemDependencies"+os.sep + "deviceQuery.cpp"
 
 NVIDIA_TAG = "NVIDIA"
 DEVICE_QUERY_END_ATTRIBUTE = "Maximum number of threads per block"
@@ -182,7 +182,7 @@ def __systemInformationIdentifier():
         with open(hwdFilepath) as hdwinfoFile:
             hdwInfoDictionary = json.load(hdwinfoFile)
     except Exception as e:
-            response['error'] = e
+            response['error'] = str(e)
             response['content'] = {}
             response['returncode'] = 0
             return response
@@ -211,9 +211,8 @@ def __systemInformationIdentifier():
         with open(outputFilepath, 'w') as outfile:
             json.dump(systemInforDictionary, outfile)
         response['returncode'] = 1
-        response['returncode']
         response['error'] = ""
-        response['content'] = "System Data Identifier successfully executed"
+        response['content'] = systemInforDictionary
     except Exception as e:
         response['error'] = e
         response['content'] = {}
