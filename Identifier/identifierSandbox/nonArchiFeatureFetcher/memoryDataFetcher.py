@@ -1,5 +1,5 @@
 import pandas as pd
-import math,os
+import math,os,logger
 
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
@@ -17,7 +17,7 @@ subProfileGMemBW = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 global totalWindowNumber
 totalWindowNumber = 0
-def preMemoryMapping(loggerError,fileName):
+def preMemoryMapping(fileName):
     global fileLocation
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
@@ -47,11 +47,11 @@ def preMemoryMapping(loggerError,fileName):
 
         return True
     except Exception as e:
-        loggerError.debug("csv memory access mapping failed with Error : "+str(e))
+        logger.loggerError.debug("csv memory access mapping failed with Error : "+str(e))
         return False
 
 
-def sharedMemoryMapping(loggerError,fileName):
+def sharedMemoryMapping(fileName):
     global totalWindowNumber
     try:
         odf = pd.read_csv(fileLocation+"categorized_memory_fr_profiling.csv")
@@ -179,10 +179,10 @@ def sharedMemoryMapping(loggerError,fileName):
         text_file.close()
         return True
     except Exception as e:
-        loggerError.debug("sharedMemoryMapping extraction failed with Error : "+str(e))
+        logger.loggerError.debug("sharedMemoryMapping extraction failed with Error : "+str(e))
         return False
 
-def globalMemoryMapping(loggerError,fileName):
+def globalMemoryMapping(fileName):
     try:
         odf = pd.read_csv(fileLocation+"categorized_memory_fr_profiling.csv")
         resultDataSet = odf.to_dict(orient='records')
@@ -287,7 +287,7 @@ def globalMemoryMapping(loggerError,fileName):
         return True
     except Exception as e:
         print e
-        loggerError.debug("globalMemoryMapping extraction failed with Error : "+str(e))
+        logger.loggerError.debug("globalMemoryMapping extraction failed with Error : "+str(e))
         return False
 
 # preMemoryMapping()

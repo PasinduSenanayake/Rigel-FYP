@@ -1,5 +1,5 @@
 
-import json,os
+import json,os,logger
 
 
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
@@ -8,7 +8,7 @@ iterations = ['16','32','64','128','256','512','1024']
 
 
 
-def finalBranchCounter(loggerError,fileName):
+def finalBranchCounter(fileName):
     global fileLocation
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
@@ -31,5 +31,5 @@ def finalBranchCounter(loggerError,fileName):
         text_file.close()
         return True
     except Exception as e:
-        loggerError.debug("Final Branch count failed with Error : "+str(e))
+        logger.loggerError.debug("Final Branch count failed with Error : "+str(e))
         return False

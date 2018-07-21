@@ -1,10 +1,10 @@
 import pandas as pd
-import math,os,json
+import math,os,json,logger
 
 branchDataList = []
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
-def preCollapseBranchDataFetch(loggerError,fileName):
+def preCollapseBranchDataFetch(fileName):
     global fileLocation
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
@@ -17,10 +17,10 @@ def preCollapseBranchDataFetch(loggerError,fileName):
         newCsv.to_csv(fileLocation+"categorizedCollapseBranchProfileData.csv")
         return True
     except Exception as e:
-        loggerError.debug("branch_profiling.csv info fetching failed with Error : "+str(e))
+        logger.loggerError.debug("branch_profiling.csv info fetching failed with Error : "+str(e))
         return False
 
-def fetchCollapseBranchInfo(loggerError):
+def fetchCollapseBranchInfo():
     try:
         odf = pd.read_csv(fileLocation+"categorizedCollapseBranchProfileData.csv")
         resultDataSet = odf.to_dict(orient='records')
@@ -63,5 +63,5 @@ def fetchCollapseBranchInfo(loggerError):
             json.dump(branchDataList, outfile)
         return True
     except Exception as e:
-        loggerError.debug("Branching info extraction failed with Error : "+str(e))
+        logger.loggerError.debug("Branching info extraction failed with Error : "+str(e))
         return False

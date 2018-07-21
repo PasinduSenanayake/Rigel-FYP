@@ -1,10 +1,12 @@
 import json,os,sys
 import shutil
+sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
+import logger
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Identifier.offloadChecker import occupancyCalculation
-from Identifier.systemIdentifier import __systemInformationIdentifier
+from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
-from Identifier.identifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
+from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
 
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
@@ -66,7 +68,7 @@ def systemIdentify():
     global result
     logger.loggerInfo("System Data Identifier Command Initiated")
     if(__systemInformationIdentifier()['returncode']==1):
-        with open(os.path.dirname(os.path.realpath(__file__))+"/Identifier/sysinfo/systemInfo.json", 'r') as handle:
+        with open(os.path.dirname(os.path.realpath(__file__))+"/Identifier/systemIdentifier/sysinfo/systemInfo.json", 'r') as handle:
             parsed = json.load(handle)
         # print json.dumps(parsed, indent=4, sort_keys=True)
         result['code']=0
@@ -152,21 +154,23 @@ def runCommand(command):
     return result
 
 if __name__ == "__main__":
-    sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
-    import logger
     logger.createLog()
     logger.loggerInfo("Individual Command executer initiated")
-    runCommand(sys.argv[1])
-    if(result['code']==0):
-        if not result['successMessage'] == "":
-            print result['successMessage']
-        if not result['content'] == []:
-            print result['content']
-        logger.loggerSuccess("Individual Command executer completed successfully")
-    if(result['code']==1):
-        if not result['error'] == "":
-            print result['error']
-            logger.loggerError("Individual Command executer completed with error : "+str(result['error']))
-        else :
-            print "Unknown Error"
-            logger.loggerError("Individual Command executer completed with unknown Error")
+    if(len(sys.argv)>1):
+        runCommand(sys.argv[1])
+        if(result['code']==0):
+            if not result['successMessage'] == "":
+                print result['successMessage']
+            if not result['content'] == []:
+                print result['content']
+            logger.loggerSuccess("Individual Command executer completed successfully")
+        if(result['code']==1):
+            if not result['error'] == "":
+                print result['error']
+                logger.loggerError("Individual Command executer completed with error : "+str(result['error']))
+            else :
+                print "Unknown Error"
+                logger.loggerError("Individual Command executer completed with unknown Error")
+    else:
+        print "Please add the command name"
+        logger.loggerError("Command Name missing")

@@ -1,10 +1,11 @@
 import pandas as pd
 import math,os,json
+import logger
 
 branchDataList = []
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
-def preBranchDataFetch(loggerError,fileName):
+def preBranchDataFetch(fileName):
     global fileLocation
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
@@ -17,10 +18,10 @@ def preBranchDataFetch(loggerError,fileName):
         newCsv.to_csv(fileLocation+"categorizedBranchProfileData.csv")
         return True
     except Exception as e:
-        loggerError.debug("branch_profiling.csv info fetching failed with Error : "+str(e))
+        logger.loggerError.debug("branch_profiling.csv info fetching failed with Error : "+str(e))
         return False
 
-def fetchBranchInfo(loggerError):
+def fetchBranchInfo():
     try:
         odf = pd.read_csv(fileLocation+"categorizedBranchProfileData.csv")
         resultDataSet = odf.to_dict(orient='records')
@@ -63,5 +64,5 @@ def fetchBranchInfo(loggerError):
             json.dump(branchDataList, outfile)
         return True
     except Exception as e:
-        loggerError.debug("Branching info extraction failed with Error : "+str(e))
+        logger.loggerError.debug("Branching info extraction failed with Error : "+str(e))
         return False

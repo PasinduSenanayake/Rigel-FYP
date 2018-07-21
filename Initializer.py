@@ -7,13 +7,18 @@ from Initialize import moduleInit
 from shutil import copyfile
 import shutil,datetime,logger
 
+
 directoryList = []
+
+
+
+
 
 def processInitializer():
     from Identifier.initializer import identify
     from Extractor.Extractor import Extractor
+    from Extractor.metaDataExtractor import metaDataExtractor
     from Modifier.initializer import modify
-    import dbManager
 
     #Identifier Begins
     logger.loggerInfo("Extracting Source Code Initiated")
@@ -21,20 +26,22 @@ def processInitializer():
     extractor = Extractor(sourceDirectry)
     logger.loggerSuccess("Extracting Source Code concluded successfully")
 
-    if "metadata" in os.listdir(os.path.dirname(os.path.realpath(__file__))+"/Sandbox"):
-        logger.loggerInfo("Meta data insertion Initiated")
-        logger.loggerSuccess("Meta data insertion Completed")
-    else:
-        logger.loggerInfo("No Meta data found. Meta data insertion skipped")
+    #metaData extraction
+    logger.loggerInfo("MetaData extraction Initialized")
+    metaDataExtractor()
+    logger.loggerSuccess("MetaData extraction Completed")
+    #metaData extraction completed
 
+    #Identifier Initiated
     identify(extractor,sourceDirectry)
+    #Identifier Completed
 
     logger.loggerInfo("Source Code Identification Process Completed Successfully")
-    #Identifier Completed
+
 
     #Modifier Begins
     logger.loggerInfo("Source Code Modification Process Initiated")
-    modify(extractor,sourceDirectry)
+    #modify(extractor,sourceDirectry)
 
 def dependencyChecker():
     if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+'/DatabaseManager/rigel.db')):

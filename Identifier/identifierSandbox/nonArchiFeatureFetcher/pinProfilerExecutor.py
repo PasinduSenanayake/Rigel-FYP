@@ -45,11 +45,11 @@ def runPinProf(arguments,filePath):
                     if(resultPin == "success"):
                         logger.loggerSuccess("Memory access extraction completed")
                         logger.loggerInfo("Memory access reordering initiated")
-                        isCompleted = preMemoryMapping(loggerError,filePath)
+                        isCompleted = preMemoryMapping(filePath)
                         if(isCompleted):
-                            isCompleted = sharedMemoryMapping(loggerError,filePath)
+                            isCompleted = sharedMemoryMapping(filePath)
                             if(isCompleted):
-                                isCompleted = globalMemoryMapping(loggerError,filePath)
+                                isCompleted = globalMemoryMapping(filePath)
                                 if not isCompleted:
                                     resultPin = "failed"
                             else:
@@ -63,9 +63,9 @@ def runPinProf(arguments,filePath):
                             if(resultPin == "success"):
                                 logger.loggerSuccess("Branch info extraction completed")
                                 logger.loggerInfo("Branch info reordering initiated")
-                                isCompleted = preBranchDataFetch(loggerError,filePath)
+                                isCompleted = preBranchDataFetch(filePath)
                                 if(isCompleted):
-                                    isCompleted = fetchBranchInfo(loggerError)
+                                    isCompleted = fetchBranchInfo()
                                     if not isCompleted:
                                         resultPin = "failed"
                                 else:
@@ -77,9 +77,9 @@ def runPinProf(arguments,filePath):
                                     if(resultPin == "success"):
                                         logger.loggerSuccess("Collapse Branch info extraction completed")
                                         logger.loggerInfo("Collapse Branch info reordering initiated")
-                                        isCompleted = preCollapseBranchDataFetch(loggerError,filePath)
+                                        isCompleted = preCollapseBranchDataFetch(filePath)
                                         if(isCompleted):
-                                            isCompleted = fetchCollapseBranchInfo(loggerError)
+                                            isCompleted = fetchCollapseBranchInfo()
                                             if not isCompleted:
                                                 resultPin = "failed"
                                         else:
@@ -87,7 +87,7 @@ def runPinProf(arguments,filePath):
                                         if(resultPin == "success"):
                                             logger.loggerSuccess("Collapse Branch info reordering completed")
                                             logger.loggerInfo("Final Branch info reordering initiated")
-                                            isCompleted = finalBranchCounter(loggerError,filePath)
+                                            isCompleted = finalBranchCounter(filePath)
                                             if not isCompleted:
                                                 resultPin = "failed"
                                             if(resultPin == "success"):
