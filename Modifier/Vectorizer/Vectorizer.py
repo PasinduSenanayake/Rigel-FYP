@@ -63,7 +63,7 @@ class Vectorizer():
         if(response['code']==0):
             loopDetails = response['content']
         else:
-            logger.loggerError("Array Informaton Fetcher Failed for lines " + str(startLine)+ "-" + str(endLine) +" with error "+response['error'])
+            logger.loggerError("Array Informaton Fetcher Failed for lines " + str(startLine)+ "-" + str(endLine) +" with error "+str(response['error']))
             exit()
         logger.loggerSuccess("Array Informaton Fetcher Completed Successfully for lines " + str(startLine)+ "-" + str(endLine))
         print loopDetails

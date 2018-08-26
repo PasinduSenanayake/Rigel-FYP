@@ -141,12 +141,22 @@ def dataCollect(codeName,initLine,endLine,csvPath,fileName):
         total_arith_dp_float_ops = lines[5].split(" ")[1]
         total_sp_mul_float_ops = lines[6].split(" ")[1]
         total_sp_div_float_ops = lines[7].split(" ")[1]
-
-        dataRow[12]= float(total_arith_sp_float_ops)/float(total_float_ops)
-        dataRow[13]= float(total_arith_dp_float_ops)/float(total_float_ops)
-        dataRow[9]= float(total_float_ops)/float(tOps)
-        dataRow[22]= float(total_sp_mul_float_ops)/float(total_sp_float_ops)
-        dataRow[23]= float(total_sp_div_float_ops)/float(total_sp_float_ops)
+        if not(total_float_ops == "0"):
+            dataRow[12]= float(total_arith_sp_float_ops)/float(total_float_ops)
+            dataRow[13]= float(total_arith_dp_float_ops)/float(total_float_ops)
+            dataRow[9]= float(total_float_ops)/float(tOps)
+            if not(total_sp_float_ops == "0"):
+                dataRow[22]= float(total_sp_mul_float_ops)/float(total_sp_float_ops)
+                dataRow[23]= float(total_sp_div_float_ops)/float(total_sp_float_ops)
+            else:
+                dataRow[22]= 0
+                dataRow[23]= 0
+        else:
+            dataRow[12]= 0
+            dataRow[13]= 0
+            dataRow[9]= 0
+            dataRow[22]= 0
+            dataRow[23]= 0
         logger.loggerSuccess("Featching Floating Point operation data completed")
     else:
         isCollectSuccess = False
@@ -156,7 +166,10 @@ def dataCollect(codeName,initLine,endLine,csvPath,fileName):
     if(os.path.isfile(fileLocation+'special_func_count.out')):
         lines = [line.rstrip('\n') for line in open(fileLocation+'special_func_count.out','r')]
         special_function_count = int(lines[0].split(" ")[1])
-        dataRow[24] = float(special_function_count)/float(total_sp_float_ops)
+        if not(total_sp_float_ops == "0"):
+            dataRow[24] = float(special_function_count)/float(total_sp_float_ops)
+        else:
+            dataRow[24] = 0
         logger.loggerSuccess("Featching Special Function data completed")
     else:
         isCollectSuccess = False
