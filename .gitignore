@@ -5,4 +5,5 @@ DependencyManager/requirementsLocal.json
 subCommandConf.json
 Identifier/sysinfo/*.json
 Sandbox/*
-!Sandbox/.gitkeep 
+!Sandbox/.gitkeep
+Extractor/.idea
