@@ -19,16 +19,15 @@
 
 #include "polybenchUtilFuncts.h"
 
-//define the error threshold for the results "not matching"
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.05
 
-/* Problem size */
-#define N 8192
+int N = 8192;
 
-/* Can switch DATA_TYPE between float and double */
 typedef float DATA_TYPE;
 
-void init_array(DATA_TYPE* A, DATA_TYPE* x1, DATA_TYPE* x2, DATA_TYPE* y1, DATA_TYPE* y2)
+//----> AdditionalCodeHook
+
+void init_array(DATA_TYPE* A, DATA_TYPE* x1, DATA_TYPE* x2, DATA_TYPE* y, DATA_TYPE* y2)
 {
   int i, j;
 
@@ -36,7 +35,7 @@ void init_array(DATA_TYPE* A, DATA_TYPE* x1, DATA_TYPE* x2, DATA_TYPE* y1, DATA_
   {
     x1[i] = ((DATA_TYPE) i) / N;
     x2[i] = ((DATA_TYPE) i + 1) / N;
-    y1[i] = ((DATA_TYPE) i + 3) / N;
+    y[i] = ((DATA_TYPE) i + 3) / N;
     y2[i] = ((DATA_TYPE) i + 4) / N;
     for (j = 0; j < N; j++)
     {
@@ -45,27 +44,30 @@ void init_array(DATA_TYPE* A, DATA_TYPE* x1, DATA_TYPE* x2, DATA_TYPE* y1, DATA_
   }
 }
 
-void runMvt(DATA_TYPE* a, DATA_TYPE* x1, DATA_TYPE* x2, DATA_TYPE* y1, DATA_TYPE* y2)
+
+void runMvt(DATA_TYPE* a, DATA_TYPE* x1, DATA_TYPE* x2, DATA_TYPE* y, DATA_TYPE* y2)
 {
 
-//Section A to profile --> general structure has been changed
+
 
   for (int i=0; i<N; i++)
   {
     for (int j=0; j<N; j++)
     {
-      x1[i] = x1[i] + a[i*N + j] * y1[j];
+      x1[i] = x1[i] + a[i*N + j] * y[j];
       x2[i] = x2[i] + a[j*N + i] * y2[j];
 
     }
   }
 
-//end of section A to profile
+
 
 }
 
 
-//----> AdditionalCodeHook
+
+
+
 
 int main()
 {
@@ -83,15 +85,12 @@ int main()
   y_1 = (DATA_TYPE*)malloc(N*sizeof(DATA_TYPE));
   y_2 = (DATA_TYPE*)malloc(N*sizeof(DATA_TYPE));
 
-  fprintf(stdout, "<< Matrix Vector Product and Transpose >>\n");
-
   init_array(a, x1, x2, y_1, y_2);
 
   t_start = rtclock();
   //run the algorithm on the CPU
   runMvt(a, x1, x2, y_1, y_2);
   t_end = rtclock();
-  fprintf(stdout, "CPU Runtime: %0.6lfs\n", t_end - t_start);
 
 
 
