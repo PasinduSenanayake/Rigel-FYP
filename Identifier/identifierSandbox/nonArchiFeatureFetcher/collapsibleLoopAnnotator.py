@@ -29,7 +29,7 @@ def makeObjectCode(fileName,originalFileName,makeFilePath):
 
     with open(makeFileLocation+makeFilePath, 'r') as file :
         filedata = file.read()
-    filedata = filedata.replace('runnable', 'runnableSecond')
+    filedata = filedata.replace('runnableBranch', 'runnableSecond')
     with open(makeFileLocation+makeFilePath, 'w') as file:
         file.write(filedata)
 
@@ -71,6 +71,11 @@ def captureAndFix(numofLoops):
     iniFoundIndex = 0
     for lineIndexInit,line in enumerate(lines[iniIndex:]):
         if "for (" in line:
+            numofLoops-=1
+            if numofLoops ==1:
+                iniFoundIndex = lineIndexInit
+                break
+        elif "for(" in line:
             numofLoops-=1
             if numofLoops ==1:
                 iniFoundIndex = lineIndexInit
