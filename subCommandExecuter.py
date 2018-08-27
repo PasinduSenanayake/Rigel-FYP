@@ -3,7 +3,7 @@ import shutil
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 import logger
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
-from Identifier.offloadChecker import occupancyCalculation
+from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
 from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
