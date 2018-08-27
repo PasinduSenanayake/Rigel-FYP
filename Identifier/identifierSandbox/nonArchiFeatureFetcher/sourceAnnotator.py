@@ -182,11 +182,15 @@ def mapVariablesFixer():
 
 def classifyPointers():
     for key in undefinedVariables.keys():
-        if '*' in undefinedVariables[key]['type'] :
+        if '(*)' in undefinedVariables[key]['type'] :
+            tempParametercode = undefinedVariables[key]['type'].replace("(*)",key+'[]')
+            parameterizedValues.append(tempParametercode)
+            parameterizedVariables.append(key)
+            parameterNames.append(key)
+        elif '*' in undefinedVariables[key]['type'] :
             parameterizedValues.append(undefinedVariables[key]['type']+''+key)
             parameterizedVariables.append(key)
             parameterNames.append(key)
-
         else:
             gloableValues.append(undefinedVariables[key]['type']+' abcdefgh'+key+';')
             gloableNames.append(key)
@@ -297,7 +301,6 @@ def innerVaribales(fileName,loopStartLine,loopEndline):
             if('use of undeclared identifier' in lineCode):
                 nextLineUseful = True
                 variable =  re.findall(r"'(.*?)'", lineCode, re.DOTALL)[0]
-
                 if not variable in undefinedInnerVariables.keys():
                     undefinedInnerVariables[variable] = {
                         'type':'',

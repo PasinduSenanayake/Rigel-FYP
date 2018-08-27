@@ -47,7 +47,8 @@ def preMemoryMapping(fileName):
 
         return True
     except Exception as e:
-        logger.loggerError.debug("csv memory access mapping failed with Error : "+str(e))
+        print e
+        logger.loggerError("csv memory access mapping failed with Error : "+str(e))
         return False
 
 
@@ -179,7 +180,8 @@ def sharedMemoryMapping(fileName):
         text_file.close()
         return True
     except Exception as e:
-        logger.loggerError.debug("sharedMemoryMapping extraction failed with Error : "+str(e))
+        print e
+        logger.loggerError("sharedMemoryMapping extraction failed with Error : "+str(e))
         return False
 
 def globalMemoryMapping(fileName):
@@ -287,7 +289,7 @@ def globalMemoryMapping(fileName):
         return True
     except Exception as e:
         print e
-        logger.loggerError.debug("globalMemoryMapping extraction failed with Error : "+str(e))
+        logger.loggerError("globalMemoryMapping extraction failed with Error : "+str(e))
         return False
 
 # preMemoryMapping()

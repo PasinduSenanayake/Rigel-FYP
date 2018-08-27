@@ -13,9 +13,11 @@ def copyFile(filename):
 def addCollapes():
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     for index,line in enumerate(lines):
-     if "void profileHook" in line:
-         code = line
-         lines[index] = code+"#pragma omp for collapse(1) \n"
+        if "void profileHook" in line:
+            code = line
+            lines[index] = code+"#pragma omp for collapse(1) \n"
+        if '/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){break;};' in line:
+            lines[index] = line.replace('/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){break;};','/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){/*break*/;};')
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
@@ -27,7 +29,7 @@ def makeObjectCode(fileName,originalFileName,makeFilePath):
 
     with open(makeFileLocation+makeFilePath, 'r') as file :
         filedata = file.read()
-    filedata = filedata.replace('runnable', 'runnableSecond')
+    filedata = filedata.replace('runnableBranch', 'runnableSecond')
     with open(makeFileLocation+makeFilePath, 'w') as file:
         file.write(filedata)
 
@@ -107,7 +109,8 @@ def captureAndFix(numofLoops):
         if(foundString):
             break
     strValEnd =  lines[realIndex+staticLineIndex]
-    lines[realIndex+staticLineIndex] = strValEnd[0:staticCharIndex]+"*/"+strValEnd[staticCharIndex:]
+    strValEndTemp = strValEnd.replace('/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){/*break*/;};','/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){break;};')
+    lines[realIndex+staticLineIndex] = strValEndTemp
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
@@ -117,9 +120,9 @@ def captureAndFix(numofLoops):
 def incrementAndRun(numofLoops):
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     for index,line in enumerate(lines):
-     if "#pragma omp for collapse" in line:
-         code = line
-         lines[index] = "#pragma omp for collapse("+str(numofLoops)+") \n"
+        if "#pragma omp for collapse" in line:
+            code = line
+            lines[index] = "#pragma omp for collapse("+str(numofLoops)+") \n"
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
