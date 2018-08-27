@@ -10,7 +10,7 @@
 #include <sys/time.h>
 #include "./mgbenchUtilFunctions.h"
 
-#define SIZE 2048
+int SIZE = 512;
 #define GPU_DEVICE 0
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.05
 
@@ -48,6 +48,8 @@ int colinear_list_points_GPU()
 		parallel_lines[i] = 0;
 	}
 
+
+
 	for(int i = 0; i < SIZE; i++)
 	{
 		for(int j = 0; j < SIZE; j++)
@@ -76,6 +78,8 @@ int colinear_list_points_GPU()
 				}
 			}
 		}
+
+
 
 		val = 0;
 		for(i=0;i<p;i++)
