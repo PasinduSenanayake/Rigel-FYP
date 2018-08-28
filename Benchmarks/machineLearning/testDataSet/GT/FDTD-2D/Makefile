@@ -2,8 +2,8 @@
 CC = clang
 
 
-syrkm:
-	$(CC) syrk_m_profile.c -o runnable
+fdtd2d:
+	$(CC) fdtd2d_profile.c -o runnable
 
 clean:
 	rm -f *.o

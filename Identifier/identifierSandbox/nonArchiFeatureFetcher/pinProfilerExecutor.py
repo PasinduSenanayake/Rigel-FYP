@@ -59,7 +59,7 @@ def runPinProf(arguments,filePath):
                         if(resultPin == "success"):
                             logger.loggerSuccess("Memory access reordering completed")
                             logger.loggerInfo("Branch info extraction initiated")
-                            resultPin = profileInPin("branchFinder.so",arguments)
+                            resultPin = profileBranchInPin("branchFinder.so",arguments)
                             if(resultPin == "success"):
                                 logger.loggerSuccess("Branch info extraction completed")
                                 logger.loggerInfo("Branch info reordering initiated")
@@ -155,6 +155,18 @@ def profileTwoInPin(soFile,arguments):
 
 def profileILPInPin(soFile,arguments):
     executeString = 'cd '+baseFileLocation +' && '+fileLocation+'pin -t '+fileLocation+''+soFile+' -- '+baseFileLocation+'/runnableILP'+" "+arguments
+    processOutput = Popen(executeString,shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    output,error=processOutput.communicate()
+    if error=="":
+        return "success"
+    elif "All done reading" in error:
+        return "success"
+    else:
+        return error
+
+
+def profileBranchInPin(soFile,arguments):
+    executeString = 'cd '+baseFileLocation +' && '+fileLocation+'pin -t '+fileLocation+''+soFile+' -- '+baseFileLocation+'/runnableBranch'+" "+arguments
     processOutput = Popen(executeString,shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
     if error=="":

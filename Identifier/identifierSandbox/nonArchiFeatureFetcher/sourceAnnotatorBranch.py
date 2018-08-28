@@ -25,7 +25,7 @@ def makeObjectCode(fileName,makeFilePath):
 
     with open(makeFileLocation+makeFilePath, 'r') as file :
         filedata = file.read()
-    filedata = filedata.replace('runnable', 'runnableILP')
+    filedata = filedata.replace('runnableILP', 'runnableBranch')
     with open(makeFileLocation+makeFilePath, 'w') as file:
         file.write(filedata)
 
@@ -89,6 +89,7 @@ def createFinalSourceCode(fileName,loopStartLine,loopEndline):
                         addedHookFunction = True
                 fout.write(item)
 
+
 def addFunctionHook():
     parameterSet =''
     for parameterizedValue in parameterizedValues:
@@ -106,11 +107,13 @@ def addFunctionHook():
     profileHookEndLine = 0
     for i, item in enumerate(lines):
         if  '/////######################################################/////' in item:
-            newitem = item+'\n'+'void profileHook('+parameterSet+'){int iteratotConuter =0; \n'
+            # newitem = item+'\n'+'void profileHook('+parameterSet+'){int iteratotConuter =0; \n'
+            newitem = item+'\n'+'void profileHook('+parameterSet+'){ \n'
             lines[i] = ''.join(newitem)
             profileHookStartLine = i
         if '/*addNewLoopPart*/break;' in item:
-            newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/iteratotConuter++; if(iteratotConuter>10){break;}; ",1)
+            newitem = item.replace("/*addNewLoopPart*/break;","",1)
+            # newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase iteratotConuter++; if(iteratotConuter>1000){break;}; */",1)
             lines[i] = ''.join(newitem)
             profileHookEndLine = i
         if '/////----------------------------------------------------/////' in item:
@@ -358,7 +361,7 @@ def findVariables(fileName,loopStartLine,loopEndline):
         else:
             break
 
-def targetDataMapILP(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopEndline):
+def targetDataMapBranch(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopEndline):
     global compilerOptins
     compilerOptins =  compilerOptinsPassed
     global fileLocation

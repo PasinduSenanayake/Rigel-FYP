@@ -10,17 +10,18 @@ makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 def copyFile(filename):
     copyfile(fileLocation+filename, fileLocation+"withCollapse.c")
 
-
 def addCollapes():
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     for index,line in enumerate(lines):
-     if "void profileHook" in line:
-         code = line
-         lines[index] = code+"#pragma omp for collapse(1) \n"
+        if "void profileHook" in line:
+            code = line
+            lines[index] = code+"#pragma omp for collapse(1) \n"
+        # if '/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){break;};*/' in line:
+        #     lines[index] = line.replace('/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){break;};*/','')
+            # lines[index] = line.replace('/*dontErase iteratotConuter++; if(iteratotConuter>1000){break;};*/','/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){/*break*/;};')
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
-
 
 def makeObjectCode(fileName,originalFileName,makeFilePath):
     copyfile(fileLocation+originalFileName, fileLocation+"tempOriginal.c")
@@ -54,8 +55,8 @@ def runCode():
 def removePragma():
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     for index,line in enumerate(lines):
-        if "#pragma omp for collapse" in line:
-            lines[index] = " \n"
+     if "#pragma omp for collapse" in line:
+         lines[index] = " \n"
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
@@ -71,11 +72,6 @@ def captureAndFix(numofLoops):
     iniFoundIndex = 0
     for lineIndexInit,line in enumerate(lines[iniIndex:]):
         if "for (" in line:
-            numofLoops-=1
-            if numofLoops ==1:
-                iniFoundIndex = lineIndexInit
-                break
-        elif "for(" in line:
             numofLoops-=1
             if numofLoops ==1:
                 iniFoundIndex = lineIndexInit
@@ -96,7 +92,6 @@ def captureAndFix(numofLoops):
     realIndex = iniIndex+iniFoundIndex+staticIniLineIndex
     strValIni =  lines[realIndex]
     lines[realIndex] = strValIni[0:staticIniCharIndex+1]+"/*"+strValIni[staticIniCharIndex+1:]
-
     count = 0
     staticLineIndex = 0
     staticCharIndex = 0
@@ -115,7 +110,10 @@ def captureAndFix(numofLoops):
         if(foundString):
             break
     strValEnd =  lines[realIndex+staticLineIndex]
+    strValEnd =  lines[realIndex+staticLineIndex]
     lines[realIndex+staticLineIndex] = strValEnd[0:staticCharIndex]+"*/"+strValEnd[staticCharIndex:]
+    # strValEndTemp = strValEnd.replace('/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){/*break*/;};','/*dontErase*/iteratotConuter++; if(iteratotConuter>1000){break;};')
+    # lines[realIndex+staticLineIndex] = strValEndTemp
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
@@ -125,9 +123,9 @@ def captureAndFix(numofLoops):
 def incrementAndRun(numofLoops):
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     for index,line in enumerate(lines):
-     if "#pragma omp for collapse" in line:
-         code = line
-         lines[index] = "#pragma omp for collapse("+str(numofLoops)+") \n"
+        if "#pragma omp for collapse" in line:
+            code = line
+            lines[index] = "#pragma omp for collapse("+str(numofLoops)+") \n"
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
@@ -150,7 +148,9 @@ def collapseAnnotator(fileName,makeFilePath,compilerOptions):
         fileName = "/finalCode.c"
         copyFile(fileName)
         addCollapes()
+
         results = runCode()
+        exit()
         if(results=="success"):
             incrementAndRun(2)
             results = makeObjectCode(fileName,originalFileName,makeFilePath)
