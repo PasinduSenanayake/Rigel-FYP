@@ -22,21 +22,25 @@
 #define ERROR_THRESHOLD 0.05
 #define GPU_DEVICE 1
 
-/* Problem size */
-#define N 1024
-#define M 1024
 
-/* Declared constant values for alpha and beta */
-/* (same as values in PolyBench 2.0) */
-#define alpha 12435
-#define beta 4546
+int N = 512;
+int M = 512;
 
-/* Can switch DATA_TYPE between float and double */
+
+int alpha = 12435;
+int beta = 4546;
+
+
 typedef float DATA_TYPE;
 
-DATA_TYPE A[N][M];
-DATA_TYPE C[N][M];
-DATA_TYPE D[N][M];
+DATA_TYPE A[512][512];
+DATA_TYPE C[512][512];
+DATA_TYPE D[512][512];
+
+
+//----> AdditionalCodeHook
+
+
 
 void init_arrays() {
   int i, j;
@@ -54,7 +58,8 @@ void init_arrays() {
 
 void syrk() {
 
-  //Section A profile here
+
+
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < M; j++) {
       C[i][j] *= beta;
@@ -65,11 +70,12 @@ void syrk() {
     }
   }
 
-  //End of section A profiling
+
+
 
 }
 
-//----> AdditionalCodeHook
+
 
 int main() {
   double t_start, t_end;
@@ -79,7 +85,6 @@ int main() {
   t_start = rtclock();
   syrk();
   t_end = rtclock();
-  fprintf(stdout, "CPU Runtime: %0.6lfs\n", t_end - t_start);
 
   return 0;
 }

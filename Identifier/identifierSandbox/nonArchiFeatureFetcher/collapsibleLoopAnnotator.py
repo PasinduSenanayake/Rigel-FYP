@@ -11,12 +11,25 @@ def copyFile(filename):
     copyfile(fileLocation+filename, fileLocation+"withCollapse.c")
 
 
+def reenableLimit():
+    lines = open(fileLocation+"withCollapse.c", 'r').readlines()
+    for index,line in enumerate(lines):
+        if "/*iteratotConuter++; if(iteratotConuter>100){break;};*/"in line:
+            lines[index] = line.replace("/*iteratotConuter++; if(iteratotConuter>100){break;};*/","iteratotConuter++; if(iteratotConuter>100){break;};")
+
+    out = open(fileLocation+"withCollapse.c", 'w')
+    out.writelines(lines)
+    out.close()
+
 def addCollapes():
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     for index,line in enumerate(lines):
-     if "void profileHook" in line:
-         code = line
-         lines[index] = code+"#pragma omp for collapse(1) \n"
+        if "void profileHook" in line:
+            code = line
+            lines[index] = code+"#pragma omp for collapse(1) \n"
+        if "/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};"in line:
+            lines[index] = line.replace("/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};","/*iteratotConuter++; if(iteratotConuter>100){break;};*/")
+
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
@@ -120,6 +133,7 @@ def captureAndFix(numofLoops):
     out.writelines(lines)
     out.close()
     removePragma()
+    reenableLimit()
 
 
 def incrementAndRun(numofLoops):
