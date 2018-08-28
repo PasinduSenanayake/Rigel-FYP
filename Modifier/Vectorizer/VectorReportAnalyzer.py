@@ -34,6 +34,7 @@ class VectorReportAnalyzer:
         self.sources = []
         self.vectors = {}
         self.addSources(sources)
+        self.sourceDir = "/".join(self.sources[0].split("/")[:-1])
         self.execute()
 
     def addSources(self, sources):
@@ -42,13 +43,14 @@ class VectorReportAnalyzer:
     def compileFile(self):
         # command = "icc -o2 -qopt-report=5 -qopt-report-phase=all '" + "' '".join(self.sources) + "'"
         sourcePaths = []
+
         for source in self.sources:
             tempSource = source.replace(" ", "\ ")
             sourcePaths.append(tempSource)
         command = "icc -o2 -qopt-report=5 -qopt-report-phase=all " + " ".join(sourcePaths)
         # command.replace("'", "\"")
         # print(command)
-        processOutput = Popen(command,shell=True)
+        processOutput = Popen(command, shell=True, cwd=self.sourceDir)
         stdout, stderr = processOutput.communicate()
         if(stderr==None):
             print "Compiled Successfully"
@@ -60,8 +62,8 @@ class VectorReportAnalyzer:
         # print(fullname)
         return fullname
 
-    def readVectorReport(self,filename):
-        file = FileHandler.getInstance().readSource(filename[0:-2]+'.optrpt')
+    def readVectorReport(self,filePath):
+        file = FileHandler.getInstance().readSource(filePath[0:-2]+'.optrpt')
         # print("read")
         return file
 
@@ -186,8 +188,7 @@ class VectorReportAnalyzer:
         try:
             self.compileFile()
             for source in self.sources:
-                filename = self.getFileName(source)
-                report = self.readVectorReport(filename)
+                report = self.readVectorReport(source)
                 vectorList = self.removeDuplicateLoops(self.findLoopBlocks(report))
                 self.vectors[source] = vectorList
         except Exception as e:
