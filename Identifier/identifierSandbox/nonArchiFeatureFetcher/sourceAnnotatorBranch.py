@@ -107,13 +107,13 @@ def addFunctionHook():
     profileHookEndLine = 0
     for i, item in enumerate(lines):
         if  '/////######################################################/////' in item:
-            # newitem = item+'\n'+'void profileHook('+parameterSet+'){int iteratotConuter =0; \n'
-            newitem = item+'\n'+'void profileHook('+parameterSet+'){ \n'
+            newitem = item+'\n'+'void profileHook('+parameterSet+'){int iteratotConuter =0; \n'
+            # newitem = item+'\n'+'void profileHook('+parameterSet+'){ \n'
             lines[i] = ''.join(newitem)
             profileHookStartLine = i
         if '/*addNewLoopPart*/break;' in item:
-            newitem = item.replace("/*addNewLoopPart*/break;","",1)
-            # newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase iteratotConuter++; if(iteratotConuter>1000){break;}; */",1)
+            # newitem = item.replace("/*addNewLoopPart*/break;","",1)
+            newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};",1)
             lines[i] = ''.join(newitem)
             profileHookEndLine = i
         if '/////----------------------------------------------------/////' in item:
