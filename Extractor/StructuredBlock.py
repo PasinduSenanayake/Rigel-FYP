@@ -37,8 +37,8 @@ class StructuredBlock(Block):
 
     def vectorize(self, vectorLen=None, alignment=None):
         if not self.directive():
-            # newPragma = Block("#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
-            newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+            newPragma = Block("#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
+            # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
             newPragma.parent = self
             self.elements.insert(0, newPragma)
 
