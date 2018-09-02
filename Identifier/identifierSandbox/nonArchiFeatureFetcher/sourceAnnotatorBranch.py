@@ -112,8 +112,8 @@ def addFunctionHook():
             lines[i] = ''.join(newitem)
             profileHookStartLine = i
         if '/*addNewLoopPart*/break;' in item:
-            # newitem = item.replace("/*addNewLoopPart*/break;","",1)
-            newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};",1)
+            newitem = item.replace("/*addNewLoopPart*/break;","",1)
+            # newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};",1)
             lines[i] = ''.join(newitem)
             profileHookEndLine = i
         if '/////----------------------------------------------------/////' in item:

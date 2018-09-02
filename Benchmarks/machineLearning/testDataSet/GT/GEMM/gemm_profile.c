@@ -1,13 +1,3 @@
-/**
- * gemm.c: This file was adapted from PolyBench/GPU 1.0 test suite
- * to run on GPU with OpenMP 4.0 pragmas and OpenCL driver.
- *
- * http://www.cse.ohio-state.edu/~pouchet/software/polybench/GPU
- *
- * Contacts: Marcio M Pereira <mpereira@ic.unicamp.br>
- *           Rafael Cardoso F Sousa <rafael.cardoso@students.ic.unicamp.br>
- *           Luís Felipe Mattos <ra107822@students.ic.unicamp.br>
- */
 
 #include <unistd.h>
 #include <stdio.h>
@@ -25,22 +15,25 @@
 //define the error threshold for the results "not matching"
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.05
 
-/* Problem size */
-#define NI 1024
-#define NJ 1024
-#define NK 1024
+int NI = 2048;
+int NJ = 2048;
+int NK = 2048;
 
-/* Declared constant values for ALPHA and BETA (same as values in PolyBench 2.0) */
-#define ALPHA 32412.0f
-#define BETA 2123.0f
+int ALPHA = 32412.0f;
+int BETA = 2123.0f;
 
-/* Can switch DATA_TYPE between float and double */
 typedef float DATA_TYPE;
+
+
+
+//----> AdditionalCodeHook
 
 void gemm(DATA_TYPE *A, DATA_TYPE *B, DATA_TYPE *C)
 {
-//Region to profile
-  for (int i = 0; i < NI; i++)
+
+
+
+  for (int i = 0; i < 204; i++)
   {
     for (int j = 0; j < NJ; j++)
     {
@@ -53,7 +46,8 @@ void gemm(DATA_TYPE *A, DATA_TYPE *B, DATA_TYPE *C)
     }
   }
 
-  //end of region to profile
+
+
 }
 
 
@@ -86,7 +80,7 @@ void init(DATA_TYPE *A, DATA_TYPE *B, DATA_TYPE *C)
   }
 }
 
-//----> AdditionalCodeHook
+
 
 
 int main(int argc, char *argv[])
@@ -105,12 +99,8 @@ int main(int argc, char *argv[])
 
   init(A, B, C);
 
-
-
-  t_start = rtclock();
   gemm(A, B, C);
-  t_end = rtclock();
-  fprintf(stdout, "CPU Runtime: %0.6lfs\n", t_end - t_start);
+
 
   free(A);
   free(B);
