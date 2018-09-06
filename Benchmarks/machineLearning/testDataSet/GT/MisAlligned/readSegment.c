@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 {
   double t_start_OMP,t_end_OMP,t_start_GPU,t_end_GPU;
 
-    int nElem = 1 << 20; // total number of elements to reduce
+    int nElem = 1 << 27; // total number of elements to reduce
     int offset = 11;
     size_t nBytes = nElem * sizeof(float);
 

@@ -187,6 +187,8 @@ def mapVariablesFixer():
                     break
         else:
             break
+    processOutput.stdout.close()
+    processOutput.stderr.close()
     mapVariables()
 
 
