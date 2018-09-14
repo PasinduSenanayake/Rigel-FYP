@@ -6,6 +6,7 @@ branchDataList = []
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
 def preBranchDataFetch(fileName):
+    branchDataList = []
     global fileLocation
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     # try:

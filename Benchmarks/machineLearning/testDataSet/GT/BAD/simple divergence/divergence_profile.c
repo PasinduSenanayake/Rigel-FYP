@@ -12,18 +12,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <omp.h>
 
 
 
 /* Problem size. */
 # define NI 64000000*2
 
-/* Can switch DATA_TYPE between float and double */
 typedef float DATA_TYPE;
+
+//----> AdditionalCodeHook
 
 void Divergence_CPU(DATA_TYPE* B){
 
-//Section A region to profle
+#pragma omp parallel for
 for (int i = 0; i < NI; i++)
 {
   if(i%2==0){
@@ -34,13 +36,12 @@ for (int i = 0; i < NI; i++)
   }
 }
 
-//end of Section A region to profile
 }
 
-//----> AdditionalCodeHook
+
 
 int main(int argc, char** argv)
-{
+{omp_set_num_threads(1);
   double t_start, t_end, t_start_GPU, t_end_GPU;
 
 

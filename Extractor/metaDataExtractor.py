@@ -5,7 +5,7 @@ import pandas as pd
 
 def metaDataExtractor():
     if "metadata" in os.listdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/Sandbox"):
-        logger.loggerInfo("Meta data insertion Initiated")
+        logger.loggerInfo("Meta data extraction Initiated")
         metaDataSet =[]
         if os.path.isfile(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/Sandbox/metadata/checksum.json"):
             with open(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/Sandbox/metadata/checksum.json") as f:

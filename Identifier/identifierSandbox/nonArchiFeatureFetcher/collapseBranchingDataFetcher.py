@@ -51,6 +51,7 @@ def preCollapseBranchDataFetch(fileName):
 
 def fetchCollapseBranchInfo(fileName):
     global fileLocation
+    branchDataList = []
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
         odf = pd.read_csv(fileLocation+"branch_profiling.csv")

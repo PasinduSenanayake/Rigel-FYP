@@ -19,6 +19,8 @@ global totalWindowNumber
 totalWindowNumber = 0
 def preMemoryMapping(fileName):
     global fileLocation
+    global totalWindowNumber
+    totalWindowNumber = 0
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
         df = pd.read_csv(fileLocation+"memory_profiling_fread.csv")
@@ -54,6 +56,16 @@ def preMemoryMapping(fileName):
 
 def sharedMemoryMapping(fileName):
     global totalWindowNumber
+    subProfileGMemBW = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    subProfileShMemBW = {
+        "broadCast":0,
+        "stride 2":0,
+        "stride 4":0,
+        "stride 8":0,
+        "stride 16":0,
+        "stride 32":0,
+        "stride odd":0
+        }
     try:
         odf = pd.read_csv(fileLocation+"categorized_memory_fr_profiling.csv")
         resultDataSet = odf.to_dict(orient='records')

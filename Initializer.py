@@ -10,10 +10,6 @@ import shutil,datetime,logger
 
 directoryList = []
 
-
-
-
-
 def processInitializer():
     from Identifier.initializer import identify
     from Extractor.Extractor import Extractor
@@ -73,6 +69,18 @@ def sourceIntegrityChecker():
     if not len(directoryList)==1:
         print "There are more than one folder in Sandbox. Please keep only one folder."
         logger.loggerError("There are more than one folder in Sandbox.")
+        return False
+    if len(directoryList)==0:
+        print "Required folder is missing in Sandbox."
+        logger.loggerError("Required folder is missing in Sandbox.")
+        return False
+    if not os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/Sandbox/"+directoryList[0]+'/Makefile'):
+        print "Makefile is missing."
+        logger.loggerError("Makefile is missing.")
+        return False
+    if not os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/Sandbox/"+directoryList[0]+'/run.json'):
+        print "run.json is missing."
+        logger.loggerError("run.json is missing.")
         return False
     return True
 

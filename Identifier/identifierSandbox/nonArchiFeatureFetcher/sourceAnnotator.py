@@ -21,7 +21,14 @@ fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
 
-def makeObjectCode(fileName):
+def makeObjectCode(fileName,makeFilePath):
+    with open(makeFileLocation+makeFilePath, 'r') as file :
+        filedata = file.read()
+    filedata = filedata.replace('[compiler]', 'clang')
+    filedata = filedata.replace('[targetObject]', 'runnable')
+    with open(makeFileLocation+makeFilePath, 'w') as file:
+        file.write(filedata)
+
     processOutput = Popen('cd '+makeFileLocation +' && make && make clean ',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
     if not "error" in error:
@@ -49,11 +56,11 @@ def createFinalSourceCode(fileName,loopStartLine,loopEndline):
             globleString = globleString+''+globalVar.split(' ')[-1].split(';')[0]+ '='+globalVar.split(' ')[-1][8:]+'\n'
 
     globleReString = ''
-    for globalVar in gloableValues:
-        if(globleString==''):
-            globleReString = globalVar.split(' ')[-1][8:]+' = '+globalVar.split(' ')[-1].split(';')[0]+'\n'
-        else:
-            globleReString = globleReString+''+globalVar.split(' ')[-1][8:].split(';')[0]+' = '+globalVar.split(' ')[-1]+'\n'
+    # for globalVar in gloableValues:
+    #     if(globleString==''):
+    #         globleReString = globalVar.split(' ')[-1][8:]+' = '+globalVar.split(' ')[-1].split(';')[0]+'\n'
+    #     else:
+    #         globleReString = globleReString+''+globalVar.split(' ')[-1][8:].split(';')[0]+' = '+globalVar.split(' ')[-1]+'\n'
 
     reappendData = ''
     for innerglobalVar in innerGlobales:
@@ -343,6 +350,18 @@ def findVariables(fileName,loopStartLine,loopEndline):
             break
 
 def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopEndline):
+    global undefinedVariables
+    global undefinedInnerVariables
+    global analizerVariables
+    global reAnalizedVaraiables
+    global parameterizedValues
+    global parameterizedVariables
+    global gloableValues
+    global gloableNames
+    global parameterNames
+    global innerGlobales
+    global fullGloableSet
+    global appendableFunction
     global compilerOptins
     compilerOptins =  compilerOptinsPassed
     global fileLocation
@@ -350,6 +369,7 @@ def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopE
     fileName = "/"+fileName.rsplit('/', 1)[1]
     global makeFileLocation
     makeFileLocation = makeFileLocation+makeFilePath.rsplit('/', 1)[0]+"/"
+    makeFilePath = "/"+makeFilePath.rsplit('/', 1)[1]
 
     findVariables(fileName,loopStartLine,loopEndline)
     innerVaribales(fileName,loopStartLine,loopEndline)
@@ -363,7 +383,7 @@ def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopE
     mapVariables()
     addFunctionHook()
     createFinalSourceCode(fileName,loopStartLine,loopEndline)
-    result = makeObjectCode(fileName)
+    result = makeObjectCode(fileName,makeFilePath)
 
     if (result == "success"):
     # Remove intermediate files
@@ -373,6 +393,21 @@ def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopE
         os.remove(fileLocation+'targetChanged1.c')
         os.remove(fileLocation+'targetInnerChanged2.c')
         os.remove(fileLocation+'targetInnerChanged1.c')
+        compilerOptins =""
+        undefinedVariables = {}
+        undefinedInnerVariables = {}
+        analizerVariables = {}
+        reAnalizedVaraiables={}
+        parameterizedValues = []
+        parameterizedVariables = []
+        gloableValues = []
+        gloableNames = []
+        parameterNames = []
+        innerGlobales = []
+        fullGloableSet = ""
+        appendableFunction = ""
+        fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
+        makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
     return result
 

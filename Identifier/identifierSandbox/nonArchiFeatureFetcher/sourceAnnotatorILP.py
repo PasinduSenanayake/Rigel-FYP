@@ -56,11 +56,11 @@ def createFinalSourceCode(fileName,loopStartLine,loopEndline):
             globleString = globleString+''+globalVar.split(' ')[-1].split(';')[0]+ '='+globalVar.split(' ')[-1][8:]+'\n'
 
     globleReString = ''
-    for globalVar in gloableValues:
-        if(globleString==''):
-            globleReString = globalVar.split(' ')[-1][8:]+' = '+globalVar.split(' ')[-1].split(';')[0]+'\n'
-        else:
-            globleReString = globleReString+''+globalVar.split(' ')[-1][8:].split(';')[0]+' = '+globalVar.split(' ')[-1]+'\n'
+    # for globalVar in gloableValues:
+    #     if(globleString==''):
+    #         globleReString = globalVar.split(' ')[-1][8:]+' = '+globalVar.split(' ')[-1].split(';')[0]+'\n'
+    #     else:
+    #         globleReString = globleReString+''+globalVar.split(' ')[-1][8:].split(';')[0]+' = '+globalVar.split(' ')[-1]+'\n'
 
     reappendData = ''
     for innerglobalVar in innerGlobales:
@@ -110,11 +110,13 @@ def addFunctionHook():
             lines[i] = ''.join(newitem)
             profileHookStartLine = i
         if '/*addNewLoopPart*/break;' in item:
-            newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/iteratotConuter++; if(iteratotConuter>10){break;}; ",1)
+            newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/iteratotConuter++; if(iteratotConuter>10){exit(0);}; ",1)
             lines[i] = ''.join(newitem)
             profileHookEndLine = i
         if '/////----------------------------------------------------/////' in item:
-            newitem = reappendData+'\n}'+'\n'+item
+            if '/*addNewLoopPart*/break;' in item:
+                item = item.replace("/*addNewLoopPart*/break;","/*dontErase*/iteratotConuter++; if(iteratotConuter>10){exit(0);}; ",1)
+            newitem =  item + '\n' + reappendData+'\n}'
             lines[i] = ''.join(newitem)
             profileHookEndLine = i
     global appendableFunction
@@ -361,6 +363,18 @@ def findVariables(fileName,loopStartLine,loopEndline):
             break
 
 def targetDataMapILP(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopEndline):
+    global undefinedVariables
+    global undefinedInnerVariables
+    global analizerVariables
+    global reAnalizedVaraiables
+    global parameterizedValues
+    global parameterizedVariables
+    global gloableValues
+    global gloableNames
+    global parameterNames
+    global innerGlobales
+    global fullGloableSet
+    global appendableFunction
     global compilerOptins
     compilerOptins =  compilerOptinsPassed
     global fileLocation
@@ -392,7 +406,21 @@ def targetDataMapILP(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,lo
         os.remove(fileLocation+'targetChanged1.c')
         os.remove(fileLocation+'targetInnerChanged2.c')
         os.remove(fileLocation+'targetInnerChanged1.c')
-
+        compilerOptins =""
+        undefinedVariables = {}
+        undefinedInnerVariables = {}
+        analizerVariables = {}
+        reAnalizedVaraiables={}
+        parameterizedValues = []
+        parameterizedVariables = []
+        gloableValues = []
+        gloableNames = []
+        parameterNames = []
+        innerGlobales = []
+        fullGloableSet = ""
+        appendableFunction = ""
+        fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
+        makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
     return result
 
 
