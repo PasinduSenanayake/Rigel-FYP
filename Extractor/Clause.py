@@ -10,7 +10,7 @@ class Clause(Block):
         self.name = name
         self.details = directiveDetails[name]
         super(Clause, self).__init__(name, startIndex + r_clauseStartIndex)
-        if(haveParameters):
+        if(haveParameters and len(elements) == 0):
             elements = self.findParameters(startIndex, r_clauseStartIndex, source, directiveDetails)
         super(Clause, self).setElements(elements)
 

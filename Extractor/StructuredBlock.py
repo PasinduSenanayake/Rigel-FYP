@@ -1,6 +1,8 @@
 from Block import Block
 from Directive import Directive
+from Clause import Clause
 from ForLoop import ForLoop
+from Parameter import Parameter
 import re
 
 class StructuredBlock(Block):
@@ -42,6 +44,18 @@ class StructuredBlock(Block):
             newPragma.parent = self
             self.elements.insert(0, newPragma)
 
+    def offload(self, pragma=None, num_threads=1, clauses=""):
+        if not self.directive():
+            threadClause = Clause(name="num_threads", directiveDetails=Directive.directivesDict[pragma]["clauses"], haveParameters=True, elements=[Parameter(0, num_threads, [])])
+            threadClause.outerSpacing = ") "
+            threadClause.innerSpacing = "("
+            newPragma = Directive(self.startIndex, name=pragma, elements=[threadClause,Block(clauses,self.startIndex)])
+            newPragma.outerSpacing = "\n"
+            newPragma.innerSpacing = " "
+            # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+            newPragma.parent = self
+            self.elements.insert(0, newPragma)
+            return newPragma
 
 
     # def isChild(self, parent):

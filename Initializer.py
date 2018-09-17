@@ -33,7 +33,7 @@ def processInitializer():
     #metaData extraction completed
 
     #Identifier Initiated
-    identify(extractor,sourceDirectry)
+    identify(extractor, sourceDirectry)
     #Identifier Completed
 
     logger.loggerInfo("Source Code Identification Process Completed Successfully")
@@ -41,7 +41,7 @@ def processInitializer():
 
     #Modifier Begins
     logger.loggerInfo("Source Code Modification Process Initiated")
-    modify(extractor,sourceDirectry)
+    modify(extractor, sourceDirectry)
 
 def dependencyChecker():
     if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+'/DatabaseManager/rigel.db')):
