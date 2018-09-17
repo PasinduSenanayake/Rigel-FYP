@@ -13,9 +13,9 @@ def copyFile(filename):
 
 def reenableLimit():
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
-    for index,line in enumerate(lines):
-        if "/*iteratotConuter++; if(iteratotConuter>100){break;};*/"in line:
-            lines[index] = line.replace("/*iteratotConuter++; if(iteratotConuter>100){break;};*/","iteratotConuter++; if(iteratotConuter>100){break;};")
+    # for index,line in enumerate(lines):
+    #     if "/*iteratotConuter++; if(iteratotConuter>100){break;};*/"in line:
+    #         lines[index] = line.replace("/*iteratotConuter++; if(iteratotConuter>100){break;};*/","iteratotConuter++; if(iteratotConuter>100){break;};")
 
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
@@ -27,8 +27,8 @@ def addCollapes():
         if "void profileHook" in line:
             code = line
             lines[index] = code+"#pragma omp for collapse(1) \n"
-        if "/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};"in line:
-            lines[index] = line.replace("/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};","/*iteratotConuter++; if(iteratotConuter>100){break;};*/")
+        # if "/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};"in line:
+        #     lines[index] = line.replace("/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};","/*iteratotConuter++; if(iteratotConuter>100){break;};*/")
 
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
@@ -57,12 +57,12 @@ def makeObjectCode(fileName,originalFileName,makeFilePath):
         return error
 
 def runCode():
-    processOutput = Popen('clang -c -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c -o '+fileLocation+'withCollapse.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('cd '+fileLocation +' && clang -c -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c -o '+fileLocation+'withCollapse.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
-    if error =="":
-        return "success"
-    else:
+    if "#pragma omp for collapse" in error:
         return error
+    else:
+        return "success"
 
 def removePragma():
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
@@ -74,7 +74,7 @@ def removePragma():
     out.close()
 
 def captureAndFix(numofLoops):
-    processOutput = Popen('clang -c -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c  -o '+fileLocation+'withCollapse.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('cd '+fileLocation +' && clang -c -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c  -o '+fileLocation+'withCollapse.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
     lines = open(fileLocation+"withCollapse.c", 'r').readlines()
     iniIndex = 0
@@ -147,6 +147,7 @@ def incrementAndRun(numofLoops):
     out.close()
     if(runCode()=="success"):
         incrementAndRun(numofLoops+1)
+
     else:
         captureAndFix(numofLoops)
 

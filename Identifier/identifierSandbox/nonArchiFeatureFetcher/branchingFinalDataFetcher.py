@@ -10,6 +10,7 @@ iterations = ['16','32','64','128','256','512','1024']
 
 def finalBranchCounter(fileName):
     global fileLocation
+    finalCount = [0,0,0,0,0,0,0]
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
         with open(fileLocation+"branching.json", "r") as fin:
@@ -31,5 +32,5 @@ def finalBranchCounter(fileName):
         text_file.close()
         return True
     except Exception as e:
-        logger.loggerError.debug("Final Branch count failed with Error : "+str(e))
+        logger.loggerError("Final Branch count failed with Error : "+str(e))
         return False

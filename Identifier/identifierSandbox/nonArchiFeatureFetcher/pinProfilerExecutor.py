@@ -63,13 +63,17 @@ def runPinProf(arguments,filePath):
                             if(resultPin == "success"):
                                 logger.loggerSuccess("Branch info extraction completed")
                                 logger.loggerInfo("Branch info reordering initiated")
-                                isCompleted = preBranchDataFetch(filePath)
-                                if(isCompleted):
-                                    isCompleted = fetchBranchInfo()
-                                    if not isCompleted:
-                                        resultPin = "failed"
-                                else:
+                                isCompleted = fetchBranchInfo(filePath)
+                                if not isCompleted:
                                     resultPin = "failed"
+
+                                # isCompleted = preBranchDataFetch(filePath)
+                                # if(isCompleted):
+                                #     isCompleted = fetchBranchInfo()
+                                #     if not isCompleted:
+                                #         resultPin = "failed"
+                                # else:
+                                #     resultPin = "failed"
                                 if(resultPin == "success"):
                                     logger.loggerSuccess("Branch info reordering completed")
                                     logger.loggerInfo("Collapse Branch info extraction initiated")
@@ -77,13 +81,16 @@ def runPinProf(arguments,filePath):
                                     if(resultPin == "success"):
                                         logger.loggerSuccess("Collapse Branch info extraction completed")
                                         logger.loggerInfo("Collapse Branch info reordering initiated")
-                                        isCompleted = preCollapseBranchDataFetch(filePath)
-                                        if(isCompleted):
-                                            isCompleted = fetchCollapseBranchInfo()
-                                            if not isCompleted:
-                                                resultPin = "failed"
-                                        else:
+                                        isCompleted = fetchCollapseBranchInfo(filePath)
+                                        if not isCompleted:
                                             resultPin = "failed"
+                                        # isCompleted = preCollapseBranchDataFetch(filePath)
+                                        # if(isCompleted):
+                                        #     isCompleted = fetchCollapseBranchInfo()
+                                        #     if not isCompleted:
+                                        #         resultPin = "failed"
+                                        # else:
+                                        #     resultPin = "failed"
                                         if(resultPin == "success"):
                                             logger.loggerSuccess("Collapse Branch info reordering completed")
                                             logger.loggerInfo("Final Branch info reordering initiated")
@@ -139,6 +146,8 @@ def profileInPin(soFile,arguments):
         return "success"
     elif "All done reading" in error:
         return "success"
+    elif "getcwd()" in error:
+        return "success"
     else:
         return error
 
@@ -149,6 +158,8 @@ def profileTwoInPin(soFile,arguments):
     if error=="":
         return "success"
     elif "All done reading" in error:
+        return "success"
+    elif "getcwd()" in error:
         return "success"
     else:
         return error
@@ -161,6 +172,8 @@ def profileILPInPin(soFile,arguments):
         return "success"
     elif "All done reading" in error:
         return "success"
+    elif "getcwd()" in error:
+        return "success"
     else:
         return error
 
@@ -172,6 +185,8 @@ def profileBranchInPin(soFile,arguments):
     if error=="":
         return "success"
     elif "All done reading" in error:
+        return "success"
+    elif "getcwd()" in error:
         return "success"
     else:
         return error
