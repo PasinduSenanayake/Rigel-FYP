@@ -18,11 +18,11 @@ sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 # parser.add_argument('-ca', '--carguments', type=str, help='Compiler time arguments', required=False, default="")
 # parser.add_argument('-fa', '--farguments', type=str, help='Run time arguments', required=False, default="")
 # args = parser.parse_args()
-# response = {
-#     "returncode":0,
-#     "error":"",
-#     "content":{}
-#     }
+response = {
+    "returncode":0,
+    "error":"",
+    "content":{}
+    }
 # arguments = {
 #     "fileAbsPath": args.fpath,
 #     "runTimeArguments": args.farguments,
@@ -50,7 +50,7 @@ class VectorReportAnalyzer:
         command = "icc -o2 -qopt-report=5 -qopt-report-phase=all " + " ".join(sourcePaths)
         # command.replace("'", "\"")
         # print(command)
-        processOutput = Popen(command, shell=True, cwd=self.sourceDir)
+        processOutput = Popen(command, shell=True, cwd=self.sourceDir+"/_vectorization")
         stdout, stderr = processOutput.communicate()
         if(stderr==None):
             print "Compiled Successfully"
@@ -63,7 +63,7 @@ class VectorReportAnalyzer:
         return fullname
 
     def readVectorReport(self,filePath):
-        file = FileHandler.getInstance().readSource(filePath[0:-2]+'.optrpt')
+        file = FileHandler.getInstance().readSource(filePath)
         # print("read")
         return file
 
@@ -188,7 +188,7 @@ class VectorReportAnalyzer:
         try:
             self.compileFile()
             for source in self.sources:
-                report = self.readVectorReport(source)
+                report = self.readVectorReport(self.sourceDir+"/_vectorization/"+source.split("/")[-1][0:-2]+'.optrpt')
                 vectorList = self.removeDuplicateLoops(self.findLoopBlocks(report))
                 self.vectors[source] = vectorList
         except Exception as e:

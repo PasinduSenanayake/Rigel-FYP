@@ -22,6 +22,7 @@ class SourceCode:
         self.serialroot = self.getSerialCode(self.root)
         self.serialparallelOuterLoopMapping = self.serialParallelOuterLoopMap()
         self.serialparallelLoopMapping = self.serialParallelLoopMap()
+        self.tunedroot = copy.deepcopy(self.root)
 
     def isBlockComments(self, index):
         tempSource = self.code
@@ -202,11 +203,20 @@ class SourceCode:
         return mapping
 
     def vectorize(self, lineNumber, vectorLen=None, alignment=None):
-        nextObj = self.root
+        nextObj = self.tunedroot
         while nextObj:
             if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
                 structuredBlock = nextObj.getParent()
                 structuredBlock.vectorize(vectorLen, alignment)
+                break
+            nextObj = nextObj.getNext()
+
+    def offload(self, lineNumber, pragma=None, num_threads=None, clauses=""):
+        nextObj = self.tunedroot
+        while nextObj:
+            if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
+                structuredBlock = nextObj.getParent()
+                return structuredBlock.offload(pragma, str(num_threads), clauses)
                 break
             nextObj = nextObj.getNext()
 

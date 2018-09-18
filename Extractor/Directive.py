@@ -11,17 +11,18 @@ class Directive(Block):
     directivesDict = FileHandler.getInstance().readDirectives()
 
     def __init__(self, startIndex, sourceCode = None, name = None , elements = None):
-        directiveString = sourceCode[startIndex:self.getLineEnding(sourceCode, startIndex)]
-        foundDirective = self.findDirective(directiveString)
-        self.name = foundDirective[0]
-        sourceDirective = foundDirective[1]
-        self.details = self.directivesDict[self.name]
-        if not elements:
-            elements = self.findClauses(startIndex, directiveString)
         if name:
-            super(Directive, self).__init__(name, startIndex)
+            self.name = name
+            super(Directive, self).__init__("#pragma omp " + name, startIndex)
         else:
+            directiveString = sourceCode[startIndex:self.getLineEnding(sourceCode, startIndex)]
+            foundDirective = self.findDirective(directiveString)
+            self.name = foundDirective[0]
+            sourceDirective = foundDirective[1]
+            self.details = self.directivesDict[self.name]
             super(Directive, self).__init__(sourceDirective, startIndex)
+            if not elements:
+                elements = self.findClauses(startIndex, directiveString)
         super(Directive, self).setElements(elements)
 
     def findDirective(self, directiveString):
@@ -76,6 +77,15 @@ class Directive(Block):
                     break
                 lineBreaks = lineBreaks - 1
         return startIndex+directiveLength
+
+    def modifyClause(self, clauseName, content):
+        for clause in self.elements:
+            if clause.body == clauseName:
+                clause.elements = []
+                parameter = Parameter(0, str(content), [])
+                parameter.parent = clause
+                clause.elements.append(parameter)
+
 
     # def setSchedule(self, mechanism):
     #     for clause in self.elements:

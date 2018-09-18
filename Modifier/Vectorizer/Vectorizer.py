@@ -1,3 +1,5 @@
+from numpy import vectorize
+
 from VectorReportAnalyzer import VectorReportAnalyzer
 import os
 import sys
@@ -30,36 +32,48 @@ class Vectorizer():
             loopMapping = source.getLoopMapping()
             fileName = filePath.split("/")[-1]
             for vector in vectorList:
-                startLine = vector["line"]
+                startLine = None
                 endLine = None
                 for entry in loopMapping["parallel"]:
                     if entry[0] == vector["line"]:
+                        startLine = entry[0]
                         endLine = entry[1]
+                        break
+                if not startLine:
+                    for entry in loopMapping["parallel"]:
+                        if int(entry[0]) == int(vector["line"]) - 1:
+                            logger.loggerInfo(
+                                "Exact loop was not found for line number "+ str(vector["line"]) + ". Nearest previous loop considered.")
+                            startLine = entry[0]
+                            endLine = entry[1]
+                            break
+
                 vectorLen = self.getVectorLength(startLine, endLine, filePath, instructionSet)
                 if vector["type"] == "vectorized_loop":
                     source.vectorize(vector["line"], vectorLen)
             # source.root.setLineNumber(1)
-            source.writeToFile(vectorDirectory + "/" + fileName[:-2] + "_vectorized.c", source.root)
+            print(vectorDirectory + "/" + fileName[:-2] + "_vectorized.c")
+            source.writeToFile(vectorDirectory + "/" + fileName[:-2] + "_vectorized.c", source.tunedroot)
 
 
     def getLatestInstrucionSet(self):
         systemDetails = dbManager.read("systemData")
         instructionSets = systemDetails["cpuinfo"]["vectorization"]
-        for set in instructionSets:
+        for set in reversed(instructionSets):
             if "avx-512" in set:
                 logger.loggerInfo(
-                    "avx-512 instruction set available for vectorization")
-                return "avx-512"
-        for set in instructionSets:
+                    set + " instruction set available for vectorization")
+                return set
+        for set in reversed(instructionSets):
             if "avx" in set:
                 logger.loggerInfo(
-                    "avx instruction set available for vectorization")
-                return "avx"
-        for set in instructionSets:
+                    set + " instruction set available for vectorization")
+                return set
+        for set in reversed(instructionSets):
             if "sse" in set:
                 logger.loggerInfo(
-                    "sse instruction set available for vectorization")
-                return "sse"
+                    set + " instruction set available for vectorization")
+                return set
 
     def getVectorLength(self, startLine, endLine, filePath, instructionSet):
         logger.loggerInfo("Array Information Fetcher Initiated for lines " + str(startLine)+ "-" + str(endLine) )
@@ -76,9 +90,22 @@ class Vectorizer():
         sizes = []
         for array, details in loopDetails.items():
             dataType = details["dataType"].replace("*","").strip()
+            if dataType not in dataSizes:
+                logger.loggerInfo("Variable type other than int, float, double found in arrays. Macros not supported. Found type - " + dataType)
+                continue
             sizes.append(int(dataSizes[dataType]))
+        if len(sizes) == 0:
+            logger.loggerInfo(
+                "Failed to find valid data types inside the loop. Assuming a size of a double")
+            sizes.append(8)
+
         if (all(x == sizes[0] for x in sizes)):
-            return registerLength[instructionSet]/(sizes[0]*8)
+            for set,length in registerLength.items():
+                if set in instructionSet:
+                    return registerLength[set]/(sizes[0]*8)
         else:
-            return registerLength[instructionSet]/(max(sizes)*8)
+            for set,length in registerLength.items():
+                if set in instructionSet:
+                    return registerLength[set] / (max(sizes) * 8)
+
 
