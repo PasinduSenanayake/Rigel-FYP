@@ -45,7 +45,7 @@ def identify(extractor,directory):
     with open(directory+'/run.json') as runArgumentFile:
         dataArguments = json.load(runArgumentFile)
     if not (dataArguments['runTimeArguments'] == None):
-        dbManager.write('runTimeArguments',dataArguments['runTimeArguments'])
+        dbManager.write('runTimeArguments',str(dataArguments['runTimeArguments']))
     else:
         logger.loggerError("Run time arguments fetcher Failed. Optimization process terminated.")
         print "Run time arguments fetcher Failed. Optimization process terminated."
