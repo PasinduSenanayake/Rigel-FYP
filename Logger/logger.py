@@ -26,6 +26,15 @@ def createLog():
         loggerErrorData = logging.getLogger("error:")
         loggerSuccessData = logging.getLogger("success:")
 
+    ##temporary added
+    fileName = fileName.split("/")
+    if fileName[-1] == "offloadOptimizer.py":
+        LOG_FILENAME = os.path.dirname(os.path.realpath(__file__))+"/logfiles/"+str(datetime.datetime.now())+"_optimizer_process.log"
+        logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s',filename=LOG_FILENAME, filemode="w", level=logging.INFO)
+        loggerInfoData = logging.getLogger("info:")
+        loggerErrorData = logging.getLogger("error:")
+        loggerSuccessData = logging.getLogger("success:")
+
 
 def loggerInfo(message):
     if not loggerInfoData == None:
