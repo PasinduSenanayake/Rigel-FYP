@@ -3,7 +3,9 @@
 import json
 import os
 import math
-import re
+import re,sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../../Identifier/systemIdentifier")
+from systemIdentifier import __systemInformationIdentifier
 
 """ offloadChecker compose required pragma for loop structures which are eligible for GPU execution
   NOTE: getting input details from clang verbose not implemented
@@ -25,7 +27,7 @@ config = {}
 targetPragmaDic = {}
 threadsPerWarp = 0
 GPUData_File = str(os.path.dirname(
-    (os.path.dirname(os.path.realpath(__file__))))) + os.sep + "SystemDependencies" + os.sep + "GPUData.json"
+    (os.path.dirname(os.path.realpath(__file__))))) + os.sep + "../Identifier/systemIdentifier/SystemDependencies" + os.sep + "GPUData.json"
 
 
 def __ceil(a, b):
@@ -43,10 +45,7 @@ input = {
     "sharedMemoryPerBlock": 932
 }
 
-def __readClangVerbose():
-    print ""
-
-def __readGPUData(computeCapability):
+def readGPUData(computeCapability):
     with open(GPUData_File, 'r') as gpuDataFile:
         data = json.load(gpuDataFile)
         global config
@@ -56,7 +55,7 @@ def __readGPUData(computeCapability):
         threadsPerWarp = config['threadsPerWarp']
 
 
-def __occupancyCalculator():
+def occupancyCalculator():
     maxThreadBlockSize = config['maxThreadBlockSize'] + 1
     occupancyDic = {}
 
@@ -126,17 +125,16 @@ def __occupancyCalculator():
             occupancyDic[occupancyOfMultiprocessor] = list_
 
     maxOccupancy = max(list(occupancyDic))
-    print occupancyDic[maxOccupancy]
-    return max(occupancyDic[maxOccupancy])
+    return occupancyDic[maxOccupancy]
 
 
 # find collapsible depth
-def __colllapsibleDepth(key, value, loopMetaData):
+def colllapsibleDepth(key, value, loopMetaData):
     if len(value) == 1:
         if (loopMetaData[key]['loopMeta']['collapse'][1]):
             if isinstance(value[0], dict):
                 for key1, value1 in value[0].iteritems():
-                    return 1 + __colllapsibleDepth(key1, value1, loopMetaData)
+                    return 1 + colllapsibleDepth(key1, value1, loopMetaData)
             else:
                 return 2
         else:
@@ -145,7 +143,7 @@ def __colllapsibleDepth(key, value, loopMetaData):
         return 1
 
 
-def __calculateTeams(threadsPerTeam, iterationSpace):
+def calculateTeams(threadsPerTeam, iterationSpace):
     remainder = iterationSpace % threadsPerTeam
     if (remainder) > 0:  # not a multiple of 32
         iterationSpace = threadsPerTeam - remainder + iterationSpace
@@ -153,7 +151,7 @@ def __calculateTeams(threadsPerTeam, iterationSpace):
     return teams
 
 
-def __pragmaGenerator(depth, threadsPerTeam, teams):
+def pragmaGenerator(depth, threadsPerTeam, teams):
     if (depth == 1):  # not collapsible
         rep = {"$teams": str(teams), "$threads":str(threadsPerTeam)}  # define desired replacements here
         string = TARGET_PRAGMA_SPLIT
@@ -170,19 +168,19 @@ def __pragmaGenerator(depth, threadsPerTeam, teams):
 # collapsible
 # number of teams
 # number of threads
-def __loadLoopData(looporder, loopmetadata):
+def loadLoopData(looporder, loopmetadata):
     loopOrder = looporder
     loopMetaData = loopmetadata
     global targetPragmaDic
-    __readGPUData()
+    readGPUData()
     print loopOrder
     print loopMetaData
     for key, value in loopOrder.iteritems():
         iterations = 4096*4096
-        depth = __colllapsibleDepth(key, value, loopMetaData)
-        threadsPerTeam = __occupancyCalculator()
-        teams = __calculateTeams(threadsPerTeam, iterations)
-        outputPragma = __pragmaGenerator(depth, threadsPerTeam, teams)
+        depth = colllapsibleDepth(key, value, loopMetaData)
+        threadsPerTeam = occupancyCalculator()
+        teams = calculateTeams(threadsPerTeam, iterations)
+        outputPragma = pragmaGenerator(depth, threadsPerTeam, teams)
         targetPragmaDic[key] = outputPragma
     print targetPragmaDic
 
@@ -191,11 +189,15 @@ def __loadLoopData(looporder, loopmetadata):
 # in case number of threads are greater than iteration space
 # hint from more teams with less threads
 
-def occupancyCalculation(computeCapability,registersPerThread,sharedMemoryPerBlock):
+def occupancyCalculation(registersPerThread,sharedMemoryPerBlock):
     global input
     input["registersPerThread"] = float(registersPerThread)
     input["sharedMemoryPerBlock"] = float(sharedMemoryPerBlock)
-    __readGPUData(computeCapability)
-    threadsPerTeam = __occupancyCalculator()
-    return threadsPerTeam
-# print(threadsPerTeam)
+    responseObj = __systemInformationIdentifier()
+    if responseObj['returncode'] == 1:
+            gpuInfo = responseObj['content']['gpuinfo']
+            nvidiaGPUList = [key for key in gpuInfo if "NVIDIA" in key]
+            computeCapability = gpuInfo[nvidiaGPUList[0]]['compute_capability']
+            readGPUData(computeCapability)
+            threadsPerTeamList = occupancyCalculator()
+            return threadsPerTeamList
