@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 {
 
     // set up array size
-    int nElem = 6400000; // total number of elements to reduce
+    int nElem = 6400000*256; // total number of elements to reduce
     printf("With array size %d\n", nElem);
     size_t nBytes = nElem * sizeof(float);
 

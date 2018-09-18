@@ -146,6 +146,8 @@ def profileInPin(soFile,arguments):
         return "success"
     elif "All done reading" in error:
         return "success"
+    elif "getcwd()" in error:
+        return "success"
     else:
         return error
 
@@ -156,6 +158,8 @@ def profileTwoInPin(soFile,arguments):
     if error=="":
         return "success"
     elif "All done reading" in error:
+        return "success"
+    elif "getcwd()" in error:
         return "success"
     else:
         return error
@@ -168,6 +172,8 @@ def profileILPInPin(soFile,arguments):
         return "success"
     elif "All done reading" in error:
         return "success"
+    elif "getcwd()" in error:
+        return "success"
     else:
         return error
 
@@ -179,6 +185,8 @@ def profileBranchInPin(soFile,arguments):
     if error=="":
         return "success"
     elif "All done reading" in error:
+        return "success"
+    elif "getcwd()" in error:
         return "success"
     else:
         return error

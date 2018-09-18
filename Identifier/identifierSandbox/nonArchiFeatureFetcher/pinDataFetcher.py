@@ -15,7 +15,7 @@ def dataCollect(codeName,initLine,endLine,csvPath,fileName):
     global fileLocation
     global tOps
     global total_sp_float_ops
-
+    global dataRow
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     isCollectSuccess = True
     logger.loggerInfo("Check for new CSV")
@@ -196,5 +196,11 @@ def dataCollect(codeName,initLine,endLine,csvPath,fileName):
         inswriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         inswriter.writerow(dataRow)
     logger.loggerSuccess("Writing to CSV completed")
+    fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
+    dataRow =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+
+    tOps = 0
+    total_sp_float_ops = 0
 
     return isCollectSuccess

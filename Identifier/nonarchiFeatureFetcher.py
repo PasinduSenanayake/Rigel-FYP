@@ -12,17 +12,17 @@ from identifierSandbox.nonArchiFeatureFetcher.pinDataFetcher import dataCollect
 
 
 
-def hotspotsProfiler(codeName,mainFilePath,annotatedFile,makeFile,compileCommand,arguments,segmentArray,initLocation):
+def hotspotsProfiler(codeName,mainFilePath,annotatedFile,makeFile,compileCommand,arguments,segmentArray,initLocation,trainCollection=True):
     logger.loggerInfo("File coping started")
     isCopySuccessful = True
     subFilePath = ""
     if (os.path.isfile(mainFilePath)):
-        subFilePath = mainFilePath.split("Sandbox")[1]
-        makeFilePath = makeFile.split("Sandbox")[1]
-        annotatedFilePath = annotatedFile.split("Sandbox")[1]
+        subFilePath = mainFilePath.rsplit("Sandbox",1)[1]
+        makeFilePath = makeFile.rsplit("Sandbox",1)[1]
+        annotatedFilePath = annotatedFile.rsplit("Sandbox",1)[1]
         if(os.path.exists(os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")):
             shutil.rmtree(os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")
-        shutil.copytree("./Sandbox", os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")
+        shutil.copytree(initLocation+"/Sandbox", os.path.dirname(os.path.realpath(__file__))+"/identifierSandbox/nonArchiFeatureFetcher/Sandbox")
     else:
         logger.loggerError("No " + mainFilePath +" found. Process stopped" )
         isCopySuccessful = False
@@ -51,7 +51,10 @@ def hotspotsProfiler(codeName,mainFilePath,annotatedFile,makeFile,compileCommand
                             if(pinresult):
                                 logger.loggerSuccess("Pin profile for "+str(segment[0])+"-"+str(segment[1])+" completed")
                                 logger.loggerInfo("Information extraction for "+str(segment[0])+"-"+str(segment[1])+" initiated")
-                                pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv",subFilePath)
+                                if not trainCollection :
+                                    pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),initLocation+"/gpuvscpu.csv",subFilePath)
+                                else:
+                                    pinDataresult = dataCollect(codeName,str(segment[0]),str(segment[1]),initLocation+"/Benchmarks/machineLearning/gpuSuitability/gpuvscpu.csv",subFilePath)
                                 if(pinDataresult):
                                     logger.loggerSuccess("Data collect for "+str(segment[0])+"-"+str(segment[1])+" completed")
                                 else:

@@ -58,15 +58,17 @@ int prime_number ( int n )
   int prime;
   int total =0 ;
 
-#pragma omp target map(tofrom:total)
-#pragma omp teams thread_limit(640)
-#pragma omp distribute parallel for private( i, j, prime) reduction(+:total)
+//#pragma omp teams thread_limit(640)
 
-  for ( i = 2; i <= n; i++ )
+#pragma omp target data map(tofrom:total)
+#pragma omp target teams thread_limit(640)
+#pragma omp distribute parallel for
+
+  for ( int i = 2; i <= n; i++ )
   {
-    prime = 1;
+    int prime = 1;
 
-    for ( j = 2; j < i; j++ )
+    for ( int j = 2; j < i; j++ )
     {
       if ( i % j == 0 )
       {

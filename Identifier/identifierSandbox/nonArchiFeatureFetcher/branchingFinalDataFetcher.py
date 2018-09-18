@@ -10,6 +10,7 @@ iterations = ['16','32','64','128','256','512','1024']
 
 def finalBranchCounter(fileName):
     global fileLocation
+    finalCount = [0,0,0,0,0,0,0]
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
     try:
         with open(fileLocation+"branching.json", "r") as fin:

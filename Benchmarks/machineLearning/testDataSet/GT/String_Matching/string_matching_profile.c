@@ -16,12 +16,16 @@
 // #define SIZE2 5000
 // #define SIZE 3000000
 // #define SIZE2 5000
-#define SIZE 4000000
-#define SIZE2 5000
+int SIZE = 2000000;
+int SIZE2 = 5000;
 #define GPU_DEVICE 0
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.01
 
-/// initialize the two strings
+
+//----> AdditionalCodeHook
+
+
+
 void init(char *frase, char *palavra)
 {
   int i;
@@ -39,16 +43,15 @@ void init(char *frase, char *palavra)
   palavra[i] = '\0';
 }
 
-/// string matching algorithm GPU
-/// s = size of longer string
-/// p = size of less string
+
 int string_matching_GPU(char *frase, char *palavra)
 {
   int i,diff,j,parallel_size, count = 0;
   diff  = SIZE - SIZE2;
 
 
-    for(int i=0;i<diff;i++)
+
+    for(int i=0;i<199500;i++)
     {
       int v;
       v = 1;
@@ -63,6 +66,9 @@ int string_matching_GPU(char *frase, char *palavra)
       count +=v;
 
     }
+
+
+
   return count;
 }
 
@@ -83,9 +89,9 @@ int main(int argc, char *argv[])
   init(frase, palavra);
 
 
-  t_start = rtclock();
-  count_gpu = string_matching_GPU(frase, palavra);
-  t_end = rtclock();
+
+  string_matching_GPU(frase, palavra);
+
 
 
   free(frase);

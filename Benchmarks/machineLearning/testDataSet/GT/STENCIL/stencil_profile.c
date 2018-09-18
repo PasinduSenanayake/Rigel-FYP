@@ -35,15 +35,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#include <inttypes.h>
+#include <endian.h>
+#include <sys/types.h>
 
-#ifdef __APPLE__
-  #include <machine/endian.h>
-  #include <sys/malloc.h>
-#else
-  #include <endian.h>
-  #include <malloc.h>
-#endif
+#include <malloc.h>
 
 #include "parboil.h"
 #include "polybenchUtilFuncts.h"
@@ -76,6 +71,9 @@ struct pb_Parameters *parameters;
 
 double t_start, t_end;
 float *h_Anext_CPU;
+
+
+
 
 //This kernel moved to iteration loop to profile easily
 void cpu_stencilCPU(float *A0, float * Anext) {
@@ -112,6 +110,8 @@ static int read_data(float *A0, int nx,int ny,int nz,FILE *fp) {
     }
   return 0;
 }
+
+//----> AdditionalCodeHook
 
 double stencilCPU(int argc, char** argv) {
   //declaration
@@ -166,7 +166,8 @@ double stencilCPU(int argc, char** argv) {
   for(t=0;t<iteration;t++) //calling to kernel happens multiple times
     {
 
-      //Section A to profile , in cuda also this is the kernel executed by threads
+
+
       for(int k=1;k<NZ-1;k++) {
         for(int j=1;j<NY-1;j++) {
           for(int i=1;i<NX-1;i++) {
@@ -181,7 +182,9 @@ double stencilCPU(int argc, char** argv) {
           }
         }
       }
-    //end of Section A to profile
+
+
+
 
       float *temp=h_A0;
       h_A0 = h_Anext;
@@ -197,7 +200,7 @@ double stencilCPU(int argc, char** argv) {
   return t_end - t_start;
 }
 
-//----> AdditionalCodeHook
+
 
 int main(int argc, char** argv) {
   double t_CPU;
