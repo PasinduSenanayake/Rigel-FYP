@@ -139,7 +139,7 @@ def mapTargetData(path,loopStartLine,loopEndline):
                 fout.write(item)
             if (loopEndline - i == 1):
                 fout.write('}')
-    processOutput = Popen('clang '+ directoryPath + '/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang ' + directoryPath + '/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     nextLineUseful = False
     while True:
         line = processOutput.stderr.readline()
@@ -168,15 +168,13 @@ def mapTargetData(path,loopStartLine,loopEndline):
     pragma = '#pragma omp target data'
     for key in undefinedVariables.keys():
         if (undefinedVariables[key]['nature']['read'] and undefinedVariables[key]['nature']['write']):
-            pragma  = pragma + ' map(tofrom:'+key+')'
+            pragma  = pragma + ' map(tofrom:'+ undefinedVariables[key]['dataSource'] +')'
         else:
             if (undefinedVariables[key]['nature']['read']):
-                pragma  = pragma + ' map(to:'+key+')'
+                pragma  = pragma + ' map(to:'+ undefinedVariables[key]['dataSource'] + ')'
             if (undefinedVariables[key]['nature']['write']):
-                pragma  = pragma + ' map(from:'+key+')'
-
+                pragma  = pragma + ' map(from:'+ undefinedVariables[key]['dataSource'] + ')'
     os.remove(directoryPath+'/target.c')
     os.remove(directoryPath+'/targetChanged.c')
-    print pragma
     return pragma
 
