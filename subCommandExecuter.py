@@ -1,9 +1,12 @@
 import json,os,sys
 import shutil
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
-import logger
+sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
+sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
+import dbManager,logger
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
+from Modifier.gpuMachineLearner.gpuMLExecuter import mlModelExecutor
 from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
@@ -32,6 +35,25 @@ def checkSubCommandConf():
         return False
     else:
         return True
+
+def mlGPUDataMode():
+    if(checkSubCommandConf()):
+        commadName = commandJson['command']['mlGUPModel']
+        resultLocal = mlModelExecutor(commadName['filePath'])
+        if (resultLocal):
+            result['code']=0
+            result['content']=resultLocal
+            result['error']=''
+            result['successMessage']='GPU machine learning process concluded successfully'
+            logger.loggerSuccess("GPU machine learning process concluded successfully")
+        else:
+            result['code']=1
+            result['content']=[]
+            result['error']='GPU machine learning model failed'
+            result['successMessage']=''
+            logger.loggerError("GPU machine learning model Failed")
+
+
 
 def nonArchi():
     global result
@@ -149,6 +171,7 @@ def runCommand(command):
         'systemIdentify':lambda : systemIdentify(),
         'sourceAnnotation': lambda : sourceAnnotation(),
         'arrayInfoFetch':lambda : arrayInformationFetch(),
+        'mlGUPModel':lambda : mlGPUDataMode(),
     }[command]()
 
     return result

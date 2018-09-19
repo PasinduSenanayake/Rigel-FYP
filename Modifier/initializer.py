@@ -15,7 +15,7 @@ def modify(extractor,directory):
     if (result):
         logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
     else:
-        logger.loggerError("Gpu Machine Learning Model Execution Terminated.")
+        logger.loggerError("Gpu Machine Learning Model Execution Failed.")
     exit()
 
     logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
