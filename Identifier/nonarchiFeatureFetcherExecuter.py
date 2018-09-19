@@ -46,26 +46,32 @@ def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
         for index,element in enumerate(serialSections):
             parallelStartLine = parallelSections[index].split(":")[0]
             parallelEndLine = parallelSections[index].split(":")[1]
-            isIn = False
+            isIn = 'None'
             for data in loopSections:
+                #Can have the file Name restrictions if required.
                 if(data['startLine'] == str(int(parallelStartLine)-1) ):
                     if (data['endLine'] == parallelEndLine ):
-                        isIn = True
-                        break
-            if (isIn):
+                        if(data['optimiazability']):
+                            isIn = 'proceed'
+                            break
+                        else:
+                            isIn = 'notSig'
+
+            if (isIn=='proceed'):
                 sequentialStartLine = int(element.split(":")[0]) - 1
                 sequentialEndLine =int(element.split(":")[1]) + 1
                 fileName = fileName.replace("_serial.c",".c")
-                codeName = fileName+":p["+str(parallelStartLine)+"-"+str(parallelEndLine)+"]"
+                codeName = fileName+":p["+str(data['startLine'])+"-"+str(data['endLine'])+"]"
                 folderPath = directory + "/_profiling/Sandbox"
                 loopSegments = [[sequentialStartLine,sequentialEndLine]]
                 logger.loggerInfo("GPU Feature Extraction Process Initiated for section "+parallelStartLine+":"+parallelEndLine)
                 hotspotsProfiler(codeName,fileFeaturePath,fileFeaturePath,folderPath+"/Makefile","",dbManager.read('runTimeArguments'),loopSegments,directory+"/_profiling",False)
                 gc.collect()
                 logger.loggerSuccess("GPU Feature Extraction Process completed for section "+parallelStartLine+":"+parallelEndLine)
-            else:
+            elif(isIn=='notSig'):
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is skipped due to low overhead")
-        exit()
+            else:
+                logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is not a parallelable region. Skipped")
 
 
 
