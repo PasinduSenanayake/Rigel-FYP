@@ -7,7 +7,7 @@ from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
 from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
-
+from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
     with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as f:
@@ -63,6 +63,19 @@ def occupancyCal():
         result['error']=''
         result['successMessage']=''
         logger.loggerSuccess("occupancyCal command concluded successfully")
+
+def offloadOptimizer():
+        global result
+        logger.loggerInfo("offloadOptimizer Command Initiated")
+        if(checkSubCommandConf()):
+            commadName = commandJson['command']['offloadOptimizer']
+            resultLocal = runOffloadOptimizer()
+            result['code']=0
+            result['content']=resultLocal
+            result['error']=''
+            result['successMessage']=''
+            logger.loggerSuccess("offloadOptimizer command concluded successfully")
+
 
 def systemIdentify():
     global result
@@ -149,6 +162,7 @@ def runCommand(command):
         'systemIdentify':lambda : systemIdentify(),
         'sourceAnnotation': lambda : sourceAnnotation(),
         'arrayInfoFetch':lambda : arrayInformationFetch(),
+        'offloadOptimizer':lambda :offloadOptimizer(),
     }[command]()
 
     return result
