@@ -236,5 +236,5 @@ def mlModelExecutor(filePath):
                     dataItem["optimizeMethod"] ='GPU'
                 resultLaunch= resultLaunch+1
                 break
-    dbManager.write('loopSections',loopData)
+    dbManager.overWrite('loopSections',loopData)
     return True

@@ -23,6 +23,8 @@ def selectOptimizableLoopSections(optimizableLoops):
         'identifier':loopSection,
         'startLine': optimizableLoops[loopSection]['startLine'],
         'endLine':optimizableLoops[loopSection]['endLine'],
+        'serialStartLine':0,
+        'serialEndLine':0,
         'executionTime':optimizableLoops[loopSection]['sectionTime'],
         'optimiazability':False,
         'optimizeMethod':None
@@ -86,18 +88,24 @@ def identify(extractor,directory):
                 if (isVector):
                     gpuThread.join()
                     #vectorThread.join()
+                    loopSectionsTemp = dbManager.read('loopSectionsTemp')
+                    dbManager.overWrite('loopSections', loopSectionsTemp)
                     logger.loggerInfo("GPU and Vector Optimizations Considered")
                     response['content'] = {'cosidered':'both', 'status':True}
                     response["returncode"] = 0
 
                 else:
                     gpuThread.join()
+                    loopSectionsTemp = dbManager.read('loopSectionsTemp')
+                    dbManager.overWrite('loopSections', loopSectionsTemp)
                     logger.loggerInfo("Only GPU Optimizations Considered.")
                     response['content'] = {'cosidered':'GPU', 'status':True}
                     response["returncode"] = 0
             else:
                 if (isVector):
                     #vectorThread.join()
+                    loopSectionsTemp = dbManager.read('loopSectionsTemp')
+                    dbManager.overWrite('loopSections', loopSectionsTemp)
                     logger.loggerInfo("Only Vector Optimizations Considered.")
                     response['content'] = {'cosidered':'Vector', 'status':True}
                     response["returncode"] = 0
