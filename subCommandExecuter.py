@@ -11,6 +11,8 @@ from Identifier.systemIdentifier.systemIdentifier import __systemInformationIden
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
+from Identifier.summaryIdentifier.initilizerOmpp import getSummary
+from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
     with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as f:
@@ -35,6 +37,105 @@ def checkSubCommandConf():
         return False
     else:
         return True
+
+
+
+def modifierExecutor():
+    global result
+    if(checkSubCommandConf()):
+        from Extractor.Extractor import Extractor
+        commadName = commandJson['command']['modifierExecute']
+        folderPath = commadName['folderPath']
+        filePathOld = commadName['filePath']
+        logger.loggerInfo("Modifier Execution Command Initiated")
+        sourceDirectry = folderPath
+        extractor = Extractor(sourceDirectry)
+        logger.loggerInfo("System Information Fetcher Initiated")
+        responseObj = __systemInformationIdentifier()
+        if(responseObj['returncode']==1):
+            dbManager.write('systemData',responseObj['content'])
+            logger.loggerSuccess("System Information Fetcher completed successfully")
+        else:
+            logger.loggerError("System Information Fetcher Failed")
+            print "System Information Fetcher Failed. Optimization process terminated."
+            exit()
+        logger.loggerInfo("Run time arguments fetcher Initiated")
+        with open(folderPath+'/run.json') as runArgumentFile:
+            dataArguments = json.load(runArgumentFile)
+        if not (dataArguments['runTimeArguments'] == None):
+            dbManager.write('runTimeArguments',str(dataArguments['runTimeArguments']))
+        else:
+            logger.loggerError("Run time arguments fetcher Failed. Optimization process terminated.")
+            print "Run time arguments fetcher Failed. Optimization process terminated."
+            exit()
+
+        logger.loggerSuccess("Run time arguments fetcher completed successfully")
+        logger.loggerInfo("Profile Summarization Initiated")
+        summarizedReport = getSummary(folderPath,dbManager.read('runTimeArguments'))
+        if summarizedReport['returncode'] == 1:
+            logger.loggerSuccess("Profile Summarization completed successfully")
+            optimizableLoops = summarizedReport['content']
+            selectedLoops = []
+            for loopSection in optimizableLoops:
+                selectedSection = {
+                    'fileName': optimizableLoops[loopSection]['fileName'],
+                    'identifier': loopSection,
+                    'startLine': optimizableLoops[loopSection]['startLine'],
+                    'endLine': optimizableLoops[loopSection]['endLine'],
+                    'serialStartLine':0,
+                    'serialEndLine':0,
+                    'executionTime': optimizableLoops[loopSection]['sectionTime'],
+                    'optimiazability': False,
+                    'optimizeMethod': None
+                }
+                if (float(optimizableLoops[loopSection]['overheadPrecentage']) > 0.0):
+                    selectedSection['optimiazability'] = True
+                selectedLoops.append(selectedSection)
+            dbManager.write('loopSections', selectedLoops)
+            workingDir = folderPath + "/_profiling/Sandbox"
+            if os.path.exists(workingDir):
+                shutil.rmtree(workingDir)
+            os.makedirs(workingDir)
+            for fileModify in os.listdir(folderPath):
+                filePath = folderPath + "/" + fileModify
+                if os.path.isfile(filePath):
+                    if fileModify.endswith(".c"):
+                        sourceObj = extractor.getSource(filePath)
+                        sourceObj.writeToFile(workingDir + "/" + fileModify, sourceObj.root)
+                        sourceObj.writeToFile(workingDir + "/" + fileModify[:-2] + "_serial.c", sourceObj.serialroot)
+                    else:
+                        shutil.copyfile(filePath, workingDir + "/" + fileModify)
+            with open(folderPath + "/_profiling/Sandbox/Makefile", 'r') as file:
+                filedata = file.read()
+                filedata = filedata.replace('.c', '_serial.c')
+            with open(folderPath + "/_profiling/Sandbox/Makefile", 'w') as file:
+                file.write(filedata)
+            serialSections = []
+            parallelSections = []
+            sourceObj = extractor.getSource(filePathOld)
+            for item in sourceObj.serialParallelOuterLoopMap():
+                for subItem in sourceObj.serialParallelOuterLoopMap()[item]:
+                    if item == "serial":
+                        serialSections.append(str(subItem.lineNumber) + ":" + str(subItem.endLineNumber))
+                    else:
+                        parallelSections.append(str(subItem.lineNumber) + ":" + str(subItem.endLineNumber))
+
+            for index, element in enumerate(serialSections):
+                parallelStartLine = parallelSections[index].split(":")[0]
+                parallelEndLine = parallelSections[index].split(":")[1]
+                for data in selectedLoops:
+                    # Can have the file Name restrictions if required.
+                    if (data['startLine'] == str(int(parallelStartLine) - 1)):
+
+                        if (data['endLine'] == parallelEndLine):
+                            if (data['optimiazability']):
+                                data['serialStartLine'] = str(int(element.split(":")[0]) - 1)
+                                data['serialEndLine']= str(int(element.split(":")[1]) + 1)
+                                break
+            dbManager.overWrite('loopSections', selectedLoops)
+            print dbManager.read('loopSections')
+        return {'extractor':extractor,'folderPath':folderPath}
+
 
 def mlGPUDataMode():
     if(checkSubCommandConf()):
@@ -186,6 +287,7 @@ def runCommand(command):
         'arrayInfoFetch':lambda : arrayInformationFetch(),
         'mlGUPModel':lambda : mlGPUDataMode(),
         'offloadOptimizer':lambda :offloadOptimizer(),
+        'modifierExecute':lambda :modifierExecutor(),
     }[command]()
 
     return result
