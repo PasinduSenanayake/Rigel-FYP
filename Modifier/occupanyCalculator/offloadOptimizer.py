@@ -10,6 +10,8 @@ import shutil
 import subprocess
 from offloadChecker import  occupancyCalculation
 from GpuTarget import mapTargetData
+from collapsibleFinder import  collapseAnnotator
+
 
 TARGET_PRAGMA_INITIALIZE = "#pragma omp target teams\n" \
                             "#pragma omp distribute parallel for schedule(static,1)"
@@ -27,6 +29,7 @@ CLANG = "cc=clang"
 MAKE = "make"
 MAKEFILE = "Makefile"
 makePath = ''
+modifierOffloaderFilePath = "/../modifierSandbox/OffloaderSandbox/Sandbox"
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/../../subCommandConf.json")):
     with open(os.path.dirname(os.path.realpath(__file__))+"/../../subCommandConf.json") as f:
@@ -45,15 +48,17 @@ input = {
 }
 
 loopList = [[22,32]]
+extractorPassObject = {'index': 0, 'pragma': ''}
+extractorPragmaList = []
 
 def moveSandbox():
     global result
     logger.loggerInfo("Source Code Annotation Command Initiated")
-    path = os.path.dirname(os.path.realpath(__file__))+"/../offloaderSandbox/Sandbox"
+    path = os.path.dirname(os.path.realpath(__file__))+ modifierOffloaderFilePath
     if(os.path.exists(path)):
-        shutil.rmtree(os.path.dirname(os.path.realpath(__file__))+"/../offloaderSandbox/Sandbox")
+        shutil.rmtree(os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath)
     try:
-        shutil.copytree("../../Sandbox", os.path.dirname(os.path.realpath(__file__))+"/../offloaderSandbox/Sandbox")
+        shutil.copytree("../../Sandbox", os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath)
     except Exception as e:
         logger.loggerError("Offload optimizer Sandbox moving failed")
 
@@ -62,7 +67,7 @@ def readClangVerbose():
     global input
     global makePath
     makefile = commandJson["command"]["nonArchiFeatureFetch"]["makeFile"]
-    makefilePath = os.path.dirname(os.path.realpath(__file__)) + "/../offloaderSandbox/Sandbox" + \
+    makefilePath = os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath + \
                    makefile.split("Sandbox")[1]
 
     makePath ='cd ' + makefilePath.replace('/'+MAKEFILE, '') + '  &&  ' + MAKE
@@ -85,7 +90,7 @@ def readClangVerbose():
 
 def changeMakeFile():
     makefile = commandJson["command"]["nonArchiFeatureFetch"]["makeFile"]
-    makefilePath = os.path.dirname(os.path.realpath(__file__))+"/../offloaderSandbox/Sandbox" + makefile.split("Sandbox")[1]
+    makefilePath = os.path.dirname(os.path.realpath(__file__))+ modifierOffloaderFilePath + makefile.split("Sandbox")[1]
     check = True
 
     with open(makefilePath,'r') as f:
@@ -106,8 +111,10 @@ def changeMakeFile():
 def __runOptimizerStandalone():
     global loopList
     global makePath
+    global extractorPragmaList
+
     annotatedFile = commandJson["command"]["nonArchiFeatureFetch"]["annotatedFile"]
-    offloadFilePath = os.path.dirname(os.path.realpath(__file__))+"/../offloaderSandbox/Sandbox" + annotatedFile.split("Sandbox")[1]
+    offloadFilePath = os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath + annotatedFile.split("Sandbox")[1]
     loopStartList = []
 
     for x in loopList:
@@ -136,14 +143,20 @@ def __runOptimizerStandalone():
         end =[ y[1] for y in loopList if y[0]==x]
         TARGET_MAP_PRAGMA =  mapTargetData(offloadFilePath, x, end[0])
 
-        #need to check suitability for collapsing and choose offload pragma
+        collapsibleDepth  = collapseAnnotator(offloadFilePath,x)
+
+        if collapsibleDepth > 1:
+            TARGET_PRAGMA = TARGET_PRAGMA_COLLAPSE.replace('$depth', collapsibleDepth)
+        else:
+            TARGET_PRAGMA = TARGET_PRAGMA_SPLIT
+
 
         OMP_GET_STIME = 'double omp_getwtime1,omp_getwtime2;\n' \
                         'omp_getwtime1 = omp_get_wtime();\n'
         OMP_GET_ETIME = 'omp_getwtime2 = omp_get_wtime();\n' \
                         'printf("GPU Runtime:%0.6lf", omp_getwtime2 - omp_getwtime1);\n'
 
-        FINALIZED_PRGAMA = OMP_GET_STIME + '#pragma omp target data map(to:A[0:n]) map(to:B[0:n]) map(tofrom:C[0:n])' + '\n' + TARGET_PRAGMA_SPLIT
+        FINALIZED_PRGAMA = OMP_GET_STIME + TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA
 
         timeList = []
         for threads in threadsPerTeamList:
@@ -176,8 +189,21 @@ def __runOptimizerStandalone():
 
         val, idx = min((val, idx) for (idx, val) in enumerate(timeList))
 
+        if collapsibleDepth > 1:
+            TARGET_PRAGMA = TARGET_PRAGMA_COLLAPSE.replace('$depth', collapsibleDepth)
+        else:
+            TARGET_PRAGMA = TARGET_PRAGMA_SPLIT
+
+        EXTRACTOR_PRAGMA = TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA.replace('$threads', str(threadsPerTeamList[idx]))
+
+        extractorPassObject['index'] = x
+        extractorPassObject['pragma'] = EXTRACTOR_PRAGMA
+        extractorPragmaList.append(extractorPassObject)
+
         print val,' ',idx
         print threadsPerTeamList[idx]
+    print extractorPragmaList
+
 
 
 if __name__ == "__main__":
@@ -185,10 +211,3 @@ if __name__ == "__main__":
     logger.loggerInfo("Offload Optimizer initiated")
     moveSandbox()
     __runOptimizerStandalone()
-
-
-
-
-
-
-
