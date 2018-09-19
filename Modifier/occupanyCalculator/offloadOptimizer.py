@@ -53,14 +53,17 @@ extractorPragmaList = []
 
 def moveSandbox():
     global result
+
+    print str(os.path.dirname(os.path.realpath(__file__)))
+
     logger.loggerInfo("Source Code Annotation Command Initiated")
-    path = os.path.dirname(os.path.realpath(__file__))+ modifierOffloaderFilePath
+    path = os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath
     if(os.path.exists(path)):
         shutil.rmtree(os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath)
     try:
-        shutil.copytree("../../Sandbox", os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath)
+        shutil.copytree(os.path.dirname(os.path.realpath(__file__))+"/../../Sandbox", os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath)
     except Exception as e:
-        logger.loggerError("Offload optimizer Sandbox moving failed")
+        logger.loggerError(e)
 
 
 def readClangVerbose():
@@ -154,7 +157,8 @@ def __runOptimizerStandalone():
         OMP_GET_STIME = 'double omp_getwtime1,omp_getwtime2;\n' \
                         'omp_getwtime1 = omp_get_wtime();\n'
         OMP_GET_ETIME = 'omp_getwtime2 = omp_get_wtime();\n' \
-                        'printf("GPU Runtime:%0.6lf", omp_getwtime2 - omp_getwtime1);\n'
+                        'printf("GPU Runtime:%0.6lf", omp_getwtime2 - omp_getwtime1);\n' \
+                        'exit(0)'
 
         FINALIZED_PRGAMA = OMP_GET_STIME + TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA
 
@@ -205,6 +209,9 @@ def __runOptimizerStandalone():
     print extractorPragmaList
 
 
+def runOffloadOptimizer():
+    moveSandbox()
+    __runOptimizerStandalone()
 
 if __name__ == "__main__":
     logger.createLog()
