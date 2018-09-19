@@ -7,6 +7,8 @@ import re,sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../../Identifier/systemIdentifier")
 from systemIdentifier import __systemInformationIdentifier
 
+
+
 """ offloadChecker compose required pragma for loop structures which are eligible for GPU execution
   NOTE: getting input details from clang verbose not implemented
         getting input for iteration space not implemented
@@ -14,12 +16,6 @@ from systemIdentifier import __systemInformationIdentifier
         for not-colllapsible loops split and parallel method is used
 
   """
-
-TARGET_PRAGMA_COLLAPSE = "#pragma omp target teams num_teams($teams) thread_limit($threads)" \
-                         "#pragma omp distribute parallel for collapse($depth) schedule(static,1)"
-
-TARGET_PRAGMA_SPLIT = "#pragma omp target teams num_teams($teams) thread_limit($threads)" \
-                      "#pragma omp distribute parallel for schedule(static,1)"
 
 loopOrder = {}
 loopMetaData = {}
@@ -141,29 +137,6 @@ def colllapsibleDepth(key, value, loopMetaData):
             return 1
     else:
         return 1
-
-
-def calculateTeams(threadsPerTeam, iterationSpace):
-    remainder = iterationSpace % threadsPerTeam
-    if (remainder) > 0:  # not a multiple of 32
-        iterationSpace = threadsPerTeam - remainder + iterationSpace
-    teams = iterationSpace / threadsPerTeam
-    return teams
-
-
-def pragmaGenerator(depth, threadsPerTeam, teams):
-    if (depth == 1):  # not collapsible
-        rep = {"$teams": str(teams), "$threads":str(threadsPerTeam)}  # define desired replacements here
-        string = TARGET_PRAGMA_SPLIT
-
-    else:
-        rep = {"$teams": str(teams), "$threads": str(threadsPerTeam),"$depth": str(depth)}  # define desired replacements here
-        string = TARGET_PRAGMA_COLLAPSE
-
-    rep = dict((re.escape(k), v) for k, v in rep.iteritems())
-    pattern = re.compile("|".join(rep.keys()))
-    return pattern.sub(lambda m: rep[re.escape(m.group(0))], string)
-
 
 # collapsible
 # number of teams
