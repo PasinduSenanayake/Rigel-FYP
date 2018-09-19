@@ -3,7 +3,8 @@
 from subprocess import Popen, PIPE
 import re,os
 from shutil import copyfile
-loopCountVarible = 0
+import math
+
 compilerOptins =""
 undefinedVariables = {}
 undefinedInnerVariables = {}
@@ -17,15 +18,17 @@ parameterNames = []
 innerGlobales = []
 fullGloableSet = ""
 appendableFunction = ""
+loopCountVarible = 0
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
 
 
-def makeObjectCode(fileName,makeFilePath):
-
+def makeObjectCode(fileName,makeFilePath,runtimeargs):
+    global loopCountVarible
     with open(makeFileLocation+makeFilePath, 'r') as file :
         filedata = file.read()
-    filedata = filedata.replace('runnableTest', 'runnable')
+    filedata = filedata.replace('[compiler]', 'clang')
+    filedata = filedata.replace('[targetObject]', 'runnableTest')
     with open(makeFileLocation+makeFilePath, 'w') as file:
         file.write(filedata)
 
@@ -36,6 +39,12 @@ def makeObjectCode(fileName,makeFilePath):
         os.remove(fileLocation+fileName)
         copyfile(fileLocation+'originalCode.c',fileLocation+fileName)
         os.remove(fileLocation+'originalCode.c')
+        processOutput = Popen('cd '+makeFileLocation +' && ./runnableTest '+runtimeargs,shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        output,error=processOutput.communicate()
+        outputStrings = output.split('\n')
+        for stringData in outputStrings:
+            if 'loopValC::'in stringData:
+                loopCountVarible =  stringData.split("::")[1]
         return "success"
     else:
         return error
@@ -77,7 +86,7 @@ def createFinalSourceCode(fileName,loopStartLine,loopEndline):
         for i, item in enumerate(fin, 1):
             if(i-loopStartLine==1):
                 fout.write(globleString)
-                fout.write('profileHook('+parameterSet+');exit(0); \n')
+                fout.write('profileHook('+parameterSet+');printf("loopValC::%d::",abcdefghLoopCounter);exit(0); \n')
                 fout.write(globleReString)
                 fout.write(reappendData)
             if (i > loopStartLine) and (i < loopEndline) :
@@ -106,16 +115,16 @@ def addFunctionHook():
     profileHookEndLine = 0
     for i, item in enumerate(lines):
         if  '/////######################################################/////' in item:
-            newitem = item+'\n'+'void profileHook('+parameterSet+'){int iteratotConuter =0; \n'
+            newitem = item+'\n'+'void profileHook('+parameterSet+'){int LoopCounter =0; \n'
             lines[i] = ''.join(newitem)
             profileHookStartLine = i
         if '/*addNewLoopPart*/break;' in item:
-            newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/iteratotConuter++; if(iteratotConuter>"+loopCountVarible+"){exit(0);}; ",1)
+            newitem = item.replace("/*addNewLoopPart*/break;","/*dontErase*/LoopCounter++; ",1)
             lines[i] = ''.join(newitem)
             profileHookEndLine = i
         if '/////----------------------------------------------------/////' in item:
             if '/*addNewLoopPart*/break;' in item:
-                item = item.replace("/*addNewLoopPart*/break;","/*dontErase*/iteratotConuter++; if(iteratotConuter>"+loopCountVarible+"){exit(0);}; ",1)
+                item = item.replace("/*addNewLoopPart*/break;","/*dontErase*/LoopCounter++; ",1)
             newitem =  item + '\n' + reappendData+'\n}'
             lines[i] = ''.join(newitem)
             profileHookEndLine = i
@@ -210,10 +219,10 @@ def classifyPointers():
             gloableValues.append(undefinedVariables[key]['type']+' abcdefgh'+key+';')
             gloableNames.append(key)
 
-
 def classifyInnerGloables():
     for key in undefinedInnerVariables.keys():
         innerGlobales.append(undefinedInnerVariables[key]['type']+' abcdefgh'+key+';')
+    innerGlobales.append('int'+' abcdefghLoopCounter;')
 
 
 #Identify the pointer variables in the code
@@ -317,7 +326,6 @@ def innerVaribales(fileName,loopStartLine,loopEndline):
             if('use of undeclared identifier' in lineCode):
                 nextLineUseful = True
                 variable =  re.findall(r"'(.*?)'", lineCode, re.DOTALL)[0]
-
                 if not variable in undefinedInnerVariables.keys():
                     undefinedInnerVariables[variable] = {
                         'type':'',
@@ -362,7 +370,7 @@ def findVariables(fileName,loopStartLine,loopEndline):
         else:
             break
 
-def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopEndline,loopCount):
+def targetDataMapCounter(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopEndline,runtimeargs):
     global undefinedVariables
     global undefinedInnerVariables
     global analizerVariables
@@ -377,7 +385,6 @@ def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopE
     global appendableFunction
     global compilerOptins
     global loopCountVarible
-    loopCountVarible = loopCount
     compilerOptins =  compilerOptinsPassed
     global fileLocation
     fileLocation = fileLocation+fileName.rsplit('/', 1)[0]+"/"
@@ -398,10 +405,12 @@ def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopE
     mapVariables()
     addFunctionHook()
     createFinalSourceCode(fileName,loopStartLine,loopEndline)
-    result = makeObjectCode(fileName,makeFilePath)
-
+    result = makeObjectCode(fileName,makeFilePath,runtimeargs)
+    returnResults = {'message':'', 'loopVal':0}
     if (result == "success"):
     # Remove intermediate files
+        returnResults['message'] = "success"
+        returnResults['loopVal'] = str(math.ceil(int(loopCountVarible)/10))
         os.remove(fileLocation+'target.c')
         os.remove(fileLocation+'subTarget.c')
         os.remove(fileLocation+'targetChanged2.c')
@@ -421,10 +430,11 @@ def targetDataMap(fileName,makeFilePath,compilerOptinsPassed,loopStartLine,loopE
         innerGlobales = []
         fullGloableSet = ""
         appendableFunction = ""
+        loopCountVarible = 0
         fileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
         makeFileLocation = os.path.dirname(os.path.realpath(__file__))+"/Sandbox"
-    return result
+    else :
+        returnResults['message']= result
 
 
-
-#targetDataMap('profileCode.c',sys.argv[1],sys.argv[2],sys.argv[3],)
+    return returnResults

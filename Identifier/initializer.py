@@ -18,15 +18,18 @@ response = {
 def selectOptimizableLoopSections(optimizableLoops):
     selectedLoops =[]
     for loopSection in optimizableLoops:
+        selectedSection = {
+        'fileName':optimizableLoops[loopSection]['fileName'],
+        'identifier':loopSection,
+        'startLine': optimizableLoops[loopSection]['startLine'],
+        'endLine':optimizableLoops[loopSection]['endLine'],
+        'executionTime':optimizableLoops[loopSection]['sectionTime'],
+        'optimiazability':False,
+        'optimizeMethod':None
+        }
         if(float(optimizableLoops[loopSection]['overheadPrecentage'])> 0.0):
-            selectedSection = {
-            'fileName':"",
-            'identifier':loopSection,
-            'startLine': optimizableLoops[loopSection]['startLine'],
-            'endLine':optimizableLoops[loopSection]['endLine'],
-            'executionTime':optimizableLoops[loopSection]['sectionTime']
-            }
-            selectedLoops.append(selectedSection)
+            selectedSection['optimiazability'] = True
+        selectedLoops.append(selectedSection)
     return selectedLoops
 
 def identify(extractor,directory):
@@ -45,7 +48,7 @@ def identify(extractor,directory):
     with open(directory+'/run.json') as runArgumentFile:
         dataArguments = json.load(runArgumentFile)
     if not (dataArguments['runTimeArguments'] == None):
-        dbManager.write('runTimeArguments',dataArguments['runTimeArguments'])
+        dbManager.write('runTimeArguments',str(dataArguments['runTimeArguments']))
     else:
         logger.loggerError("Run time arguments fetcher Failed. Optimization process terminated.")
         print "Run time arguments fetcher Failed. Optimization process terminated."
@@ -57,6 +60,7 @@ def identify(extractor,directory):
     if summarizedReport['returncode'] == 1:
         logger.loggerSuccess("Profile Summarization completed successfully")
         loopSections = selectOptimizableLoopSections(summarizedReport['content'])
+        dbManager.write('loopSections',loopSections)
         if (len(loopSections)>0):
             isGpu = True
             isVector = True
@@ -82,25 +86,36 @@ def identify(extractor,directory):
                 if (isVector):
                     gpuThread.join()
                     #vectorThread.join()
+                    logger.loggerInfo("GPU and Vector Optimizations Considered")
+                    response['content'] = {'cosidered':'both', 'status':True}
+                    response["returncode"] = 0
+
                 else:
                     gpuThread.join()
+                    logger.loggerInfo("Only GPU Optimizations Considered.")
+                    response['content'] = {'cosidered':'GPU', 'status':True}
+                    response["returncode"] = 0
             else:
                 if (isVector):
-                    ankjdasda = 10
                     #vectorThread.join()
+                    logger.loggerInfo("Only Vector Optimizations Considered.")
+                    response['content'] = {'cosidered':'Vector', 'status':True}
+                    response["returncode"] = 0
+
                 else:
-                    logger.loggerInfo("No hardware support is captured for optimizations. Optimization process terminated.")
-                    print "No hardware support is captured for optimizations. Optimization process terminated."
-                    exit()
+                    logger.loggerInfo("No additional hardware support is found for optimizations. only CPU optimizations will be considered.")
+                    response['content'] = {'cosidered':'None', 'status':True}
+                    response["returncode"] = 0
 
         else:
             logger.loggerInfo("No significant loops available for optimization. Optimization process terminated.")
-            print "No significant loops available for optimization. Optimization process terminated."
-            exit()
+            response['content'] = {'cosidered':'NoOpt', 'status':True}
+            response["returncode"] = 0
     else:
         logger.loggerError("Profile Summarization Failed. Optimization process terminated.")
         print "Profile Summarization Failed. Optimization process terminated."
-        exit()
+        response['content'] = {'cosidered':'', 'status':False}
+        response["returncode"] = 1
 
     # except Exception as e:
     #     print e
@@ -120,5 +135,5 @@ def trigger1(filePath,compTimeArguments,runTimeArguments):
     except Exception as e:
         response['error'] = e
         response['content'] = {}
-        response['returncode'] = 0
+        response['returnCode'] = 0
     return response

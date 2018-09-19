@@ -18,6 +18,7 @@ def getSummary(filePath,runTimeArguments):
         initLine = dataArray.index('##BEG region overview')
         endLine = dataArray.index('##END region overview')
         for i in range(initLine+2, endLine, 1):
+                summarizedReport[dataArray[i].split(',')[0]]['fileName']=dataArray[i].split(',')[2]
                 summarizedReport[dataArray[i].split(',')[0]]['startLine']=dataArray[i].split(',')[3]
                 summarizedReport[dataArray[i].split(',')[0]]['endLine']=dataArray[i].split(',')[4]
         returnResponse['content'] =summarizedReport
