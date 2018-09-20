@@ -4,6 +4,7 @@ import json
 import os
 import math
 import re,sys
+import dbManager
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../../Identifier/systemIdentifier")
 from systemIdentifier import __systemInformationIdentifier
 
@@ -166,11 +167,11 @@ def occupancyCalculation(registersPerThread,sharedMemoryPerBlock):
     global input
     input["registersPerThread"] = float(registersPerThread)
     input["sharedMemoryPerBlock"] = float(sharedMemoryPerBlock)
-    responseObj = __systemInformationIdentifier()
-    if responseObj['returncode'] == 1:
-            gpuInfo = responseObj['content']['gpuinfo']
-            nvidiaGPUList = [key for key in gpuInfo if "NVIDIA" in key]
-            computeCapability = gpuInfo[nvidiaGPUList[0]]['compute_capability']
-            readGPUData(computeCapability)
-            threadsPerTeamList = occupancyCalculator()
-            return threadsPerTeamList
+    responseObj = dbManager.read('systemData')
+
+    gpuInfo = responseObj['gpuinfo']
+    nvidiaGPUList = [key for key in gpuInfo if "NVIDIA" in key]
+    computeCapability = gpuInfo[nvidiaGPUList[0]]['compute_capability']
+    readGPUData(computeCapability)
+    threadsPerTeamList = occupancyCalculator()
+    return threadsPerTeamList
