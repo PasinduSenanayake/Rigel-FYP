@@ -5,7 +5,7 @@ sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 import dbManager,logger
-from Identifier.vectorFeatureFetcher import vecAnalzyer
+# from Identifier.vectorFeatureFetcher import vecAnalzyer
 from Modifier.Vectorizer.Vectorizer import Vectorizer
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
@@ -330,6 +330,8 @@ def runCommand(command):
 if __name__ == "__main__":
     logger.createLog()
     logger.loggerInfo("Individual Command executer initiated")
+    if os.path.isfile('/media/pasindu/newvolume/FYP/Framework/Rigel-FYP/DatabaseManager/rigel.db'):
+        os.remove('/media/pasindu/newvolume/FYP/Framework/Rigel-FYP/DatabaseManager/rigel.db')
     if(len(sys.argv)>1):
         runCommand(sys.argv[1])
         if(result['code']==0):

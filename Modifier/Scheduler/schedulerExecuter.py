@@ -1,8 +1,3 @@
-#add static to pragma
-#execute and get the results
-#extract relevant ones
-#run the algorithm
-#Inject pragma
 import dbManager,logger
 import shutil,os
 from omppScheduler.omppbasicprofile import getBasicProfile
@@ -13,9 +8,6 @@ def copyFolder(source,destination):
     if os.path.isdir(destination):
         shutil.rmtree(destination)
     shutil.copytree(source, destination)
-
-
-
 
 
 def getSummary(filePath,runTimeArguments,destination):
@@ -45,9 +37,9 @@ def getSummary(filePath,runTimeArguments,destination):
                     loopRegions.append(loopSection)
         loopSubSets =[]
         for loopSubRegion in loopRegions:
-            loopSubSet ={'threadTimes':[],'startLine':'','endLine':'','fileName':'','schedulinMechanism':''}
+            loopSubSet ={'threadTimes':[],'startLine':'','endLine':'','fileName':'','schedulingMechanism':''}
             for lnum in range(loopSubRegion['startLine']+3,loopSubRegion['endLine']-1):
-                loopSubSet['threadTimes'].append(dataArray[lnum].split(',')[3])
+                loopSubSet['threadTimes'].append(float(dataArray[lnum].split(',')[3]))
             loopMetdata =  dataArray[loopSubRegion['startLine']+1].split(',')
             loopSubSet['startLine'] = loopMetdata[3]
             loopSubSet['endLine'] = loopMetdata[4]
@@ -63,7 +55,29 @@ def getSummary(filePath,runTimeArguments,destination):
     return returnResponse
 
 
-# def mechanismIdentifier(loopInfo):
+def mechanismIdentifier(loopInfo):
+    #stage 1 selection
+    voting = [0,0,0]
+    minTime = min(loopInfo['threadTimes'])
+    maxTime = max(loopInfo['threadTimes'])
+    avgTime = sum(loopInfo['threadTimes'])/int(len(loopInfo['threadTimes']))
+    if (avgTime-minTime)/avgTime > 0.5:
+        voting[0] = 1
+    else:
+        voting[0] = 0
+    if (maxTime-avgTime)/avgTime > 0.5:
+        voting[1] = 1
+    else:
+        voting[1] = 0
+    if (maxTime-minTime)/avgTime > 0.5:
+        voting[2] = 1
+    else:
+        voting[2] = 0
+    if sum(voting)> 1:
+        print "Non-static"
+    else:
+        print "Static"
+        loopInfo['schedulingMechanism']="static"
 
 
 
@@ -74,16 +88,13 @@ def getSummary(filePath,runTimeArguments,destination):
 def schdedulerInitializer(extractor, directory):
     global fileLocation
     copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
-    loopContainFiles =[]
     loopSections = dbManager.read('loopSections')
     profiledStatus  = getSummary(directory,dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
-    print profiledStatus
-    print loopSections
-    exit()
     if (profiledStatus['returncode']==1):
         for singleSection in profiledStatus['content']:
             for indiviualSection in loopSections:
-                if( loopSubSet['startLine'] == "" and loopSubSet['endLine'] == "" and loopSubSet['fileName']== "" ):
+                if( indiviualSection['startLine'] == singleSection['startLine'] and indiviualSection['endLine'] == singleSection['endLine'] and indiviualSection['fileName']== singleSection['fileName'] ):
                     singleSection = mechanismIdentifier(singleSection)
+                    break
 
             #setMechanism(extractor,directory,loopSections)
