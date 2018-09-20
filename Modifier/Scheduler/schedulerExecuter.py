@@ -4,21 +4,21 @@
 #run the algorithm
 #Inject pragma
 import dbManager,logger
-import shutil
+import shutil,os
 from omppScheduler.omppbasicprofile import getBasicProfile
 
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
 
 def copyFolder(source,destination):
     if os.path.isdir(destination):
-        os.remove(destination)
-     shutil.copytree(source, destination)
+        shutil.rmtree(destination)
+    shutil.copytree(source, destination)
 
 
 
 
 
-def getSummary(filePath,runTimeArguments):
+def getSummary(filePath,runTimeArguments,destination):
     returnResponse = {
     "returncode" :1,
     "content" : [],
@@ -28,12 +28,38 @@ def getSummary(filePath,runTimeArguments):
     if response['returncode'] == 1:
         summarizedReport={}
         dataArray = response['content']
-        print dataArray
+        initLine = dataArray.index('##BEG flat region profiles')
+        endLine = dataArray.index('##END flat region profiles')
+        loopRegions=[]
+        inLoop = False
+        for i in range(initLine+1, endLine, 1):
+            if not inLoop:
+                loopSection = {'startLine':0,'endLine':0}
+            if 'flat profile' in dataArray[i]:
+                if '##BEG' in dataArray[i]:
+                    inLoop = True
+                    loopSection['startLine'] = i
+                elif '##END' in dataArray[i]:
+                    inLoop = False
+                    loopSection['endLine'] = i
+                    loopRegions.append(loopSection)
+        loopSubSets =[]
+        for loopSubRegion in loopRegions:
+            loopSubSet ={'threadTimes':[],'startLine':'','endLine':'','fileName':'','schedulinMechanism':''}
+            for lnum in range(loopSubRegion['startLine']+3,loopSubRegion['endLine']-1):
+                loopSubSet['threadTimes'].append(dataArray[lnum].split(',')[3])
+            loopMetdata =  dataArray[loopSubRegion['startLine']+1].split(',')
+            loopSubSet['startLine'] = loopMetdata[3]
+            loopSubSet['endLine'] = loopMetdata[4]
+            loopSubSet['fileName'] = loopMetdata[2]
+            loopSubSets.append(loopSubSet)
+
+        returnResponse['content'] = loopSubSets
     else:
         returnResponse['content'] = ""
     returnResponse['returncode'] = response['returncode']
     returnResponse['error'] = response['error']
-    exit()
+    shutil.rmtree(destination)
     return returnResponse
 
 
@@ -41,23 +67,23 @@ def mechanismIdentifier(loopInfo):
 
 
 
-def setMechanism(extractor,directory,loopSections):
+# def setMechanism(extractor,directory,loopSections):
 
 
 
 def schdedulerInitializer(extractor, directory):
     global fileLocation
-    copyfile(directory,fileLocation+'omppScheduler/Sandbox')
+    copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
     loopContainFiles =[]
     loopSections = dbManager.read('loopSections')
-    for loopSection in loopSections:
-        if not loopSection['fileName'] in loopContainFiles:
-            loopContainFiles.append(loopSection['fileName'])
-    for fileName in loopContainFiles:
-        newFilePath = fileLocation+'omppScheduler/Sandbox/'+fileName
-        profiledStatus  = getSummary(newFilePath,dbManager.read('runTimeArguments'))
-        if (profiledStatus['returncode']==1):
-            for singleSection in loopSections:
-                if(singleSection['loopLines'] in allLoops):
-                    singleSection = mechanismIdentifier(singleSection)
-            setMechanism(extractor,directory,loopSections)
+    profiledStatus  = getSummary(directory,dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
+    print profiledStatus
+    print loopSections
+    exit()
+    if (profiledStatus['returncode']==1):
+        for singleSection in profiledStatus['content']:
+            for indiviualSection in loopSections
+            if( loopSubSet['startLine'] == "" and loopSubSet['endLine'] == "" and loopSubSet['fileName']== "" ):
+                singleSection = mechanismIdentifier(singleSection)
+
+            #setMechanism(extractor,directory,loopSections)

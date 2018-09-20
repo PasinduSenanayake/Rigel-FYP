@@ -7,6 +7,7 @@ import dbManager,logger
 from Modifier.Vectorizer.Vectorizer import Vectorizer
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
+from Modifier.Scheduler.schedulerExecuter import schdedulerInitializer
 from Modifier.gpuMachineLearner.gpuMLExecuter import mlModelExecutor
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
@@ -39,6 +40,10 @@ def checkSubCommandConf():
         return True
 
 
+
+def schedulingIdentifier():
+    responseSet =  modifierExecutor()
+    schdedulerInitializer(responseSet['extractor'],responseSet['folderPath'])
 
 
 def vectorizer():
@@ -155,7 +160,6 @@ def modifierExecutor():
                                 data['serialEndLine']= str(int(element.split(":")[1]) + 1)
                                 break
             dbManager.overWrite('loopSections', selectedLoops)
-            print dbManager.read('loopSections')
         return {'extractor':extractor,'folderPath':folderPath}
 
 
@@ -311,6 +315,7 @@ def runCommand(command):
         'offloadOptimizer':lambda :offloadOptimizer(),
         'modifierExecute':lambda :modifierExecutor(),
         "vectorize":lambda :vectorizer(),
+        'schedule':lambda :schedulingIdentifier()
     }[command]()
 
     return result
