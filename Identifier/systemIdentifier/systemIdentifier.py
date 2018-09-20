@@ -152,6 +152,7 @@ def __extractNvidiaGPUinfo():
                                 break
                     gpu_info_list[name] = nvidia_info_list
                     deviceQuery_list = deviceQuery_list[end:]
+
         else:
             response['error'] = err
             response['content'] = {}
