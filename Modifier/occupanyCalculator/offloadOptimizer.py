@@ -202,6 +202,7 @@ def __runOptimizerStandalone(extractor):
                     timeList.append(float(s.split(":")[1].strip()))
                     break
 
+        print(timeList)
         val, idx = min((val, idx) for (idx, val) in enumerate(timeList))
 
         if collapsibleDepth > 1:
