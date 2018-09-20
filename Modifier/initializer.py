@@ -17,7 +17,6 @@ def modify(extractor,directory):
         logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
     else:
         logger.loggerError("Gpu Machine Learning Model Execution Failed.")
-    exit()
 
     logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
 
@@ -26,7 +25,7 @@ def modify(extractor,directory):
     logger.loggerInfo("GPU Optimization Initialized")
     resultLocal = runOffloadOptimizer(extractor, directory)
     logger.loggerSuccess("GPU Optimization Completed")
-
+    exit()
     logger.loggerInfo("Vector Optimization Initialized")
     vectorizer = Vectorizer(extractor, directory)
     logger.loggerSuccess("Vector Optimization Completed")
