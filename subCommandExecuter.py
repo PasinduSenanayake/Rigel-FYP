@@ -1,9 +1,11 @@
 import json,os,sys
 import shutil
+
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 import dbManager,logger
+from Identifier.vectorFeatureFetcher import vecAnalzyer
 from Modifier.Vectorizer.Vectorizer import Vectorizer
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
@@ -39,6 +41,9 @@ def checkSubCommandConf():
     else:
         return True
 
+def vectorFeatureIdentifier():
+    responseSet =  modifierExecutor()
+    vecAnalzyer(responseSet['extractor'],responseSet['folderPath'],dbManager.read('loopSections'))
 
 
 def schedulingIdentifier():
@@ -315,7 +320,8 @@ def runCommand(command):
         'offloadOptimizer':lambda :offloadOptimizer(),
         'modifierExecute':lambda :modifierExecutor(),
         "vectorize":lambda :vectorizer(),
-        'schedule':lambda :schedulingIdentifier()
+        'schedule':lambda :schedulingIdentifier(),
+        'vectorFeature': lambda: vectorFeatureIdentifier()
     }[command]()
 
     return result
