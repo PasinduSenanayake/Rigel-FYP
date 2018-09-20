@@ -152,7 +152,9 @@ def __runOptimizerStandalone(extractor):
         changeMakeFile()
         readClangVerbose()
         threadsPerTeamList = occupancyCalculation(input['registersPerThread'], input['sharedMemoryPerBlock'])
-        end =[ y[1] for y in loopList if y[0]==x]
+
+        print threadsPerTeamList
+
         TARGET_MAP_PRAGMA = mapTargetData(offloadFilePath, x, loopEndList[index])
 
 
@@ -195,7 +197,6 @@ def __runOptimizerStandalone(extractor):
                                   stdin=subprocess.PIPE)
             (output, err) = p.communicate()  # to check for errors
             runnableList = output.splitlines()
-            print output
             for s in runnableList:
                 if "GPU Runtime:" in s:
                     timeList.append(float(s.split(":")[1].strip()))
@@ -213,7 +214,7 @@ def __runOptimizerStandalone(extractor):
         extractorPassObject['index'] = x
         extractorPassObject['pragma'] = EXTRACTOR_PRAGMA
         extractorPragmaList.append(extractorPassObject)
-        extractor
+        #extractor.getSource.offload()
 
         index = index + 1
         print val,' ',idx
