@@ -221,8 +221,20 @@ def mlModelExecutor(filePath):
     loopData = dbManager.read('loopSections')
     subSections=[]
     for loopSection in dataSection:
-        loopSection.split(' ')[1] 
-    print dataSection
-    print resultsSet
-    print loopData
+        dataSource = {'fileName':'', 'loopSegementStartLine':'','loopSegementEndLine':''}
+        dataSource['fileName'] = loopSection.split(' ')[1].split(':')[0]
+        loopSubSection =  loopSection.split(' ')[1].split(':')[1].split('[')[1].split('-')
+        dataSource['loopSegementStartLine'] = loopSubSection[0]
+        dataSource['loopSegementEndLine'] = loopSubSection[1].split(']')[0]
+        subSections.append(dataSource)
+
+    resultLaunch =0
+    for loopMatchSection in subSections:
+        for dataItem in loopData:
+            if(dataItem["startLine"]== loopMatchSection['loopSegementStartLine'] and dataItem["endLine"]== loopMatchSection['loopSegementEndLine'] and dataItem["fileName"]== loopMatchSection['fileName']):
+                if(resultsSet[resultLaunch]=='Y'):
+                    dataItem["optimizeMethod"] ='GPU'
+                resultLaunch= resultLaunch+1
+                break
+    dbManager.overWrite('loopSections',loopData)
     return True

@@ -62,6 +62,7 @@ void conv2D_OMP(DATA_TYPE* A, DATA_TYPE* B)
 
   #pragma omp target data map(to:A[0:NI*NJ]) map(from:B[0:NI*NJ])
   #pragma omp target teams thread_limit(512)
+  {
   #pragma omp distribute parallel for schedule(static,1) collapse(2)
   for (int i = 1; i < NI - 1; ++i)
   {
@@ -73,6 +74,7 @@ void conv2D_OMP(DATA_TYPE* A, DATA_TYPE* B)
         + c31 * A[(i - 1)*NJ + (j + 1)]  +  c32 * A[(i + 0)*NJ + (j + 1)]  +  c33 * A[(i + 1)*NJ + (j + 1)];
     }
   }
+}
 }
 
 void init(DATA_TYPE* A)

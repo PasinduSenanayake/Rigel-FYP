@@ -7,3 +7,5 @@ Identifier/sysinfo/*.json
 Sandbox/*
 !Sandbox/.gitkeep
 Extractor/.idea
+Modifier/offloaderSandbox/*
+!Modifier/offloaderSandbox/Sandbox/.gitkeep

@@ -124,7 +124,7 @@ void mm2_OMP(DATA_TYPE* A, DATA_TYPE* B, DATA_TYPE* C, DATA_TYPE* D, DATA_TYPE* 
 
   #pragma omp target map(from: E[:NI*NL]) map(to: A[:NI*NK], B[:NK*NJ], C[:NI*NJ], D[:NJ*NL])
   {
-    #pragma omp teams
+    #pragma omp teams 
     {
       #pragma omp distribute parallel for collapse(2)
       for (int i = 0; i < NI; i++)

@@ -52,6 +52,8 @@ def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
                 if(data['startLine'] == str(int(parallelStartLine)-1) ):
                     if (data['endLine'] == parallelEndLine ):
                         if(data['optimiazability']):
+                            data['serialStartLine'] = str(int(element.split(":")[0]) - 1)
+                            data['serialEndLine']= str(int(element.split(":")[1]) + 1)
                             isIn = 'proceed'
                             break
                         else:
@@ -72,6 +74,7 @@ def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is skipped due to low overhead")
             else:
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is not a parallelable region. Skipped")
+        dbManager.write('loopSectionsTemp', loopSections)
 
 
 

@@ -176,11 +176,11 @@ class VectorReportAnalyzer:
         duplicateList = []
         for vector1 in loopList:
             duplicateList.append(vector1)
-            count =0
+            count = 0
             for vector2 in duplicateList:
                 if vector1["line"] == vector2["line"]:
-                    count +=1
-                if count >1 :
+                    count += 1
+                if count > 1:
                     duplicateList.pop()
         return duplicateList
 
