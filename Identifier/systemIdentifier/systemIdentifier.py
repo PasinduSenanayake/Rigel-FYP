@@ -76,6 +76,8 @@ systemCommandDictionary = {}
 
 hdwInfoDictionary = {}
 
+deviceCount = 0
+
 # function can be used to organize stdoutput from shell output
 def __extractCpuInformation(sysoutput):
     global cpu_info_list
@@ -89,19 +91,14 @@ def __extractCpuInformation(sysoutput):
 
 def __extracGpuInformation(sysoutput,key):
     global gpu_info_list
+    global deviceCount
     list_output = sysoutput.splitlines()
     for acc in list_output:
         if key in acc:
             s = acc.split(":")[2].strip()
 
             if NVIDIA_TAG in s:
-
-                if "[" in s and "]" in s:
-                    s = NVIDIA_TAG + "-" + s[s.find("[")+1:s.find("]")]
-
-            if s not in gpu_info_list:
-                gpu_info_list[s] = {}
-
+                deviceCount = deviceCount + 1
 
 # function can be used to extract extra details from original details
 def __extractDetails(value,splitCharacter,key):
@@ -127,31 +124,27 @@ def __extractVectorizationinfo():
 def __extractNvidiaGPUinfo():
     global nvidia_info_list
     global gpu_info_list
-    gpu_name_list = []
-    hasNVIDIA = False
 
-    for acc in gpu_info_list :
-        if NVIDIA_TAG in acc:
-            gpu_name_list.append(acc)
-            hasNVIDIA = True #at least one nvidia GPU in the machine
-
-    if hasNVIDIA:
+    if deviceCount > 0:
         p = subprocess.Popen(NVIDIA_NVCC_COMMAND , shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         (output, err) = p.communicate() #to check for errors
         if len(err) == 0:
             deviceQuery_list = output.splitlines()
-            for name in gpu_name_list:
-                name_ = name.split("-")[1]
-                start , end = index_containing_substring(deviceQuery_list,name_,DEVICE_QUERY_END_ATTRIBUTE )
+            detect = int(deviceQuery_list[0].split('=')[1])
+
+            for gpu in range(0 , detect):
+                name_='Device_'+str(gpu)
+                start, end = index_containing_substring(deviceQuery_list, name_, DEVICE_QUERY_END_ATTRIBUTE)
+                gpu_model = deviceQuery_list[start].split(':')[1]
                 if start is not -1:
-                    temp_list = deviceQuery_list[start:end]
-                    for key in nvidia_json_mapping:
-                        for value in temp_list:
-                            if key in value:
-                                nvidia_info_list[nvidia_json_mapping[key]] = value.split(":")[1].strip()
-                                break
-                    gpu_info_list[name] = nvidia_info_list
-                    deviceQuery_list = deviceQuery_list[end:]
+                     temp_list = deviceQuery_list[start:end]
+                     for key in nvidia_json_mapping:
+                         for value in temp_list:
+                             if key in value:
+                                 nvidia_info_list[nvidia_json_mapping[key]] = value.split(":")[1].strip()
+                                 break
+                     deviceQuery_list = deviceQuery_list[end:]
+                     gpu_info_list[gpu_model] = nvidia_info_list
 
         else:
             response['error'] = err
