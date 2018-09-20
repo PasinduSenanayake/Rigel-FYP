@@ -63,7 +63,7 @@ def getSummary(filePath,runTimeArguments,destination):
     return returnResponse
 
 
-def mechanismIdentifier(loopInfo):
+# def mechanismIdentifier(loopInfo):
 
 
 
@@ -82,8 +82,8 @@ def schdedulerInitializer(extractor, directory):
     exit()
     if (profiledStatus['returncode']==1):
         for singleSection in profiledStatus['content']:
-            for indiviualSection in loopSections
-            if( singleSection['startLine'] == indiviualSection[''] and singleSection['endLine'] == "" and loopSubSet['fileName']== "" ):
-                singleSection = mechanismIdentifier(singleSection)
+            for indiviualSection in loopSections:
+                if( loopSubSet['startLine'] == "" and loopSubSet['endLine'] == "" and loopSubSet['fileName']== "" ):
+                    singleSection = mechanismIdentifier(singleSection)
 
             #setMechanism(extractor,directory,loopSections)
