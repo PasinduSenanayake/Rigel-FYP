@@ -26,9 +26,11 @@ class Vectorizer():
                     copyfile(filePath, vectorDirectory + "/" + file)
 
         sourcePaths = extractor.getSourcePathList()
+
         self.analyzer = VectorReportAnalyzer(sourcePaths)
         for filePath, vectorList in self.analyzer.vectors.items():
             source = extractor.getSource(filePath)
+            print(source)
             loopMapping = source.getLoopMapping()
             fileName = filePath.split("/")[-1]
             for vector in vectorList:
