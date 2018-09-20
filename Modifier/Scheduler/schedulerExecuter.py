@@ -83,7 +83,7 @@ def schdedulerInitializer(extractor, directory):
     if (profiledStatus['returncode']==1):
         for singleSection in profiledStatus['content']:
             for indiviualSection in loopSections
-            if( loopSubSet['startLine'] == "" and loopSubSet['endLine'] == "" and loopSubSet['fileName']== "" ):
+            if( singleSection['startLine'] == indiviualSection[''] and singleSection['endLine'] == "" and loopSubSet['fileName']== "" ):
                 singleSection = mechanismIdentifier(singleSection)
 
             #setMechanism(extractor,directory,loopSections)
