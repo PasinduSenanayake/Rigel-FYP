@@ -4,10 +4,10 @@ sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 import dbManager,logger
+from Modifier.Vectorizer.Vectorizer import Vectorizer
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
 from Modifier.gpuMachineLearner.gpuMLExecuter import mlModelExecutor
-from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
@@ -40,7 +40,29 @@ def checkSubCommandConf():
 
 
 
+
+def vectorizer():
+    if (checkSubCommandConf()):
+        from Extractor.Extractor import Extractor
+        commadName = commandJson['command']['vectorize']
+        folderPath = commadName['folderPath']
+        logger.loggerInfo("Modifier Execution Command Initiated")
+        sourceDirectry = folderPath
+        extractor = Extractor(sourceDirectry)
+        logger.loggerInfo("System Information Fetcher Initiated")
+        responseObj = __systemInformationIdentifier()
+        if (responseObj['returncode'] == 1):
+            dbManager.write('systemData', responseObj['content'])
+            logger.loggerSuccess("System Information Fetcher completed successfully")
+        else:
+            logger.loggerError("System Information Fetcher Failed")
+            print "System Information Fetcher Failed. Optimization process terminated."
+            exit()
+        vectorizer = Vectorizer(extractor, folderPath)
+
+
 def modifierExecutor():
+
     global result
     if(checkSubCommandConf()):
         from Extractor.Extractor import Extractor
@@ -288,6 +310,7 @@ def runCommand(command):
         'mlGUPModel':lambda : mlGPUDataMode(),
         'offloadOptimizer':lambda :offloadOptimizer(),
         'modifierExecute':lambda :modifierExecutor(),
+        "vectorize":lambda :vectorizer(),
     }[command]()
 
     return result
