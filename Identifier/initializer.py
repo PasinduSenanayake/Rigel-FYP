@@ -1,4 +1,5 @@
 from Identifier.nestedLoopChecker import nestedloopAnalysis
+from Identifier.vectorFeatureFetcher import vecAnalzyer
 from loopAnalyzer import loopAnalysis
 from summaryIdentifier.initilizerOmpp import getSummary
 from systemIdentifier.systemIdentifier import __systemInformationIdentifier
@@ -75,8 +76,8 @@ def identify(extractor,directory):
                 logger.loggerInfo("Available Vector Instructions")
                 #display what Instructions available
                 logger.loggerInfo("Feature Extraction for Vectorization Initiated")
-                # vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
-                # vectorThread.start()
+                vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
+                vectorThread.start()
                 #vecAnalzyer(extractor,directory)
             else:
                 isVector = False
