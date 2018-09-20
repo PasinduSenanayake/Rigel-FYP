@@ -4,74 +4,77 @@
 
 import os,sys
 import json
-sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/../../Logger")
-import logger
+import logger, dbManager
 import shutil
 import subprocess
-from offloadChecker import  occupancyCalculation
+from offloadChecker import occupancyCalculation
 from GpuTarget import mapTargetData
-from collapsibleFinder import  collapseAnnotator
+from collapsibleFinder import collapseAnnotator
 
 
 TARGET_PRAGMA_INITIALIZE = "#pragma omp target teams\n" \
-                            "#pragma omp distribute parallel for schedule(static,1)"
+                            "#pragma omp distribute parallel for schedule(static,1)\n"
 
 
 TARGET_PRAGMA_COLLAPSE = "#pragma omp target teams thread_limit($threads)\n" \
-                         "#pragma omp distribute parallel for collapse($depth) schedule(static,1)"
+                         "#pragma omp distribute parallel for collapse($depth) schedule(static,1)\n"
 
 TARGET_PRAGMA_SPLIT = "#pragma omp target teams  thread_limit($threads)\n" \
-                      "#pragma omp distribute parallel for schedule(static,1)"
+                      "#pragma omp distribute parallel for schedule(static,1)\n"
 
 CLANG_OFFLOAD = "CC = clang -fopenmp -fopenmp-targets=nvptx64-nvidia-cuda -v "
 
-CLANG = "cc=clang"
+CLANG = "[compiler]"
 MAKE = "make"
 MAKEFILE = "Makefile"
 makePath = ''
-modifierOffloaderFilePath = "/../modifierSandbox/OffloaderSandbox/Sandbox"
-
-if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/../../subCommandConf.json")):
-    with open(os.path.dirname(os.path.realpath(__file__))+"/../../subCommandConf.json") as f:
-        commandJson = json.load(f)
+movePath = os.path.dirname(os.path.realpath(__file__)) + "/../modifierSandbox/OffloaderSandbox/Sandbox"
 
 result = {
     'code':0,
-    'content':[],
-    'error':'',
-    'successMessage':''
+    'content': [],
+    'error': '',
+    'successMessage': ''
     }
 
 input = {
-    "registersPerThread":0,  # should come from information Json
+    "registersPerThread": 0,  # should come from information Json
     "sharedMemoryPerBlock": 0
 }
 
-loopList = [[22,32]]
+loopList = [[22, 32]]
 extractorPassObject = {'index': 0, 'pragma': ''}
 extractorPragmaList = []
+folderPath_ = ''
+folderName = ''
 
 def moveSandbox():
     global result
+    global folderName
 
-    print str(os.path.dirname(os.path.realpath(__file__)))
+    originalPath  = folderPath_ + '/_profiling/Sandbox'
+    folderName = folderPath_.split('Sandbox')[1].replace('/','')
 
-    logger.loggerInfo("Source Code Annotation Command Initiated")
-    path = os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath
-    if(os.path.exists(path)):
-        shutil.rmtree(os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath)
+    if(os.path.exists(movePath)):
+        shutil.rmtree(movePath)
     try:
-        shutil.copytree(os.path.dirname(os.path.realpath(__file__))+"/../../Sandbox", os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath)
+         shutil.copytree(originalPath, movePath+'/'+folderName)
+         logger.loggerInfo('Moving to OffloaderSandbox')
+
     except Exception as e:
-        logger.loggerError(e)
+         logger.loggerError(e)
+         result['code'] = 1
+         result['content']= []
+         result['error']= e
+         result['successMessage'] = ''
+         logger.loggerError("Moving to OffloaderSandbox failed")
+
 
 
 def readClangVerbose():
     global input
     global makePath
-    makefile = commandJson["command"]["nonArchiFeatureFetch"]["makeFile"]
-    makefilePath = os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath + \
-                   makefile.split("Sandbox")[1]
+    makefilePath = movePath + '/' + folderName + '/Makefile'
 
     makePath ='cd ' + makefilePath.replace('/'+MAKEFILE, '') + '  &&  ' + MAKE
 
@@ -92,8 +95,7 @@ def readClangVerbose():
 
 
 def changeMakeFile():
-    makefile = commandJson["command"]["nonArchiFeatureFetch"]["makeFile"]
-    makefilePath = os.path.dirname(os.path.realpath(__file__))+ modifierOffloaderFilePath + makefile.split("Sandbox")[1]
+    makefilePath = movePath + '/' + folderName + '/' + MAKEFILE
     check = True
 
     with open(makefilePath,'r') as f:
@@ -101,9 +103,12 @@ def changeMakeFile():
 
     makefileContent = ""
     for line in makeFileContentList:
-        if check and CLANG in line.lower().replace(" ","").strip():
+        if CLANG in line:
             makefileContent = makefileContent + CLANG_OFFLOAD
-            check = False
+        elif '[targetObject]' in line :
+            makefileContent = makefileContent + line.replace('[targetObject]', 'runnable')
+        elif '.c' in line:
+            makefileContent = makefileContent + line.replace('.c','_serial.c')
         else:
             makefileContent = makefileContent + line
 
@@ -111,24 +116,28 @@ def changeMakeFile():
         f.write(makefileContent)
 
 
-def __runOptimizerStandalone():
+def __runOptimizerStandalone(extractor):
     global loopList
     global makePath
     global extractorPragmaList
 
-    annotatedFile = commandJson["command"]["nonArchiFeatureFetch"]["annotatedFile"]
-    offloadFilePath = os.path.dirname(os.path.realpath(__file__)) + modifierOffloaderFilePath + annotatedFile.split("Sandbox")[1]
+    loopSections = dbManager.read('loopSections')
+    offloadFilePath = movePath + '/' + folderName + '/' + loopSections[0]['fileName'].replace('.c', '_serial.c')
     loopStartList = []
+    loopEndList = []
 
-    for x in loopList:
-        y = x[0]
+    for x in loopSections:
+        y = int(x['serialStartLine'])
         loopStartList.append(y)
+        loopEndList.append(int(x['serialEndLine']))
 
     loopList.sort() #sorts list of loops respect to their starting index
+    loopEndList.sort()
 
     with open(offloadFilePath, "r") as f:
         contentList = f.readlines()
 
+    index = 0
     for x in loopStartList:
         content = ""
         lineNumber = 0
@@ -144,7 +153,8 @@ def __runOptimizerStandalone():
         readClangVerbose()
         threadsPerTeamList = occupancyCalculation(input['registersPerThread'], input['sharedMemoryPerBlock'])
         end =[ y[1] for y in loopList if y[0]==x]
-        TARGET_MAP_PRAGMA =  mapTargetData(offloadFilePath, x, end[0])
+        TARGET_MAP_PRAGMA = mapTargetData(offloadFilePath, x, loopEndList[index])
+
 
         collapsibleDepth  = collapseAnnotator(offloadFilePath,x)
 
@@ -158,20 +168,20 @@ def __runOptimizerStandalone():
                         'omp_getwtime1 = omp_get_wtime();\n'
         OMP_GET_ETIME = 'omp_getwtime2 = omp_get_wtime();\n' \
                         'printf("GPU Runtime:%0.6lf", omp_getwtime2 - omp_getwtime1);\n' \
-                        'exit(0)'
+                        'exit(0);\n'
 
         FINALIZED_PRGAMA = OMP_GET_STIME + TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA
 
         timeList = []
         for threads in threadsPerTeamList:
             FINALIZED_PRGAMA = FINALIZED_PRGAMA.replace('$threads',str(threads))
-            lineNumber = 0
+            lineNumber = 1
             content = '#include <omp.h>\n'
             for line in contentList:
-                if x == lineNumber + 1:
-                    content = content + FINALIZED_PRGAMA
-                elif lineNumber == end[0]:
-                    content = content + OMP_GET_ETIME
+                if x == lineNumber :
+                    content = content + line + FINALIZED_PRGAMA
+                elif lineNumber == loopEndList[index]:
+                    content = content + OMP_GET_ETIME + line
                 else:
                     content = content + line
                 lineNumber = lineNumber + 1
@@ -203,15 +213,20 @@ def __runOptimizerStandalone():
         extractorPassObject['index'] = x
         extractorPassObject['pragma'] = EXTRACTOR_PRAGMA
         extractorPragmaList.append(extractorPassObject)
+        extractor
 
+        index = index + 1
         print val,' ',idx
         print threadsPerTeamList[idx]
     print extractorPragmaList
 
 
-def runOffloadOptimizer():
+def runOffloadOptimizer( extractor , folderPath):
+    global folderPath_
+    folderPath_ = folderPath
+    logger.loggerInfo("GPU Offloder Optimizer initiated")
     moveSandbox()
-    __runOptimizerStandalone()
+    __runOptimizerStandalone(extractor)
 
 if __name__ == "__main__":
     logger.createLog()
