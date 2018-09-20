@@ -222,8 +222,9 @@ def offloadOptimizer():
         global result
         logger.loggerInfo("offloadOptimizer Command Initiated")
         if(checkSubCommandConf()):
+            modifireReturn = modifierExecutor()
             commadName = commandJson['command']['offloadOptimizer']
-            resultLocal = runOffloadOptimizer()
+            resultLocal = runOffloadOptimizer(modifireReturn['extractor'], modifireReturn['folderPath'])
             result['code']=0
             result['content']=resultLocal
             result['error']=''
