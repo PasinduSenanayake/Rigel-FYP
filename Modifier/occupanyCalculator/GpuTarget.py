@@ -55,7 +55,7 @@ def getUserApproval():
 
 
 def findVariableMappingType():
-    processOutput = Popen('clang '+directoryPath+'/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -ferror-limit=1000 '+directoryPath+'/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     nextLineUseful = False
     while True:
         line = processOutput.stderr.readline()
@@ -87,6 +87,7 @@ def findVariableMappingType():
         else:
             break
     # Identify the variable type
+    print undefinedVariables
     for key in undefinedVariables.keys():
         if (undefinedVariables[key]['nature']['read'] and undefinedVariables[key]['nature']['write']):
             undefinedVariables[key]['type']='tofrom'
@@ -104,7 +105,7 @@ def findVariableType(path,loopStartLine):
                 for key in undefinedVariables.keys():
                     item = item + 'printf("%d",'+key+');\n'
             fout.write(item)
-    processOutput = Popen('clang -fopenmp '+ directoryPath+'/targetChanged.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -fopenmp -ferror-limit=1000 '+ directoryPath+'/targetChanged.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -118,6 +119,7 @@ def findVariableType(path,loopStartLine):
                     undefinedVariables[re.search(r'\((.*?)\)',nextLine).group(1).split(',')[1]]['pointer'] = True
         else:
             break
+    print undefinedVariables
     for key in undefinedVariables.keys():
         if not (undefinedVariables[key]['pointer']):
             del undefinedVariables[key]
@@ -139,7 +141,7 @@ def mapTargetData(path,loopStartLine,loopEndline):
                 fout.write(item)
             if (loopEndline - i == 1):
                 fout.write('}')
-    processOutput = Popen('clang ' + directoryPath + '/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -ferror-limit=1000 ' + directoryPath + '/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     nextLineUseful = False
     while True:
         line = processOutput.stderr.readline()
@@ -148,6 +150,7 @@ def mapTargetData(path,loopStartLine,loopEndline):
             if(nextLineUseful):
                 nextLineUseful = False
             if('use of undeclared identifier' in lineCode):
+                print lineCode
                 nextLineUseful = True
                 variable =  re.findall(r"'(.*?)'", lineCode, re.DOTALL)[0]
 
@@ -177,4 +180,3 @@ def mapTargetData(path,loopStartLine,loopEndline):
     os.remove(directoryPath+'/target.c')
     os.remove(directoryPath+'/targetChanged.c')
     return pragma
-
