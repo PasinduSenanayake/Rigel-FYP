@@ -87,7 +87,6 @@ def findVariableMappingType():
         else:
             break
     # Identify the variable type
-    print undefinedVariables
     for key in undefinedVariables.keys():
         if (undefinedVariables[key]['nature']['read'] and undefinedVariables[key]['nature']['write']):
             undefinedVariables[key]['type']='tofrom'
@@ -119,14 +118,14 @@ def findVariableType(path,loopStartLine):
                     undefinedVariables[re.search(r'\((.*?)\)',nextLine).group(1).split(',')[1]]['pointer'] = True
         else:
             break
-    print undefinedVariables
     for key in undefinedVariables.keys():
         if not (undefinedVariables[key]['pointer']):
             del undefinedVariables[key]
 
 
 def mapTargetData(path,loopStartLine,loopEndline):
-
+    global undefinedVariables
+    undefinedVariables = {}
     global directoryPath
     fileName = path.split("/")[-1]
     directoryPath = path.replace("/"+fileName,"")
@@ -150,7 +149,6 @@ def mapTargetData(path,loopStartLine,loopEndline):
             if(nextLineUseful):
                 nextLineUseful = False
             if('use of undeclared identifier' in lineCode):
-                print lineCode
                 nextLineUseful = True
                 variable =  re.findall(r"'(.*?)'", lineCode, re.DOTALL)[0]
 
