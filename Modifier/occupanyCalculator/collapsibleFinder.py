@@ -28,7 +28,6 @@ def addCollapes(loopLine):
             lines[index] = line+"\n #pragma omp for collapse(1) \n"
         # if "/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};"in line:
         #     lines[index] = line.replace("/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};","/*iteratotConuter++; if(iteratotConuter>100){break;};*/")
-    print "hiii"
     out = open(fileLocation+"withCollapse.c", 'w')
     out.writelines(lines)
     out.close()
