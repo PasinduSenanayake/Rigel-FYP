@@ -10,7 +10,9 @@ import subprocess
 from offloadChecker import occupancyCalculation
 from GpuTarget import mapTargetData
 from collapsibleFinder import collapseAnnotator
+from Extractor.SourceCode import SourceCode
 from Extractor.Extractor import Extractor
+
 
 
 TARGET_PRAGMA_INITIALIZE = "#pragma omp target teams\n" \
@@ -43,7 +45,6 @@ input = {
     "sharedMemoryPerBlock": 0
 }
 
-extractorPassObject = {'index': 0, 'pragma': ''}
 extractorPragmaList = []
 folderPath_ = ''
 folderName = ''
@@ -60,7 +61,7 @@ def moveSandbox():
     try:
          shutil.copytree(originalPath, movePath + '/' + folderName)
          logger.loggerSuccess('Moved to OffloaderSandbox for offload optimization')
-         result['code'] = 1
+         result['code'] = 0
 
     except Exception as e:
          logger.loggerError(e)
@@ -71,8 +72,6 @@ def moveSandbox():
          logger.loggerError("Moving to OffloaderSandbox failed")
 
     return result
-
-
 
 def readClangVerbose():
     global input
@@ -103,6 +102,7 @@ def readClangVerbose():
         input['sharedMemoryPerBlock'] = occupancydata[2].split(" ")[1]
         logger.loggerSuccess('Offload Optimizer reading clang verbose')
         result['code'] = 0
+    return result
 
 
 def changeMakeFile():
@@ -142,35 +142,29 @@ def changeMakeFile():
 
 def __runOptimizerStandalone(extractor):
     global makePath
-    global extractorPragmaList
+    fileName = ''
 
     loopSections = dbManager.read('loopSections')
-    offloadFolderPath = movePath + '/' + folderName + '/' + loopSections[0]['fileName'].replace('.c', '_serial.c')
-    loopStartList = []
-    loopEndList   = []
-
+    print(len(loopSections))
     status = changeMakeFile()
-
     if status['code'] == 0:
-        with open(offloadFolderPath, "r") as f:
-            contentList = f.readlines()
+        for loopSection in loopSections:
+            if fileName != loopSection['fileName']:
+                fileName = loopSection['fileName']
+                sourceObj = extractor.getSource(folderPath_ + '/' + fileName)
+                offloadFolderPath = movePath + '/' + folderName + '/' + fileName.replace('.c', '_serial.c')
+                with open(offloadFolderPath, "r") as f:
+                    contentList = f.readlines()
 
-    for loopSection in loopSections:
-        startIndex = int(loopSection['serialStartLine'])
-        endIndex   = int(loopSection['serialEndLine'])
-        #loopStartList.append(int(loopSection['serialStartLine']))
-        #loopEndList.append(int(loopSection['serialEndLine']))
 
-    #loopStartList.sort() #sorts list of loops respect to their starting index
-    #loopEndList.sort()
+            startIndex = int(loopSection['serialStartLine'])
+            endIndex   = int(loopSection['serialEndLine'])
 
-        index = 0
-        for startIndex in loopStartList:
             content = ""
             lineNumber = 0
             for line in contentList:
                 if startIndex == lineNumber + 1:
-                    content = content + TARGET_PRAGMA_INITIALIZE
+                    content = content + line + TARGET_PRAGMA_INITIALIZE
                 else:
                     content = content + line
                 lineNumber = lineNumber + 1
@@ -181,7 +175,7 @@ def __runOptimizerStandalone(extractor):
             status = readClangVerbose()
             if status['code'] == 0:
                 threadsPerTeamList = occupancyCalculation(input['registersPerThread'], input['sharedMemoryPerBlock'])
-                TARGET_MAP_PRAGMA = mapTargetData(offloadFolderPath, startIndex, loopEndList[index])
+                TARGET_MAP_PRAGMA = mapTargetData(offloadFolderPath, startIndex, endIndex)
                 collapsibleDepth  = collapseAnnotator(offloadFolderPath,startIndex)
 
                 if collapsibleDepth > 1:
@@ -205,7 +199,7 @@ def __runOptimizerStandalone(extractor):
                     for line in contentList:
                         if startIndex == lineNumber :
                             content = content + line + FINALIZED_PRGAMA
-                        elif lineNumber == loopEndList[index]:
+                        elif lineNumber == endIndex:
                             content = content + OMP_GET_ETIME + line
                         else:
                             content = content + line
@@ -219,7 +213,7 @@ def __runOptimizerStandalone(extractor):
                     p = subprocess.Popen(runnablePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                           stdin=subprocess.PIPE)
                     (output, err) = p.communicate()  # to check for errors
-                    runnableList = output.splitlines()
+                    runnableList  = output.splitlines()
                     for s in runnableList:
                         if "GPU Runtime:" in s:
                             timeList.append(float(s.split(":")[1].strip()))
@@ -234,16 +228,10 @@ def __runOptimizerStandalone(extractor):
                     TARGET_PRAGMA = TARGET_PRAGMA_SPLIT
 
                 EXTRACTOR_PRAGMA = TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA.replace('$threads', str(threadsPerTeamList[idx]))
+                print EXTRACTOR_PRAGMA
+                # sourceObj.offload(loopSection['startLine'],EXTRACTOR_PRAGMA)
+                # sourceObj.writeToFile(folderPath_+'/'+fileName)
 
-                extractorPassObject['index'] = startIndex
-                extractorPassObject['pragma'] = EXTRACTOR_PRAGMA
-                extractorPragmaList.append(extractorPassObject)
-                sourceObj = extractor.getSource(folderPath_+'/')
-
-                #extractor.getSource.offload()
-
-                index = index + 1
-        print extractorPragmaList
 
 
 def runOffloadOptimizer( extractor , folderPath):
