@@ -12,11 +12,12 @@ response = {
 inputfilepath = str(os.path.dirname(os.path.realpath(__file__))) +os.sep +"SystemDependencies"+os.sep + "command.json"
 outputFilepath =str(os.path.dirname(os.path.realpath(__file__))) + os.sep +"sysinfo"+os.sep + "systemInfo.json"
 hwdFilepath = str(os.path.dirname(os.path.realpath(__file__))) +os.sep +"SystemDependencies"+os.sep + "storage.json"
-deviceQueryPath = str(os.path.dirname(os.path.realpath(__file__))) +os.sep +"SystemDependencies"+os.sep + "deviceQuery.cpp"
+deviceQueryPath = str(os.path.dirname(os.path.realpath(__file__))) +os.sep +"SystemDependencies"
 
 NVIDIA_TAG = "NVIDIA"
 DEVICE_QUERY_END_ATTRIBUTE = "Maximum number of threads per block"
-NVIDIA_NVCC_COMMAND = "nvcc " + deviceQueryPath + " -o deviceQuery && ./deviceQuery "
+NVIDIA_NVCC_COMMAND = "cd "+deviceQueryPath+" && nvcc " + deviceQueryPath +os.sep + \
+                      "deviceQuery.cpp" + " -o deviceQuery && ./deviceQuery "
 
 # dictionary used to map data to Json information holder
 cpu_info_list={"num_cores":"",
@@ -144,6 +145,7 @@ def __extractNvidiaGPUinfo():
                      gpu_info_list[gpu_model] = nvidia_info_list
             logger.loggerSuccess('Detecting available NVIDIA devices')
 
+            os.remove(deviceQueryPath + os.sep + 'deviceQuery')
         else:
             response['error'] = err
             response['content'] = {}
