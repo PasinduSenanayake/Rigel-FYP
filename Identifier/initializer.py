@@ -1,5 +1,5 @@
 from Identifier.nestedLoopChecker import nestedloopAnalysis
-from Identifier.vectorFeatureFetcher import vecAnalzyer
+# from Identifier.vectorFeatureFetcher import vecAnalzyer
 from loopAnalyzer import loopAnalysis
 from summaryIdentifier.initilizerOmpp import getSummary
 from systemIdentifier.systemIdentifier import __systemInformationIdentifier
