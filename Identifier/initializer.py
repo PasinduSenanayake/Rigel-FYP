@@ -1,5 +1,5 @@
 from Identifier.nestedLoopChecker import nestedloopAnalysis
-from Identifier.vectorFeatureFetcher import vecAnalzyer
+# from Identifier.vectorFeatureFetcher import vecAnalzyer
 from loopAnalyzer import loopAnalysis
 from summaryIdentifier.initilizerOmpp import getSummary
 from systemIdentifier.systemIdentifier import __systemInformationIdentifier
@@ -67,19 +67,19 @@ def identify(extractor,directory):
         if (len(loopSections)>0):
             isGpu = True
             isVector = True
-            if not (responseObj['content']['gpuinfo'] == ""): #check Gpu Info
+            if bool(responseObj['content']['gpuinfo']): #check Gpu Info
                 logger.loggerInfo("Feature Extraction for GPU Initiated")
                 gpuThread = threading.Thread(target=gpuAnalzyer,args=(extractor,directory,loopSections,))
                 gpuThread.start()
             else:
                 isGpu = False
                 logger.loggerInfo("No GPU found. GPU offloading will be skipped")
-            if(True): #check Vectorization optimizations
+            if not (responseObj['content']['cpuinfo']['vectorization']): #check Vectorization optimizations
                 logger.loggerInfo("Available Vector Instructions")
                 #display what Instructions available
                 logger.loggerInfo("Feature Extraction for Vectorization Initiated")
-                vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
-                vectorThread.start()
+                #vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
+                #vectorThread.start()
                 #vecAnalzyer(extractor,directory)
             else:
                 isVector = False
