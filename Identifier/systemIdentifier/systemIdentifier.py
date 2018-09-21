@@ -1,6 +1,7 @@
 import subprocess
 import os
 import json
+import logger
 
 response = {
     "returncode":0,
@@ -88,7 +89,6 @@ def __extractCpuInformation(sysoutput):
                 cpu_info_list[cpu_json_mapping[x]] = y.split(":")[1].strip()
                 break
 
-
 def __extracGpuInformation(sysoutput,key):
     global gpu_info_list
     global deviceCount
@@ -96,15 +96,13 @@ def __extracGpuInformation(sysoutput,key):
     for acc in list_output:
         if key in acc:
             s = acc.split(":")[2].strip()
-
             if NVIDIA_TAG in s:
                 deviceCount = deviceCount + 1
-
+                logger.loggerInfo('Detected NVIDIA device ' + s)
 # function can be used to extract extra details from original details
 def __extractDetails(value,splitCharacter,key):
     global cpu_info_list
     cpu_info_list[key]=value.split(splitCharacter)[1].strip()
-
 
 def __extractVectorizationinfo():
     global hdwInfoDictionary
@@ -118,20 +116,19 @@ def __extractVectorizationinfo():
         if inst.lower() in [flag.lower() for flag in tempFlag_list]:
             vector_inst_list.append(inst.lower())
     cpu_info_list["vectorization"] = vector_inst_list
-
-
+    logger.loggerSuccess('Detecting vectorization environment')
 
 def __extractNvidiaGPUinfo():
     global nvidia_info_list
     global gpu_info_list
+    global deviceCount
 
     if deviceCount > 0:
         p = subprocess.Popen(NVIDIA_NVCC_COMMAND , shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         (output, err) = p.communicate() #to check for errors
-        if len(err) == 0:
-            deviceQuery_list = output.splitlines()
-            detect = int(deviceQuery_list[0].split('=')[1])
-
+        deviceQuery_list = output.splitlines()
+        if deviceQuery_list[0] == 'SUCCESS':
+            detect = int(deviceQuery_list[1].split('=')[1])
             for gpu in range(0 , detect):
                 name_='Device_'+str(gpu)
                 start, end = index_containing_substring(deviceQuery_list, name_, DEVICE_QUERY_END_ATTRIBUTE)
@@ -145,13 +142,17 @@ def __extractNvidiaGPUinfo():
                                  break
                      deviceQuery_list = deviceQuery_list[end:]
                      gpu_info_list[gpu_model] = nvidia_info_list
+            logger.loggerSuccess('Detecting available NVIDIA devices')
 
         else:
             response['error'] = err
             response['content'] = {}
             response['returncode'] = 0
+            logger.loggerError('Device Query Execution failed.Check CUDA runtime')
             return response
-
+    else:
+        #need to set GPU devices = 0 database or so to prevent directing to GPU optimization
+        logger.loggerInfo('No NVIDIA accelerators found.')
 
 def index_containing_substring(the_list, substring,substring2):
     start_index = -1
@@ -179,6 +180,7 @@ def __systemInformationIdentifier():
             response['error'] = str(e)
             response['content'] = {}
             response['returncode'] = 0
+            logger.loggerError(e)
             return response
 
     for infocmd in systemCommandDictionary["Linux"]["info"]:
@@ -211,5 +213,6 @@ def __systemInformationIdentifier():
         response['error'] = e
         response['content'] = {}
         response['returncode'] = 0
+        logger.loggerError(e)
     finally:
         return response
