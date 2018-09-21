@@ -37,7 +37,7 @@ def getSummary(filePath,runTimeArguments,destination):
                     loopRegions.append(loopSection)
         loopSubSets =[]
         for loopSubRegion in loopRegions:
-            loopSubSet ={'threadTimes':[],'startLine':'','endLine':'','fileName':'','schedulingMechanism':''}
+            loopSubSet ={'threadTimes':[],'startLine':'','endLine':'','fileName':'','schedulingMechanism':None}
             for lnum in range(loopSubRegion['startLine']+3,loopSubRegion['endLine']-1):
                 loopSubSet['threadTimes'].append(float(dataArray[lnum].split(',')[3]))
             loopMetdata =  dataArray[loopSubRegion['startLine']+1].split(',')
@@ -75,13 +75,38 @@ def mechanismIdentifier(loopInfo):
         voting[2] = 0
     if sum(voting)> 1:
         print "Non-static"
+        #statge 2
+        sectionTimes=[]
+        difAbsVal = 0
+        gCounter = 0
+        gRCounter = 0
+        for count in range(0,len(loopInfo['threadTimes'])-1):
+            difAbsVal = difAbsVal + abs(loopInfo['threadTimes'][count+1]-loopInfo['threadTimes'][count])
+            sectionTimes.append(loopInfo['threadTimes'][count+1]-loopInfo['threadTimes'][count])
+        totalAverage = difAbsVal/(len(loopInfo['threadTimes'])-1)
+        for counter in range(0,len(loopInfo['threadTimes'])-1):
+            if ((sectionTimes[counter]/totalAverage)>0.5):
+                gCounter=gCounter+1
+            elif ((sectionTimes[counter]/totalAverage)<-0.5):
+                gRCounter=gRCounter+1
+        if (float(gCounter)/float(len(loopInfo['threadTimes'])-1) >= 0.6):
+            print "Guided"
+            loopInfo['schedulingMechanism']="guided"
+        elif (float(gRCounter)/float(len(loopInfo['threadTimes'])-1)>= 0.6):
+            print "Guided - R"
+            loopInfo['schedulingMechanism']="guided-R"
+        else:
+            print "dynamic"
+            loopInfo['schedulingMechanism']="dynamic"
     else:
         print "Static"
         loopInfo['schedulingMechanism']="static"
 
 
 
-# def setMechanism(extractor,directory,loopSections):
+def setMechanism(extractor,directory,loopSections):
+    print loopSections
+
 
 
 
@@ -97,4 +122,4 @@ def schdedulerInitializer(extractor, directory):
                     singleSection = mechanismIdentifier(singleSection)
                     break
 
-            #setMechanism(extractor,directory,loopSections)
+        setMechanism(extractor,directory,profiledStatus['content'])
