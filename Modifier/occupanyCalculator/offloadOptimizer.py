@@ -253,9 +253,12 @@ def __runOptimizerStandalone(extractor):
                         # sourceObj.writeToFile(folderPath_+'/'+fileName)
                         for summaryLoop in summarySections:
                             if summaryLoop['startLine'] == loopSection['startLine']:
-                                summaryLoop['optimizedTime'] = val
+                                summaryLoop['optimizedTime'] = str(val)
+
+
 
             else:
+                dbManager.overWrite('summaryLoops',summarySections )
                 if (os.path.exists(movePath)):
                     shutil.rmtree(movePath)
     else:
