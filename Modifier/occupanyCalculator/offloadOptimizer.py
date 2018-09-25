@@ -143,6 +143,7 @@ def __runOptimizerStandalone(extractor):
     fileName = ''
     sourceObjList = {}
     loopSections = dbManager.read('loopSections')
+    summarySections = dbManager.read('summaryLoops')
     status = changeMakeFile()
     if status['code'] == 0:
         for loopSection in loopSections:
@@ -241,6 +242,9 @@ def __runOptimizerStandalone(extractor):
                     print EXTRACTOR_PRAGMA
                     # sourceObj.offload(loopSection['startLine'],EXTRACTOR_PRAGMA)
                     # sourceObj.writeToFile(folderPath_+'/'+fileName)
+                    for summaryLoop in summarySections:
+                        if summaryLoop['startLine'] == loopSection['startLine']:
+                            summaryLoop['optimizedTime'] = val
 
 
 
