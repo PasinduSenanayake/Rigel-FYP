@@ -45,7 +45,7 @@ def selectOptimizableLoopSections(optimizableLoops):
             summarySection['optimiazability'] = True
         summaryLoops.append(summarySection)
         selectedLoops.append(selectedSection)
-        dbManager.write('summaryLoops',summaryLoops)
+    dbManager.write('summaryLoops',summaryLoops)
     return selectedLoops
 
 def identify(extractor,directory):
