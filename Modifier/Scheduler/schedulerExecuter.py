@@ -51,7 +51,6 @@ def getSummary(filePath,runTimeArguments,destination):
         returnResponse['content'] = ""
     returnResponse['returncode'] = response['returncode']
     returnResponse['error'] = response['error']
-    shutil.rmtree(destination)
     return returnResponse
 
 
@@ -105,12 +104,25 @@ def mechanismIdentifier(loopInfo):
 
 
 def setMechanism(extractor,directory,loopSections):
-    print loopSections
+    copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
+    for loopSection in loopSections:
+        with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName']) as f:
+            file_str = f.readlines()
+            file_str[int(loopSection['startLine'])-1] =   file_str[int(loopSection['startLine'])-1].replace('static',loopSection['schedulingMechanism'])
+    # do stuff with file_str
 
-
+        with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName'], "w") as f:
+            f.writelines(file_str)
+    summaryLoops = dbManager.read('summaryLoops')
+    profiledStatus  = getSummary(fileLocation+'omppScheduler/Sandbox',dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
+    for profiledLoop in profiledStatus['content']:
+        for summaryLoop in summaryLoops:
+            if( summaryLoop['startLine'] == profiledLoop['startLine'] and summaryLoop['endLine'] == profiledLoop['endLine'] and summaryLoop['fileName']== profiledLoop['fileName'] ):
+                summaryLoop['optimizedTime'] = max(profiledLoop['threadTimes'])
+    dbManager.overWrite('summaryLoops',summaryLoops)
+    shutil.rmtree(fileLocation+'omppScheduler/Sandbox')
 def schdedulerInitializer(extractor, directory):
     global fileLocation
-    copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
     loopSections = dbManager.read('loopSections')
     schedulerStartTime = time.time()
     profiledStatus  = getSummary(directory,dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
@@ -123,4 +135,4 @@ def schdedulerInitializer(extractor, directory):
                         break
 
         setMechanism(extractor,directory,profiledStatus['content'])
-        dbManager.write('schedulerExeTime',time.time()-exeStartTime)
+        dbManager.write('schedulerExeTime',time.time()-schedulerStartTime)
