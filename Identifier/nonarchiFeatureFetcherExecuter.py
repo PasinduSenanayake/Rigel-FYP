@@ -21,9 +21,6 @@ def checkSumAnalyzer(fileInformation):
                             break
     return list(set(allFiles)-set(availableFiles))
 
-
-
-
 def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
     gpuStartTime = time.time()
     with open(directory + "/_profiling/Sandbox/Makefile", 'r') as file :

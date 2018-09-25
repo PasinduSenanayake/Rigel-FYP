@@ -233,6 +233,7 @@ def mlModelExecutor(filePath):
     for loopMatchSection in subSections:
         for dataItem in loopData:
             if(dataItem["startLine"]== loopMatchSection['loopSegementStartLine'] and dataItem["endLine"]== loopMatchSection['loopSegementEndLine'] and dataItem["fileName"]== loopMatchSection['fileName']):
+                print resultsSet[resultLaunch]
                 if(resultsSet[resultLaunch]=='Y'):
                     dataItem["optimizeMethod"] ='GPU'
                     for summaryLoopDataItem in summaryLoopData:

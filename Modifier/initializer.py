@@ -12,6 +12,7 @@ response = {
 def modify(extractor,directory):
     global response
     logger.loggerInfo("Gpu Machine Learning Model Execution Initialized")
+    
     result = mlModelExecutor(directory)
     if (result):
         logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
@@ -22,12 +23,18 @@ def modify(extractor,directory):
 
     logger.loggerSuccess("Vector Machine Learning Model Execution Completed")
 
-    logger.loggerInfo("GPU Optimization Initialized")
+    logger.loggerInfo("GPU Optimization Initialized.")
+
     resultLocal = runOffloadOptimizer(extractor, directory)
-    logger.loggerSuccess("GPU Optimization Completed")
+
+    logger.loggerSuccess("GPU Optimization Completed.")
+
     exit()
-    logger.loggerInfo("Vector Optimization Initialized")
+
+    logger.loggerInfo("Vector Optimization Initialized.")
+
     vectorizer = Vectorizer(extractor, directory)
+
     logger.loggerSuccess("Vector Optimization Completed")
 
     logger.loggerInfo("CPU Optimization Initialized")

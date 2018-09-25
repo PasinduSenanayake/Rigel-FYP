@@ -53,7 +53,7 @@ def identify(extractor,directory):
     # try:
     logger.loggerInfo("System Information Fetcher Initiated")
     responseObj = __systemInformationIdentifier()
-    if(responseObj['returncode']==0):
+    if(responseObj['returncode']==1):
         dbManager.write('systemData',responseObj['content'])
         logger.loggerSuccess("System Information Fetcher completed successfully")
     else:
