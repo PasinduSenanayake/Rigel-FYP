@@ -227,9 +227,10 @@ def __runOptimizerStandalone(extractor):
                         if clangError:
                             logger.loggerError('Optimized code execution failure. check Clang compiler')
 
-
                     print(timeList)
                     val, idx = min((val, idx) for (idx, val) in enumerate(timeList))
+                    optimizationTime = sum(timeList)
+                    dbManager.write('GPU_OptTime', str(optimizationTime))
 
                     if collapsibleDepth > 1:
                         TARGET_PRAGMA = TARGET_PRAGMA_COLLAPSE.replace('$depth', str(collapsibleDepth))
