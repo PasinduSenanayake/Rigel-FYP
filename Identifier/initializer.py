@@ -18,6 +18,7 @@ response = {
 
 def selectOptimizableLoopSections(optimizableLoops):
     selectedLoops =[]
+    summaryLoops = []
     for loopSection in optimizableLoops:
         selectedSection = {
         'fileName':optimizableLoops[loopSection]['fileName'],
@@ -30,9 +31,21 @@ def selectOptimizableLoopSections(optimizableLoops):
         'optimiazability':False,
         'optimizeMethod':None
         }
+        summarySection = {
+        'fileName':optimizableLoops[loopSection]['fileName'],
+        'startLine': optimizableLoops[loopSection]['startLine'],
+        'endLine':optimizableLoops[loopSection]['endLine'],
+        'executionTime':optimizableLoops[loopSection]['sectionTime'],
+        'optimiazability':False,
+        'optimizedTime':0,
+        'optimizeMethod':None
+        }
         if(float(optimizableLoops[loopSection]['overheadPrecentage'])> 0.0):
             selectedSection['optimiazability'] = True
+            summarySection['optimiazability'] = True
+        summaryLoops.append(summarySection)
         selectedLoops.append(selectedSection)
+        dbManager.write('summaryLoops',summaryLoops)
     return selectedLoops
 
 def identify(extractor,directory):
@@ -40,24 +53,14 @@ def identify(extractor,directory):
     # try:
     logger.loggerInfo("System Information Fetcher Initiated")
     responseObj = __systemInformationIdentifier()
-    if(responseObj['returncode']==1):
+    if(responseObj['returncode']==0):
         dbManager.write('systemData',responseObj['content'])
         logger.loggerSuccess("System Information Fetcher completed successfully")
     else:
         logger.loggerError("System Information Fetcher Failed")
         print "System Information Fetcher Failed. Optimization process terminated."
         exit()
-    logger.loggerInfo("Run time arguments fetcher Initiated")
-    with open(directory+'/run.json') as runArgumentFile:
-        dataArguments = json.load(runArgumentFile)
-    if not (dataArguments['runTimeArguments'] == None):
-        dbManager.write('runTimeArguments',str(dataArguments['runTimeArguments']))
-    else:
-        logger.loggerError("Run time arguments fetcher Failed. Optimization process terminated.")
-        print "Run time arguments fetcher Failed. Optimization process terminated."
-        exit()
 
-    logger.loggerSuccess("Run time arguments fetcher completed successfully")
     logger.loggerInfo("Profile Summarization Initiated")
     summarizedReport = getSummary(directory,dbManager.read('runTimeArguments'))
     if summarizedReport['returncode'] == 1:
@@ -78,8 +81,8 @@ def identify(extractor,directory):
                 logger.loggerInfo("Available Vector Instructions")
                 #display what Instructions available
                 logger.loggerInfo("Feature Extraction for Vectorization Initiated")
-                vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
-                vectorThread.start()
+                # vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
+                # vectorThread.start()
                 #vecAnalzyer(extractor,directory)
             else:
                 isVector = False

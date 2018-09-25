@@ -1,5 +1,5 @@
 import dbManager,logger
-import shutil,os
+import shutil,os,time
 from omppScheduler.omppbasicprofile import getBasicProfile
 
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
@@ -69,7 +69,7 @@ def mechanismIdentifier(loopInfo):
         voting[1] = 1
     else:
         voting[1] = 0
-    if (maxTime-minTime)/avgTime > 0.5:
+    if (maxTime-minTime)/avgTime > 1:
         voting[2] = 1
     else:
         voting[2] = 0
@@ -108,18 +108,19 @@ def setMechanism(extractor,directory,loopSections):
     print loopSections
 
 
-
-
 def schdedulerInitializer(extractor, directory):
     global fileLocation
     copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
     loopSections = dbManager.read('loopSections')
+    schedulerStartTime = time.time()
     profiledStatus  = getSummary(directory,dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
     if (profiledStatus['returncode']==1):
         for singleSection in profiledStatus['content']:
             for indiviualSection in loopSections:
-                if( indiviualSection['startLine'] == singleSection['startLine'] and indiviualSection['endLine'] == singleSection['endLine'] and indiviualSection['fileName']== singleSection['fileName'] ):
-                    singleSection = mechanismIdentifier(singleSection)
-                    break
+                if(indiviualSection['optimizeMethod']==None):
+                    if( indiviualSection['startLine'] == singleSection['startLine'] and indiviualSection['endLine'] == singleSection['endLine'] and indiviualSection['fileName']== singleSection['fileName'] ):
+                        singleSection = mechanismIdentifier(singleSection)
+                        break
 
         setMechanism(extractor,directory,profiledStatus['content'])
+        dbManager.write('schedulerExeTime',time.time()-exeStartTime)
