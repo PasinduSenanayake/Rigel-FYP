@@ -25,7 +25,7 @@ def processMLData():
     x_train_total = pd.DataFrame(data1) # Converting data to Panda DataFrame
 
     output = ['VECTORIZABLE']
-    featureSet1 = ['Function / Call Stack', 'CPU_CLK_UNHALTED.THREAD',
+    featureSet1 = [ 'CPI Rate', 'CPU_CLK_UNHALTED.THREAD',
                    'CPU_CLK_UNHALTED.REF_TSC', 'INST_RETIRED.ANY', 'INST_RETIRED.PREC_DIST',
                    'BR_MISP_RETIRED.ALL_BRANCHES_PS']
     featureSet2 = []
@@ -72,14 +72,14 @@ def processMLData():
     Weighted_XTest = Weighted_XTest.dropna()
 
     #create model
-    # baggingClassifier1 = ensemble.BaggingClassifier(n_estimators=11,bootstrap_features=True,n_jobs=-1,random_state=0)
-    # baggingClassifier1.fit(X_new1,y_train)
-    #
-    # # print(Weighted_XTest)
-    # prediction1 = baggingClassifier1.predict(Weighted_XTest[Weighted_XTest.columns[idxs_selected1]])
-    lrmodel = LogisticRegression()
-    lrmodel.fit(X_new1, y_train)
-    prediction = lrmodel.predict(Weighted_XTest[Weighted_XTest.columns[idxs_selected1]])
+    baggingClassifier1 = ensemble.BaggingClassifier(n_estimators=11,bootstrap_features=True,n_jobs=-1,random_state=0)
+    baggingClassifier1.fit(X_new1,y_train)
+
+    # print(Weighted_XTest)
+    prediction = baggingClassifier1.predict(Weighted_XTest[Weighted_XTest.columns[idxs_selected1]])
+    # lrmodel = LogisticRegression()
+    # lrmodel.fit(X_new1, y_train)
+    # prediction = lrmodel.predict(Weighted_XTest[Weighted_XTest.columns[idxs_selected1]])
     print (prediction)
 
     # total = prediction1
