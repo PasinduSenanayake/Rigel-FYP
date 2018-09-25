@@ -219,6 +219,7 @@ def mlModelExecutor(filePath):
     dataSection = dataPreProcessor(filePath+"/_profiling/")
     resultsSet = processMLData()
     loopData = dbManager.read('loopSections')
+    summaryLoopData = dbManager.read('summaryLoops')
     subSections=[]
     for loopSection in dataSection:
         dataSource = {'fileName':'', 'loopSegementStartLine':'','loopSegementEndLine':''}
@@ -232,9 +233,15 @@ def mlModelExecutor(filePath):
     for loopMatchSection in subSections:
         for dataItem in loopData:
             if(dataItem["startLine"]== loopMatchSection['loopSegementStartLine'] and dataItem["endLine"]== loopMatchSection['loopSegementEndLine'] and dataItem["fileName"]== loopMatchSection['fileName']):
+                print resultsSet[resultLaunch]
                 if(resultsSet[resultLaunch]=='Y'):
                     dataItem["optimizeMethod"] ='GPU'
+                    for summaryLoopDataItem in summaryLoopData:
+                        if(summaryLoopDataItem["startLine"]== loopMatchSection['loopSegementStartLine'] and summaryLoopDataItem["endLine"]== loopMatchSection['loopSegementEndLine'] and summaryLoopDataItem["fileName"]== loopMatchSection['fileName']):
+                            summaryLoopDataItem["optimizeMethod"] ='GPU'
+                            break
                 resultLaunch= resultLaunch+1
                 break
     dbManager.overWrite('loopSections',loopData)
+    dbManager.overWrite('summaryLoops',summaryLoopData)
     return True

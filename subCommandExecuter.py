@@ -111,6 +111,7 @@ def modifierExecutor():
             logger.loggerSuccess("Profile Summarization completed successfully")
             optimizableLoops = summarizedReport['content']
             selectedLoops = []
+            summaryLoops = []
             for loopSection in optimizableLoops:
                 selectedSection = {
                     'fileName': optimizableLoops[loopSection]['fileName'],
@@ -123,10 +124,22 @@ def modifierExecutor():
                     'optimiazability': False,
                     'optimizeMethod': None
                 }
+                summarySection = {
+                'fileName':optimizableLoops[loopSection]['fileName'],
+                'startLine': optimizableLoops[loopSection]['startLine'],
+                'endLine':optimizableLoops[loopSection]['endLine'],
+                'executionTime':optimizableLoops[loopSection]['sectionTime'],
+                'optimiazability':False,
+                'optimizedTime':0,
+                'optimizeMethod':None
+                }
                 if (float(optimizableLoops[loopSection]['overheadPrecentage']) > 0.0):
                     selectedSection['optimiazability'] = True
+                    summarySection['optimiazability'] = True
                 selectedLoops.append(selectedSection)
+                summaryLoops.append(summarySection)
             dbManager.write('loopSections', selectedLoops)
+            dbManager.write('summaryLoops', summaryLoops)
             workingDir = folderPath + "/_profiling/Sandbox"
             if os.path.exists(workingDir):
                 shutil.rmtree(workingDir)

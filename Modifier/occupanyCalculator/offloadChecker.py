@@ -137,7 +137,7 @@ def occupancyCalculation(registersPerThread,sharedMemoryPerBlock):
     responseObj = dbManager.read('systemData')
 
     gpuInfo = responseObj['gpuinfo']
-    nvidiaGPUList = [key for key in gpuInfo if "NVIDIA" in key]
+    nvidiaGPUList = [key for key in gpuInfo]
     computeCapability = gpuInfo[nvidiaGPUList[0]]['compute_capability']
     readGPUData(computeCapability)
     threadsPerTeamList = occupancyCalculator()

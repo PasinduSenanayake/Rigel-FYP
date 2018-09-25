@@ -1,5 +1,5 @@
 import dbManager,logger
-import shutil,os
+import shutil,os,time
 from omppScheduler.omppbasicprofile import getBasicProfile
 
 fileLocation = os.path.dirname(os.path.realpath(__file__))+"/"
@@ -37,7 +37,7 @@ def getSummary(filePath,runTimeArguments,destination):
                     loopRegions.append(loopSection)
         loopSubSets =[]
         for loopSubRegion in loopRegions:
-            loopSubSet ={'threadTimes':[],'startLine':'','endLine':'','fileName':'','schedulingMechanism':''}
+            loopSubSet ={'threadTimes':[],'startLine':'','endLine':'','fileName':'','schedulingMechanism':None}
             for lnum in range(loopSubRegion['startLine']+3,loopSubRegion['endLine']-1):
                 loopSubSet['threadTimes'].append(float(dataArray[lnum].split(',')[3]))
             loopMetdata =  dataArray[loopSubRegion['startLine']+1].split(',')
@@ -51,7 +51,6 @@ def getSummary(filePath,runTimeArguments,destination):
         returnResponse['content'] = ""
     returnResponse['returncode'] = response['returncode']
     returnResponse['error'] = response['error']
-    shutil.rmtree(destination)
     return returnResponse
 
 
@@ -69,32 +68,71 @@ def mechanismIdentifier(loopInfo):
         voting[1] = 1
     else:
         voting[1] = 0
-    if (maxTime-minTime)/avgTime > 0.5:
+    if (maxTime-minTime)/avgTime > 1:
         voting[2] = 1
     else:
         voting[2] = 0
     if sum(voting)> 1:
         print "Non-static"
+        #statge 2
+        sectionTimes=[]
+        difAbsVal = 0
+        gCounter = 0
+        gRCounter = 0
+        for count in range(0,len(loopInfo['threadTimes'])-1):
+            difAbsVal = difAbsVal + abs(loopInfo['threadTimes'][count+1]-loopInfo['threadTimes'][count])
+            sectionTimes.append(loopInfo['threadTimes'][count+1]-loopInfo['threadTimes'][count])
+        totalAverage = difAbsVal/(len(loopInfo['threadTimes'])-1)
+        for counter in range(0,len(loopInfo['threadTimes'])-1):
+            if ((sectionTimes[counter]/totalAverage)>0.5):
+                gCounter=gCounter+1
+            elif ((sectionTimes[counter]/totalAverage)<-0.5):
+                gRCounter=gRCounter+1
+        if (float(gCounter)/float(len(loopInfo['threadTimes'])-1) >= 0.6):
+            print "Guided"
+            loopInfo['schedulingMechanism']="guided"
+        elif (float(gRCounter)/float(len(loopInfo['threadTimes'])-1)>= 0.6):
+            print "Guided - R"
+            loopInfo['schedulingMechanism']="guided-R"
+        else:
+            print "dynamic"
+            loopInfo['schedulingMechanism']="dynamic"
     else:
         print "Static"
         loopInfo['schedulingMechanism']="static"
 
 
 
-# def setMechanism(extractor,directory,loopSections):
+def setMechanism(extractor,directory,loopSections):
+    copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
+    for loopSection in loopSections:
+        with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName']) as f:
+            file_str = f.readlines()
+            file_str[int(loopSection['startLine'])-1] =   file_str[int(loopSection['startLine'])-1].replace('static',loopSection['schedulingMechanism'])
+    # do stuff with file_str
 
-
-
+        with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName'], "w") as f:
+            f.writelines(file_str)
+    summaryLoops = dbManager.read('summaryLoops')
+    profiledStatus  = getSummary(fileLocation+'omppScheduler/Sandbox',dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
+    for profiledLoop in profiledStatus['content']:
+        for summaryLoop in summaryLoops:
+            if( summaryLoop['startLine'] == profiledLoop['startLine'] and summaryLoop['endLine'] == profiledLoop['endLine'] and summaryLoop['fileName']== profiledLoop['fileName'] ):
+                summaryLoop['optimizedTime'] = max(profiledLoop['threadTimes'])
+    dbManager.overWrite('summaryLoops',summaryLoops)
+    shutil.rmtree(fileLocation+'omppScheduler/Sandbox')
 def schdedulerInitializer(extractor, directory):
     global fileLocation
-    copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
     loopSections = dbManager.read('loopSections')
+    schedulerStartTime = time.time()
     profiledStatus  = getSummary(directory,dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
     if (profiledStatus['returncode']==1):
         for singleSection in profiledStatus['content']:
             for indiviualSection in loopSections:
-                if( indiviualSection['startLine'] == singleSection['startLine'] and indiviualSection['endLine'] == singleSection['endLine'] and indiviualSection['fileName']== singleSection['fileName'] ):
-                    singleSection = mechanismIdentifier(singleSection)
-                    break
+                if(indiviualSection['optimizeMethod']==None):
+                    if( indiviualSection['startLine'] == singleSection['startLine'] and indiviualSection['endLine'] == singleSection['endLine'] and indiviualSection['fileName']== singleSection['fileName'] ):
+                        singleSection = mechanismIdentifier(singleSection)
+                        break
 
-            #setMechanism(extractor,directory,loopSections)
+        setMechanism(extractor,directory,profiledStatus['content'])
+        dbManager.write('schedulerExeTime',time.time()-schedulerStartTime)
