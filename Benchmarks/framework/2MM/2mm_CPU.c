@@ -118,7 +118,7 @@ void mm2_OMP(DATA_TYPE* A, DATA_TYPE* B, DATA_TYPE* C, DATA_TYPE* D, DATA_TYPE* 
   int i, j, k;
 
 
-   #pragma omp parallel for
+   #pragma omp parallel for schedule(static)
    for (i = 0; i < NI; i++)
      {
        for (j = 0; j < NJ; j++)
@@ -131,7 +131,7 @@ void mm2_OMP(DATA_TYPE* A, DATA_TYPE* B, DATA_TYPE* C, DATA_TYPE* D, DATA_TYPE* 
 	 }
      }
 
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(static)
     for (i = 0; i < NI; i++)
       {
 	for (j = 0; j < NL; j++)
