@@ -5,37 +5,23 @@ from shutil import copyfile
 global pragmaLine
 global compilerOptins
 fileLocation = ''
+filePath = ''
 
-
-def copyFile(filename):
-    copyfile(fileLocation+filename, fileLocation+"withCollapse.c")
-
-
-def reenableLimit():
-    lines = open(fileLocation+"withCollapse.c", 'r').readlines()
-    # for index,line in enumerate(lines):
-    #     if "/*iteratotConuter++; if(iteratotConuter>100){break;};*/"in line:
-    #         lines[index] = line.replace("/*iteratotConuter++; if(iteratotConuter>100){break;};*/","iteratotConuter++; if(iteratotConuter>100){break;};")
-
-    out = open(fileLocation+"withCollapse.c", 'w')
-    out.writelines(lines)
-    out.close()
-
-def addCollapes(loopLine):
-    lines = open(fileLocation+"withCollapse.c", 'r').readlines()
-    for index,line in enumerate(lines):
-        if index == loopLine-1:
-            lines[index] = line+"\n #pragma omp for collapse(1) \n"
-        # if "/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};"in line:
-        #     lines[index] = line.replace("/*dontErase*/ iteratotConuter++; if(iteratotConuter>100){break;};","/*iteratotConuter++; if(iteratotConuter>100){break;};*/")
-    out = open(fileLocation+"withCollapse.c", 'w')
-    out.writelines(lines)
-    out.close()
-
-
+def addCollapes(loopLine,contentList):
+    content = ''
+    index = 1
+    for line in contentList:
+        if index == loopLine:
+            content = content + line + "\n#pragma omp for collapse(1)\n"
+        else:
+            content = content + line
+        index = index + 1
+    with open(filePath,'w') as out:
+        out.write(content)
 
 def runCode():
-    processOutput = Popen('cd '+fileLocation +' && clang -c -fopenmp -ferror-limit=1000 '+compilerOptins +' '+fileLocation+'withCollapse.c -o '+fileLocation+'withCollapse.o',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('cd '+fileLocation +' && clang -c -fopenmp -ferror-limit=1000 '+compilerOptins + ' ' + filePath +
+                          ' -o withCollapse',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output,error=processOutput.communicate()
     if "#pragma omp for collapse" in error:
         return error
@@ -44,12 +30,12 @@ def runCode():
 
 
 def incrementAndRun(numofLoops):
-    lines = open(fileLocation+"withCollapse.c", 'r').readlines()
+    lines = open(filePath, 'r').readlines()
     for index,line in enumerate(lines):
      if "#pragma omp for collapse" in line:
          code = line
          lines[index] = "#pragma omp for collapse("+str(numofLoops)+") \n"
-    out = open(fileLocation+"withCollapse.c", 'w')
+    out = open(filePath, 'w')
     out.writelines(lines)
     out.close()
     if(runCode()=="success"):
@@ -59,16 +45,16 @@ def incrementAndRun(numofLoops):
         return numofLoops-1
 
 
-def collapseAnnotator(filePath,loopStartLine,compilerOptions=''):
+def collapseAnnotator(offloadFilePath,loopStartLine,contentList,compilerOptions=''):
     global compilerOptins
     global  fileLocation
-
+    global filePath
     compilerOptins = compilerOptions
-    fileName     = "" + filePath.rsplit('/', 1)[1]
-    fileLocation = filePath.replace(fileName, "")
-    copyFile(fileName)
-    addCollapes(loopStartLine)
+    fileName = "/" + offloadFilePath.rsplit('/', 1)[1]
+    fileLocation = offloadFilePath.replace(fileName, "")
+    fileName = fileName.split('.c')[0]
+    filePath = fileLocation + fileName + '_withCollapse.c'
+    addCollapes(loopStartLine, contentList)
     results = runCode()
     if(results=="success"):
-        print incrementAndRun(2)
-        os.remove(fileLocation+"withCollapse.c")
+        return incrementAndRun(2)

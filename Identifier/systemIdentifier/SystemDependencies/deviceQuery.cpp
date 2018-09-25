@@ -59,9 +59,11 @@ main(int argc, char **argv)
 
     if (error_id != cudaSuccess)
     {
-        printf("cudaGetDeviceCount returned %d\n-> %s\n", (int)error_id, cudaGetErrorString(error_id));
-        printf("Result = FAIL\n");
+        printf("FAIL\n");
         exit(EXIT_FAILURE);
+    }
+    else{
+        printf("SUCCESS\n");
     }
 
     printf("Detected devices =%d \n", deviceCount);

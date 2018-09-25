@@ -89,7 +89,7 @@ def readClangVerbose():
         if "nvlink info" in s:
             nvlinkInfo.append(s)
     if len(nvlinkInfo) == 0:
-        logger.loggerError('Offload Optimizer reading clang verbose failed ', err)
+        logger.loggerError('Offload Optimizer reading clang verbose failed ')
         result['code'] = 1
         result['content'] = []
         result['error'] = err
@@ -138,106 +138,115 @@ def changeMakeFile():
     return result
 
 
-
-
 def __runOptimizerStandalone(extractor):
     global makePath
     fileName = ''
-
+    sourceObjList = {}
     loopSections = dbManager.read('loopSections')
-    print(len(loopSections))
     status = changeMakeFile()
     if status['code'] == 0:
         for loopSection in loopSections:
-            if fileName != loopSection['fileName']:
-                fileName = loopSection['fileName']
-                sourceObj = extractor.getSource(folderPath_ + '/' + fileName)
-                offloadFolderPath = movePath + '/' + folderName + '/' + fileName.replace('.c', '_serial.c')
-                with open(offloadFolderPath, "r") as f:
-                    contentList = f.readlines()
+            if loopSection['optimizeMethod'] =='GPU':
+                if fileName != loopSection['fileName']:
+                    fileName = loopSection['fileName']
+                    if fileName in sourceObjList.keys():
+                        sourceObj = sourceObjList[fileName]
+                    else:
+                        sourceObj = extractor.getSource(folderPath_ + '/' + fileName)
+                        sourceObjList[fileName] = sourceObj
+
+                    offloadFolderPath = movePath + '/' + folderName + '/' + fileName.replace('.c', '_serial.c')
+                    with open(offloadFolderPath, "r") as f:
+                        contentList = f.readlines()
+
+                startIndex = int(loopSection['serialStartLine'])
+                endIndex   = int(loopSection['serialEndLine'])
+
+                collapsibleDepth = collapseAnnotator(offloadFolderPath, startIndex, contentList)
+                content = ""
+                lineNumber = 0
+                for line in contentList:
+                    if startIndex == lineNumber + 1:
+                        content = content + line + TARGET_PRAGMA_INITIALIZE
+                    else:
+                        content = content + line
+                    lineNumber = lineNumber + 1
+
+                with open(offloadFolderPath, 'w') as f:
+                    f.write(content)
+
+                status = readClangVerbose()
+                if status['code'] == 0:
+                    threadsPerTeamList = occupancyCalculation(input['registersPerThread'], input['sharedMemoryPerBlock'])
+                    TARGET_MAP_PRAGMA = mapTargetData(offloadFolderPath, startIndex, endIndex)
+
+                    print collapsibleDepth
+
+                    if collapsibleDepth > 1:
+                        TARGET_PRAGMA = TARGET_PRAGMA_COLLAPSE.replace('$depth', str(collapsibleDepth))
+                    else:
+                        TARGET_PRAGMA = TARGET_PRAGMA_SPLIT
 
 
-            startIndex = int(loopSection['serialStartLine'])
-            endIndex   = int(loopSection['serialEndLine'])
+                    OMP_GET_STIME = 'double omp_getwtime1,omp_getwtime2;\n' \
+                                    'omp_getwtime1 = omp_get_wtime();\n'
+                    OMP_GET_ETIME = 'omp_getwtime2 = omp_get_wtime();\n' \
+                                    'printf("GPU Runtime:%0.6lf", omp_getwtime2 - omp_getwtime1);\n' \
+                                    'exit(0);\n'
+                    FINALIZED_PRGAMA = OMP_GET_STIME + TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA
 
-            content = ""
-            lineNumber = 0
-            for line in contentList:
-                if startIndex == lineNumber + 1:
-                    content = content + line + TARGET_PRAGMA_INITIALIZE
-                else:
-                    content = content + line
-                lineNumber = lineNumber + 1
+                    timeList = []
+                    for threads in threadsPerTeamList:
+                        FINALIZED_PRGAMA = FINALIZED_PRGAMA.replace('$threads',str(threads))
+                        lineNumber = 1
+                        content = '//GPU optimzation\n'
+                        for line in contentList:
+                            if startIndex == lineNumber :
+                                content = content + line + FINALIZED_PRGAMA
+                            elif lineNumber == endIndex:
+                                content = content + OMP_GET_ETIME + line
+                            else:
+                                content = content + line
+                            lineNumber = lineNumber + 1
 
-            with open(offloadFolderPath, 'w') as f:
-                f.write(content)
+                        #writing to the new file
+                        with open(offloadFolderPath,'w') as f:
+                             f.write(content)
 
-            status = readClangVerbose()
-            if status['code'] == 0:
-                threadsPerTeamList = occupancyCalculation(input['registersPerThread'], input['sharedMemoryPerBlock'])
-                TARGET_MAP_PRAGMA = mapTargetData(offloadFolderPath, startIndex, endIndex)
-                collapsibleDepth  = collapseAnnotator(offloadFolderPath,startIndex)
+                        runnablePath = makePath + '&& ./runnable '
+                        p = subprocess.Popen(runnablePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                              stdin=subprocess.PIPE)
+                        (output, err) = p.communicate()  # to check for errors
+                        runnableList  = output.splitlines()
+                        clangError = True
+                        for s in runnableList:
+                            if "GPU Runtime:" in s:
+                                timeList.append(float(s.split(":")[1].strip()))
+                                clangError = False
+                                break
+                        if clangError:
+                            logger.loggerError('Optimized code execution failure. check Clang compiler')
 
-                if collapsibleDepth > 1:
-                    TARGET_PRAGMA = TARGET_PRAGMA_COLLAPSE.replace('$depth', collapsibleDepth)
-                else:
-                    TARGET_PRAGMA = TARGET_PRAGMA_SPLIT
 
+                    print(timeList)
+                    val, idx = min((val, idx) for (idx, val) in enumerate(timeList))
 
-                OMP_GET_STIME = 'double omp_getwtime1,omp_getwtime2;\n' \
-                                'omp_getwtime1 = omp_get_wtime();\n'
-                OMP_GET_ETIME = 'omp_getwtime2 = omp_get_wtime();\n' \
-                                'printf("GPU Runtime:%0.6lf", omp_getwtime2 - omp_getwtime1);\n' \
-                                'exit(0);\n'
-                FINALIZED_PRGAMA = OMP_GET_STIME + TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA
+                    if collapsibleDepth > 1:
+                        TARGET_PRAGMA = TARGET_PRAGMA_COLLAPSE.replace('$depth', str(collapsibleDepth))
+                    else:
+                        TARGET_PRAGMA = TARGET_PRAGMA_SPLIT
 
-                timeList = []
-                for threads in threadsPerTeamList:
-                    FINALIZED_PRGAMA = FINALIZED_PRGAMA.replace('$threads',str(threads))
-                    lineNumber = 1
-                    content = '#include <omp.h>\n'
-                    for line in contentList:
-                        if startIndex == lineNumber :
-                            content = content + line + FINALIZED_PRGAMA
-                        elif lineNumber == endIndex:
-                            content = content + OMP_GET_ETIME + line
-                        else:
-                            content = content + line
-                        lineNumber = lineNumber + 1
-
-                    #writing to the new file
-                    with open(offloadFolderPath,'w') as f:
-                         f.write(content)
-
-                    runnablePath = makePath + '&& ./runnable '
-                    p = subprocess.Popen(runnablePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                          stdin=subprocess.PIPE)
-                    (output, err) = p.communicate()  # to check for errors
-                    runnableList  = output.splitlines()
-                    for s in runnableList:
-                        if "GPU Runtime:" in s:
-                            timeList.append(float(s.split(":")[1].strip()))
-                            break
-
-                print(timeList)
-                val, idx = min((val, idx) for (idx, val) in enumerate(timeList))
-
-                if collapsibleDepth > 1:
-                    TARGET_PRAGMA = TARGET_PRAGMA_COLLAPSE.replace('$depth', collapsibleDepth)
-                else:
-                    TARGET_PRAGMA = TARGET_PRAGMA_SPLIT
-
-                EXTRACTOR_PRAGMA = TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA.replace('$threads', str(threadsPerTeamList[idx]))
-                print EXTRACTOR_PRAGMA
-                # sourceObj.offload(loopSection['startLine'],EXTRACTOR_PRAGMA)
-                # sourceObj.writeToFile(folderPath_+'/'+fileName)
+                    EXTRACTOR_PRAGMA = TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA.replace('$threads', str(threadsPerTeamList[idx]))
+                    print EXTRACTOR_PRAGMA
+                    # sourceObj.offload(loopSection['startLine'],EXTRACTOR_PRAGMA)
+                    # sourceObj.writeToFile(folderPath_+'/'+fileName)
 
 
 
 def runOffloadOptimizer( extractor , folderPath):
     global folderPath_
     folderPath_ = folderPath
-    logger.loggerInfo("GPU Offloder Optimizer initiated")
+    logger.loggerInfo("GPU Offloader Optimizer initiated")
     status = moveSandbox()
     if status['code'] == 0:
         __runOptimizerStandalone(extractor)
