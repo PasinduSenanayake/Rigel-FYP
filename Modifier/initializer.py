@@ -1,4 +1,4 @@
-import logger
+import logger,dbManager
 from Vectorizer.Vectorizer import Vectorizer
 from gpuMachineLearner.gpuMLExecuter import mlModelExecutor
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
@@ -12,7 +12,7 @@ response = {
 def modify(extractor,directory):
     global response
     logger.loggerInfo("Gpu Machine Learning Model Execution Initialized")
-    
+
     result = mlModelExecutor(directory)
     if (result):
         logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
@@ -28,6 +28,8 @@ def modify(extractor,directory):
     resultLocal = runOffloadOptimizer(extractor, directory)
 
     logger.loggerSuccess("GPU Optimization Completed.")
+
+    print dbManager.read('summaryLoops')
 
     exit()
 
