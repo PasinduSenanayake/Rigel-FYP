@@ -117,8 +117,8 @@ def reportGenerator():
     optLoops=[]
     for index,loopSection in enumerate(loopSections):
         loopNames.append('Section'+str(index+1))
-        nonOptLoops.append('Section'+str(index+1))
-        optLoops.append('Section'+str(index+1))
+        nonOptLoops.append(loopSection['executionTime'])
+        optLoops.append(loopSection['optimizedTime'])
 
 
     report = {
