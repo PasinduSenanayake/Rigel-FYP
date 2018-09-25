@@ -55,7 +55,7 @@ def getUserApproval():
 
 
 def findVariableMappingType():
-    processOutput = Popen('clang '+directoryPath+'/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -ferror-limit=1000 '+directoryPath+'/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     nextLineUseful = False
     while True:
         line = processOutput.stderr.readline()
@@ -104,7 +104,7 @@ def findVariableType(path,loopStartLine):
                 for key in undefinedVariables.keys():
                     item = item + 'printf("%d",'+key+');\n'
             fout.write(item)
-    processOutput = Popen('clang -fopenmp '+ directoryPath+'/targetChanged.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -fopenmp -ferror-limit=1000 '+ directoryPath+'/targetChanged.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     while True:
         line = processOutput.stderr.readline()
         if line != '':
@@ -124,7 +124,8 @@ def findVariableType(path,loopStartLine):
 
 
 def mapTargetData(path,loopStartLine,loopEndline):
-
+    global undefinedVariables
+    undefinedVariables = {}
     global directoryPath
     fileName = path.split("/")[-1]
     directoryPath = path.replace("/"+fileName,"")
@@ -139,7 +140,7 @@ def mapTargetData(path,loopStartLine,loopEndline):
                 fout.write(item)
             if (loopEndline - i == 1):
                 fout.write('}')
-    processOutput = Popen('clang ' + directoryPath + '/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    processOutput = Popen('clang -ferror-limit=1000 ' + directoryPath + '/target.c -o testCpu',shell=True,stdin=PIPE, stdout=PIPE, stderr=PIPE)
     nextLineUseful = False
     while True:
         line = processOutput.stderr.readline()
@@ -177,4 +178,3 @@ def mapTargetData(path,loopStartLine,loopEndline):
     os.remove(directoryPath+'/target.c')
     os.remove(directoryPath+'/targetChanged.c')
     return pragma
-

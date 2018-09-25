@@ -1,13 +1,18 @@
 import json,os,sys
 import shutil
+
+
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 import dbManager,logger
+from Identifier.vectorFeatureFetcher import vecAnalzyer
 from Modifier.Vectorizer.Vectorizer import Vectorizer
 from Identifier.nonarchiFeatureFetcher import hotspotsProfiler
 from Modifier.occupanyCalculator.offloadChecker import occupancyCalculation
+from Modifier.Scheduler.schedulerExecuter import schdedulerInitializer
 from Modifier.gpuMachineLearner.gpuMLExecuter import mlModelExecutor
+from Modifier.vecMachineLearner.vecMLExecuter import vecMlModelExecutor
 from Identifier.identifierSandbox.sourceCodeAnnotation.sourceAnnotator import targetDataMap
 from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayInfoFetch
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
@@ -38,7 +43,15 @@ def checkSubCommandConf():
     else:
         return True
 
+def vectorFeatureIdentifier():
+    responseSet =  modifierExecutor()
+    vecAnalzyer(responseSet['extractor'],responseSet['folderPath'],dbManager.read('loopSections'))
+    vecMlModelExecutor(responseSet['folderPath'])
 
+
+def schedulingIdentifier():
+    responseSet =  modifierExecutor()
+    schdedulerInitializer(responseSet['extractor'],responseSet['folderPath'])
 
 
 def vectorizer():
@@ -97,6 +110,7 @@ def modifierExecutor():
             logger.loggerSuccess("Profile Summarization completed successfully")
             optimizableLoops = summarizedReport['content']
             selectedLoops = []
+            summaryLoops = []
             for loopSection in optimizableLoops:
                 selectedSection = {
                     'fileName': optimizableLoops[loopSection]['fileName'],
@@ -109,10 +123,22 @@ def modifierExecutor():
                     'optimiazability': False,
                     'optimizeMethod': None
                 }
+                summarySection = {
+                'fileName':optimizableLoops[loopSection]['fileName'],
+                'startLine': optimizableLoops[loopSection]['startLine'],
+                'endLine':optimizableLoops[loopSection]['endLine'],
+                'executionTime':optimizableLoops[loopSection]['sectionTime'],
+                'optimiazability':False,
+                'optimizedTime':0,
+                'optimizeMethod':None
+                }
                 if (float(optimizableLoops[loopSection]['overheadPrecentage']) > 0.0):
                     selectedSection['optimiazability'] = True
+                    summarySection['optimiazability'] = True
                 selectedLoops.append(selectedSection)
+                summaryLoops.append(summarySection)
             dbManager.write('loopSections', selectedLoops)
+            dbManager.write('summaryLoops', summaryLoops)
             workingDir = folderPath + "/_profiling/Sandbox"
             if os.path.exists(workingDir):
                 shutil.rmtree(workingDir)
@@ -154,7 +180,6 @@ def modifierExecutor():
                                 data['serialEndLine']= str(int(element.split(":")[1]) + 1)
                                 break
             dbManager.overWrite('loopSections', selectedLoops)
-            print dbManager.read('loopSections')
         return {'extractor':extractor,'folderPath':folderPath}
 
 
@@ -212,8 +237,9 @@ def offloadOptimizer():
         global result
         logger.loggerInfo("offloadOptimizer Command Initiated")
         if(checkSubCommandConf()):
+            modifireReturn = modifierExecutor()
             commadName = commandJson['command']['offloadOptimizer']
-            resultLocal = runOffloadOptimizer()
+            resultLocal = runOffloadOptimizer(modifireReturn['extractor'], modifireReturn['folderPath'])
             result['code']=0
             result['content']=resultLocal
             result['error']=''
@@ -310,6 +336,8 @@ def runCommand(command):
         'offloadOptimizer':lambda :offloadOptimizer(),
         'modifierExecute':lambda :modifierExecutor(),
         "vectorize":lambda :vectorizer(),
+        'schedule':lambda :schedulingIdentifier(),
+        'vectorFeature': lambda: vectorFeatureIdentifier()
     }[command]()
 
     return result
@@ -317,6 +345,8 @@ def runCommand(command):
 if __name__ == "__main__":
     logger.createLog()
     logger.loggerInfo("Individual Command executer initiated")
+    if os.path.isfile('/media/pasindu/newvolume/FYP/Framework/Rigel-FYP/DatabaseManager/rigel.db'):
+        os.remove('/media/pasindu/newvolume/FYP/Framework/Rigel-FYP/DatabaseManager/rigel.db')
     if(len(sys.argv)>1):
         runCommand(sys.argv[1])
         if(result['code']==0):

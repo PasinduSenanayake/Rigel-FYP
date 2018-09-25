@@ -1,6 +1,7 @@
 import dbManager,logger,os,shutil
 import hashlib,dbManager
 import gc
+import time
 from nonarchiFeatureFetcher import hotspotsProfiler
 
 def checkSumAnalyzer(fileInformation):
@@ -20,10 +21,8 @@ def checkSumAnalyzer(fileInformation):
                             break
     return list(set(allFiles)-set(availableFiles))
 
-
-
-
 def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
+    gpuStartTime = time.time()
     with open(directory + "/_profiling/Sandbox/Makefile", 'r') as file :
         filedata = file.read()
         filedata = filedata.replace('.c', '_serial.c')
@@ -75,6 +74,7 @@ def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
             else:
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is not a parallelable region. Skipped")
         dbManager.write('loopSectionsTemp', loopSections)
+        dbManager.write('gpuFeatureTime', time.time() - gpuStartTime)
 
 
 

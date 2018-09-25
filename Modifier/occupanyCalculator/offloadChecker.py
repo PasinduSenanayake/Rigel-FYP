@@ -4,6 +4,7 @@ import json
 import os
 import math
 import re,sys
+import dbManager
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../../Identifier/systemIdentifier")
 from systemIdentifier import __systemInformationIdentifier
 
@@ -124,39 +125,6 @@ def occupancyCalculator():
     return occupancyDic[maxOccupancy]
 
 
-# find collapsible depth
-def colllapsibleDepth(key, value, loopMetaData):
-    if len(value) == 1:
-        if (loopMetaData[key]['loopMeta']['collapse'][1]):
-            if isinstance(value[0], dict):
-                for key1, value1 in value[0].iteritems():
-                    return 1 + colllapsibleDepth(key1, value1, loopMetaData)
-            else:
-                return 2
-        else:
-            return 1
-    else:
-        return 1
-
-# collapsible
-# number of teams
-# number of threads
-def loadLoopData(looporder, loopmetadata):
-    loopOrder = looporder
-    loopMetaData = loopmetadata
-    global targetPragmaDic
-    readGPUData()
-    print loopOrder
-    print loopMetaData
-    for key, value in loopOrder.iteritems():
-        iterations = 4096*4096
-        depth = colllapsibleDepth(key, value, loopMetaData)
-        threadsPerTeam = occupancyCalculator()
-        teams = calculateTeams(threadsPerTeam, iterations)
-        outputPragma = pragmaGenerator(depth, threadsPerTeam, teams)
-        targetPragmaDic[key] = outputPragma
-    print targetPragmaDic
-
 # for now we have considered all the loop levels as collapsible
 # in case of vectorization we can reduce number of loop levels by 1 to remove inner most loop from collapsing
 # in case number of threads are greater than iteration space
@@ -166,11 +134,11 @@ def occupancyCalculation(registersPerThread,sharedMemoryPerBlock):
     global input
     input["registersPerThread"] = float(registersPerThread)
     input["sharedMemoryPerBlock"] = float(sharedMemoryPerBlock)
-    responseObj = __systemInformationIdentifier()
-    if responseObj['returncode'] == 1:
-            gpuInfo = responseObj['content']['gpuinfo']
-            nvidiaGPUList = [key for key in gpuInfo if "NVIDIA" in key]
-            computeCapability = gpuInfo[nvidiaGPUList[0]]['compute_capability']
-            readGPUData(computeCapability)
-            threadsPerTeamList = occupancyCalculator()
-            return threadsPerTeamList
+    responseObj = dbManager.read('systemData')
+
+    gpuInfo = responseObj['gpuinfo']
+    nvidiaGPUList = [key for key in gpuInfo]
+    computeCapability = gpuInfo[nvidiaGPUList[0]]['compute_capability']
+    readGPUData(computeCapability)
+    threadsPerTeamList = occupancyCalculator()
+    return threadsPerTeamList
