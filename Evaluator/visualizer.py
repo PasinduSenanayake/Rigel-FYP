@@ -101,6 +101,26 @@ def visual(report):
     plt.show()
 
 def reportGenerator():
+
+    TotalTime = 100
+    gpuOptmizer = 20
+    cpuOptimizer = 45
+    vecOptimizer = 10
+    notOptiimzer =10
+    notParalleable = (TotalTime-(gpuOptmizer+cpuOptimizer+vecOptimizer+notOptiimzer))/TotalTime
+    gpuOptimizerable = gpuOptmizer/TotalTime
+    vecOptimizerable = vecOptimizer/TotalTime
+    cpuOptimizerable = cpuOptimizer/TotalTime
+    notOptimizerable = notOptiimzer/TotalTime
+    loopNames=[]
+    nonOptLoops=[]
+    optLoops=[]
+    for index,loopSection in enumerate(loopSections):
+        loopNames.append('Section'+str(index+1))
+        nonOptLoops.append('Section'+str(index+1))
+        optLoops.append('Section'+str(index+1))
+
+
     report = {
         'lsb':{'Not Parallelable':15,'GPU Optimizable':20,'CPU Optimizable':45,'Vector Optimizable':10,'Not Optimizable':10},
         'set':{'loopSections':['Section1', 'Section2', 'Section3', 'Section4', 'Section5', 'Section6'],'nonOptimized':[10,8,6,4,2,1],'optimized':[12,6,7,3,6,2],},
