@@ -4,10 +4,13 @@ from Clause import Clause
 from ForLoop import ForLoop
 from Parameter import Parameter
 import re
+import copy
+
 
 class StructuredBlock(Block):
     def __init__(self, directive, associatedLoop, forLoops, sourceCode):
         elements = []
+        self.vectorized = False
         if(directive):
             elements.append(directive)
             super(StructuredBlock, self).__init__("", directive.getStartIndex())
@@ -37,12 +40,44 @@ class StructuredBlock(Block):
             return self.elements[0]
         return None
 
-    def vectorize(self, vectorLen=None, alignment=None):
+    def vectorize(self, vectorLen=None, alignment=None, collapsed=None):
         if not self.directive():
-            newPragma = Block("#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
-            # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
-            newPragma.parent = self
-            self.elements.insert(0, newPragma)
+            if not collapsed:
+                newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
+                # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+                self.vectorized = True
+                newPragma.parent = self
+                self.elements.insert(0, newPragma)
+            if (collapsed and self.lineNumber < int(collapsed)):
+                iterator = self.hasAssociatedLoop()
+                collapseSize = 0
+                while iterator.lineNumber != int(collapsed):
+                    if isinstance(iterator, ForLoop):
+                        collapseSize += 1
+                    iterator = iterator.getNext()
+                collapseSize += 1
+                newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
+                                  ") collapsed(" + str(collapseSize) + ")\n", 0)
+                # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+                self.vectorized = True
+                newPragma.parent = self
+                self.elements.insert(0, newPragma)
+            elif collapsed and self.lineNumber > int(collapsed):
+                iterator = self.hasAssociatedLoop()
+                collapseSize = 1
+                while iterator.lineNumber != int(collapsed):
+                    iterator = iterator.getParentLoop()
+                    collapseSize += 1
+                newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
+                                  ") collapsed(" + str(collapseSize) + ")\n", 0)
+                # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+                structuredBlock = iterator.getParent()
+                structuredBlock.vectorized = True
+                newPragma.parent = structuredBlock
+                structuredBlock.elements.insert(0, newPragma)
+
+
+
 
     def offload(self, pragma=None, num_threads=1, clauses=""):
         if not self.directive():
@@ -83,11 +118,12 @@ class StructuredBlock(Block):
     def hasAssociatedLoop(self):
         if self.directive():
             if isinstance(self.elements[1], ForLoop):
-                return True
+                return self.elements[1]
         else:
             if isinstance(self.elements[0], ForLoop):
-                return True
-        return False
+                return self.elements[0]
+        return None
+
 
 
     def getBlockLength(self, string, startIndex):
@@ -104,7 +140,58 @@ class StructuredBlock(Block):
                 openedBracketCount = openedBracketCount - 1
                 if (openedBracketCount == 0):
                     break
-        return {"blockStartIndex":blockStartIndex - 1, "blockEndIndex":startIndex+blockLength}
+        return {"blockStartIndex":blockStartIndex-1, "blockEndIndex":startIndex+blockLength}
+
+    def distribute(self, section, chunk):
+        mainBlocks = []
+        mainSection = []
+        subSection = []
+        forLoop = self.hasAssociatedLoop()
+        nextObj = forLoop.getNext()
+        while nextObj and nextObj.isChild(forLoop):
+            if str(nextObj.lineNumber) in section:
+                mainBlocks.append(nextObj)
+            nextObj = nextObj.getNext()
+
+        nextObj = forLoop.getNext()
+        while nextObj and nextObj.isChild(forLoop):
+            found = False
+            for i in range(len(mainBlocks)):
+                if mainBlocks[i].isChild(nextObj) or mainBlocks[i] == nextObj:
+                    mainSection.append(nextObj)
+                    found = True
+                    break
+            if not found:
+                subSection.append(nextObj)
+            nextObj = nextObj.getParallelNext()
+
+        distributed = True
+        for section in subSection:
+            if ";" in section.body or isinstance(section, StructuredBlock):
+                distributed = False
+
+        if not distributed and len(mainSection)>0:
+            forLoop.setElements(mainSection)
+            newForLoop = copy.deepcopy(forLoop)
+            forLoop.innerSpacing = "{\n"
+            forLoop.outerSpacing = "\n}\n"
+            newForLoop.setElements(subSection, sort=False)
+            newStructuredBlock = StructuredBlock(None, newForLoop, None, None)
+            newStructuredBlock.startIndex = newForLoop
+            newStructuredBlock.parent = self.parent
+            if forLoop.distributedIndex == int(chunk):
+                forLoop.distributed = True
+                newForLoop.distributedIndex += 1
+                self.parent.elements.insert(self.parent.elements.index(self) + 1, newStructuredBlock)
+            else:
+                newForLoop.distributed = True
+                newForLoop.distributedIndex = forLoop.distributedIndex
+                forLoop.distributedIndex = newForLoop.distributedIndex+1
+                self.parent.elements.insert(self.parent.elements.index(self), newStructuredBlock)
+
+        # delimiter = Block("\n}\n" + self.body + "{\n")
+        # delimiter.parent = self
+        # self.elements = mainSection + [delimiter] + subSection
 
     # def scheduleStatic(self):
     #     if isinstance(self.elements[0], Directive):

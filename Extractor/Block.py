@@ -16,8 +16,9 @@ class Block(object):
     def isEnabled(self):
         return self.enabled
 
-    def setElements(self, elements):
-        elements.sort(key=lambda x: x.getStartIndex(), reverse=False)
+    def setElements(self, elements, sort=True):
+        if sort:
+            elements.sort(key=lambda x: x.getStartIndex(), reverse=False)
         for element in elements:
             element.parent = self
         self.elements = elements
@@ -98,6 +99,13 @@ class Block(object):
             childIndex = self.parent.elements.index(self)
             return self.parent.getNext(childIndex+1)
         return None
+
+    def getParallelNext(self):
+        index = self.parent.elements.index(self)
+        if index == len(self.parent.elements) - 1:
+            return None
+        else:
+            return self.parent.elements[index+1]
 
     # def getNextChild(self, childIndex = 0, parent = None):
     #     if len(self.elements) > childIndex:
