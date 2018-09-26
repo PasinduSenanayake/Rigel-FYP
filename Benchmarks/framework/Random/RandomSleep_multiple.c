@@ -19,12 +19,12 @@ void dynamic_scheduling(int* randomArray){
 	#pragma omp parallel for num_threads(theradSize) schedule(static)
 	for (int i = 0; i < 10; i++){
 		printf("Thread no = 1 i =1 \n");
-		sleep(1);
+		sleep(i*2);
 		}
 	#pragma omp parallel for num_threads(theradSize) schedule(static)
 	for (int i = 0; i < 10; i++){
 		printf("Thread no = 1 i =1 \n");
-		sleep(1);
+		sleep(i*2);
 		}
 
 }

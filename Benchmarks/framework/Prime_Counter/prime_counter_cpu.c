@@ -6,7 +6,10 @@ int main ( int argc, char *argv[] );
 void prime_number_sweep (int n_hi );
 int prime_number ( int n );
 
-/******************************************************************************/
+
+//----> AdditionalCodeHook
+
+
 
 int main ( int argc, char *argv[] )
 
@@ -18,13 +21,10 @@ int main ( int argc, char *argv[] )
 
 
   prime_number_sweep ( n_hi);
-/*
-  Terminate.
-*/
 
   return 0;
 }
-/******************************************************************************/
+
 
 void prime_number_sweep (  int n_hi )
 
@@ -52,8 +52,7 @@ int prime_number ( int n )
   int prime;
   int total = 0;
 
-# pragma omp parallel for shared ( n ) private ( i, j, prime )
-
+# pragma omp parallel for shared ( n ) private ( i, j, prime ) schedule(static)
   for ( i = 2; i <= n; i++ )
   {
     prime = 1;

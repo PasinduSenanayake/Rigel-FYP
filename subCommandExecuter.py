@@ -1,6 +1,6 @@
 import json,os,sys
 import shutil
-
+import random
 
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
@@ -52,6 +52,25 @@ def vectorFeatureIdentifier():
 def schedulingIdentifier():
     responseSet =  modifierExecutor()
     schdedulerInitializer(responseSet['extractor'],responseSet['folderPath'])
+
+
+def reportGen():
+    loopDataNOpt =[10,8,6,4,6,1]
+    loopDataOpt =[12,6,7,3,4,2]
+    summaryLoops = []
+    hardware = ['GPU','vec','CPU']
+    for Index, loopSection in enumerate(loopDataNOpt):
+        summarySection = {
+        'fileName':'testFilename',
+        'startLine': 0,
+        'endLine':0,
+        'executionTime':loopSection,
+        'optimiazability':True,
+        'optimizedTime':loopDataOpt[Index],
+        'optimizeMethod':random.choice(hardware)
+        }
+        summaryLoops.append(summarySection)
+    print summaryLoops
 
 
 def vectorizer():
@@ -338,7 +357,9 @@ def runCommand(command):
         'modifierExecute':lambda :modifierExecutor(),
         "vectorize":lambda :vectorizer(),
         'schedule':lambda :schedulingIdentifier(),
-        'vectorFeature': lambda: vectorFeatureIdentifier()
+        'vectorFeature': lambda: vectorFeatureIdentifier(),
+        'report': lambda: reportGen()
+
     }[command]()
 
     return result

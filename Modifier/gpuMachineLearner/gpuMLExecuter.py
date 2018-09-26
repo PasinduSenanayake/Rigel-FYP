@@ -216,6 +216,8 @@ def processMLData():
     return np.array(totalNew)
 
 def mlModelExecutor(filePath):
+    if not (os.path.isfile(filePath+"/_profiling/gpuvscpu.csv")):
+        return True
     dataSection = dataPreProcessor(filePath+"/_profiling/")
     resultsSet = processMLData()
     loopData = dbManager.read('loopSections')
