@@ -29,7 +29,7 @@ def selectOptimizableLoopSections(optimizableLoops):
         'serialEndLine':0,
         'executionTime':optimizableLoops[loopSection]['sectionTime'],
         'optimiazability':False,
-        'optimizeMethod':None
+        'optimizeMethod':'GPU'
         }
         summarySection = {
         'fileName':optimizableLoops[loopSection]['fileName'],
@@ -38,7 +38,7 @@ def selectOptimizableLoopSections(optimizableLoops):
         'executionTime':optimizableLoops[loopSection]['sectionTime'],
         'optimiazability':False,
         'optimizedTime':0,
-        'optimizeMethod':None
+        'optimizeMethod':'GPU'
         }
         if(float(optimizableLoops[loopSection]['overheadPrecentage'])> 0.0):
             selectedSection['optimiazability'] = True

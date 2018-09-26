@@ -231,6 +231,9 @@ def mlModelExecutor(filePath):
         dataSource['loopSegementEndLine'] = loopSubSection[1].split(']')[0]
         subSections.append(dataSource)
 
+
+    print resultsSet
+    exit()
     resultLaunch =0
     for loopMatchSection in subSections:
         for dataItem in loopData:
