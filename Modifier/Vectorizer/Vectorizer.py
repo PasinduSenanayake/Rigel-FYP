@@ -57,6 +57,7 @@ class Vectorizer():
                             break
 
                 vectorLen = self.getVectorLength(startLine, endLine, filePath, instructionSet)
+                vectorLen = 8
                 # if vector["type"] == "vectorized_loop":
                 #     source.vectorize(vector["line"], vectorLen)
                 # if vector["type"] == "partial_loop":

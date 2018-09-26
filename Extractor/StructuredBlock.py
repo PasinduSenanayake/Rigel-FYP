@@ -57,7 +57,7 @@ class StructuredBlock(Block):
                     iterator = iterator.getNext()
                 collapseSize += 1
                 newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
-                                  ") collapsed(" + str(collapseSize) + ")\n", 0)
+                                  ") collapse(" + str(collapseSize) + ")\n", 0)
                 # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
                 self.vectorized = True
                 newPragma.parent = self
@@ -69,7 +69,7 @@ class StructuredBlock(Block):
                     iterator = iterator.getParentLoop()
                     collapseSize += 1
                 newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
-                                  ") collapsed(" + str(collapseSize) + ")\n", 0)
+                                  ") collapse(" + str(collapseSize) + ")\n", 0)
                 # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
                 structuredBlock = iterator.getParent()
                 structuredBlock.vectorized = True
@@ -177,7 +177,7 @@ class StructuredBlock(Block):
             forLoop.outerSpacing = "\n}\n"
             newForLoop.setElements(subSection, sort=False)
             newStructuredBlock = StructuredBlock(None, newForLoop, None, None)
-            newStructuredBlock.startIndex = newForLoop
+            newStructuredBlock.startIndex = newForLoop.startIndex
             newStructuredBlock.parent = self.parent
             if forLoop.distributedIndex == int(chunk):
                 forLoop.distributed = True
