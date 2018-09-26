@@ -3,11 +3,12 @@ import hashlib,dbManager
 import gc
 import glob
 import pandas as pd
-
+import time
 from Identifier.identifierSandbox.vectorDataFetcher import vtuneProfiler
 from nonarchiFeatureFetcher import hotspotsProfiler
 
 def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
+    vectorStartTime = time.time()
     with open(directory + "/_vector_profiling/Sandbox/Makefile", 'r') as file :
         filedata = file.read()
         filedata = filedata.replace('.c', '_serial.c')
@@ -57,7 +58,7 @@ def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is skipped due to low overhead")
             else:
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is not a parallelable region. Skipped")
-
+    dbManager.write('vecFeatureTime', time.time() - vectorStartTime)
 
 
 def vecAnalzyer(extractor,directory,loopSections):
