@@ -18,6 +18,7 @@ class SourceCode:
         self.searchForLoops()
         self.searchDirectives()
         self.root = self.structureCode()
+        self.shatter()
         self.root.setLineNumber(1)
         self.serialroot = self.getSerialCode(self.root)
         self.serialparallelOuterLoopMapping = self.serialParallelOuterLoopMap()
@@ -126,6 +127,26 @@ class SourceCode:
         rootBlock.setElements(out)
         return rootBlock
 
+    def shatter(self):
+        nextObj = self.root
+        while nextObj:
+            if type(nextObj) == Block and nextObj.parent:
+                nextTo = nextObj.getNext()
+                parent = nextObj.parent
+                index = parent.elements.index(nextObj)
+                schatteredItems = [Block(e + "\n") for e in nextObj.body.split("\n")]
+                # schatteredItems[0].startIndex = parent.elements[index-1].getEndIndex()
+                # schatteredItems[-1].startIndex = float("inf")
+                for item in schatteredItems:
+                    item.parent = parent
+                # for i in range(len(schatteredItems) - 1):
+                #     schatteredItems[i+1].startIndex = schatteredItems[i].getEndIndex()
+                schatteredItems[-1].body = schatteredItems[-1].body[:-1]
+                parent.elements = parent.elements[:index] + schatteredItems +parent.elements[index+1:]
+                nextObj = nextTo
+                continue
+            nextObj = nextObj.getNext()
+
     def setSchedule(self, lineNumber, mechanism):
         self.root.setSchedule(lineNumber, mechanism)
 
@@ -202,14 +223,102 @@ class SourceCode:
             mapping["parallel"].append([parallelLoop.lineNumber, parallelLoop.endLineNumber])
         return mapping
 
-    def vectorize(self, lineNumber, vectorLen=None, alignment=None):
+    def vectorize(self, lineNumber, vectorLen=None, alignment=None, chunk=None, collapsed=None, stepsBack=None):
         nextObj = self.tunedroot
         while nextObj:
             if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
                 structuredBlock = nextObj.getParent()
-                structuredBlock.vectorize(vectorLen, alignment)
+                if not structuredBlock.vectorized:
+                    if chunk and nextObj.distributedIndex == int(chunk):
+                        structuredBlock.vectorize(vectorLen, alignment, collapsed)
+                        break
+                    if not chunk and not stepsBack:
+                        structuredBlock.vectorize(vectorLen, alignment, collapsed)
+                        break
+                    if stepsBack:
+                        iterator = nextObj
+                        for i in range(stepsBack):
+                            iterator = iterator.getParentLoop()
+                        structuredBlock = iterator.getParent()
+                        structuredBlock.vectorize(vectorLen, alignment, collapsed)
+                        break
+
+            nextObj = nextObj.getNext()
+
+    def distribute(self, lineNumber, section, permutation=None, chunk = None):
+        nextObj = self.tunedroot
+        while nextObj:
+            if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
+                if permutation:
+                    innermostLoop = permutation[0][-1]
+                    stepsBack = len(permutation[0]) - permutation[1].index(innermostLoop) - 1
+                    parent = nextObj
+                    for i in range(stepsBack):
+                        parent = parent.getParentLoop()
+                    parent.parent.distribute(section, chunk)
+                    if not parent.distributed:
+                        break
+                else:
+                    nextObj.parent.distribute(section, chunk)
+                    if not nextObj.distributed:
+                        break
+            nextObj = nextObj.getNext()
+
+    def permute(self, lineNumber, permutation):
+        nextObj = self.tunedroot
+        while nextObj:
+            if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop) and not nextObj.permuted:
+                original = permutation[0]
+                nodes = [{"loop":copy.deepcopy(nextObj), "dependants": []}]
+                nextObj.permuted = True
+                nodesRefs = [nextObj]
+                currentLoop = nextObj
+                for i in range(len(original)-1):
+                    parent = currentLoop.getParentLoop()
+                    for index, child in enumerate(parent.elements):
+                        if isinstance(child, StructuredBlock):
+                            associatedLoop = child.hasAssociatedLoop()
+                            if associatedLoop:
+                                parent.permuted = True
+                                nodesRefs.append(parent)
+                                dependants = []
+                                for j in range(1,index):
+                                    dependants.append(parent.elements.pop(1))
+                                nodes.append({"loop": copy.deepcopy(parent), "dependants": dependants})
+                                break
+                    currentLoop = parent
+
+                # print(lineNumber)
+                # for i in nodes:
+                #     print(i["loop"].body)
+                #     if i["dependants"]:
+                #         for j in i["dependants"]:
+                #             print(j.body)
+                # print("--------")
+
+                modified = permutation[1]
+                nodes.reverse()
+                nodesRefs.reverse()
+                for index, node in enumerate(nodes):
+                    modifiedIndex = modified.index(str(index+1))
+                    targetLoop = nodesRefs[modifiedIndex]
+                    while targetLoop:
+                        targetLoop.body = node["loop"].body
+                        for dependant in reversed(node["dependants"]):
+                            dependant.parent = targetLoop
+                            targetLoop.elements.insert(1, dependant)
+                        nextStructuredBlock = targetLoop.getParent().getParallelNext()
+                        while not isinstance(nextStructuredBlock, StructuredBlock) and nextStructuredBlock:
+                            nextStructuredBlock = nextStructuredBlock.getParallelNext()
+                        if nextStructuredBlock and nextStructuredBlock.isChild(targetLoop.getParent().getParent()):
+                            targetLoop = nextStructuredBlock.hasAssociatedLoop()
+                        else:
+                            targetLoop = None
                 break
             nextObj = nextObj.getNext()
+
+
+
 
     def offload(self, lineNumber, pragma=None, num_threads=None, clauses=""):
         nextObj = self.tunedroot
@@ -219,6 +328,15 @@ class SourceCode:
                 return structuredBlock.offload(pragma, str(num_threads), clauses)
                 break
             nextObj = nextObj.getNext()
+
+    # def permute(self, lineNumber, permutation):
+    #     nextObj = self.tunedroot
+    #     while nextObj:
+    #         if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
+    #             structuredBlock = nextObj.getParent()
+    #             return structuredBlock.offload(pragma, str(num_threads), clauses)
+    #             break
+    #         nextObj = nextObj.getNext()
 
     # def getNestedLoops(self):
     #     nestedLoopLines = []

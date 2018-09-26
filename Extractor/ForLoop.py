@@ -2,13 +2,21 @@ from Block import Block
 from Directive import Directive
 
 class ForLoop(Block):
-    def __init__(self, startIndex, sourceCode):
-        blockDetails = self.getBlockLength(sourceCode, startIndex)
-        loopHeader = sourceCode[startIndex:blockDetails["blockStartIndex"]]
-        elements = [Block(sourceCode[blockDetails["blockStartIndex"]:blockDetails["blockEndIndex"]], blockDetails["blockStartIndex"])]
-        super(ForLoop, self).__init__(loopHeader, startIndex)
-        super(ForLoop, self).setElements(elements)
-        self.iterationCount = 0
+    def __init__(self, startIndex, sourceCode, header = None, elements = None):
+        self.distributed = False
+        self.distributedIndex = 1
+        self.permuted = False
+        if not header:
+            blockDetails = self.getBlockLength(sourceCode, startIndex)
+            loopHeader = sourceCode[startIndex:blockDetails["blockStartIndex"]]
+            elements = [Block(sourceCode[blockDetails["blockStartIndex"]:blockDetails["blockEndIndex"]], blockDetails["blockStartIndex"])]
+            super(ForLoop, self).__init__(loopHeader, startIndex)
+            super(ForLoop, self).setElements(elements)
+            self.iterationCount = 0
+        else:
+            super(ForLoop, self).__init__(header, 0)
+            super(ForLoop, self).setElements(elements)
+            self.iterationCount = 0
 
     def hasPragma(self):
         if isinstance(self.getParent().directive(), Directive):
@@ -28,7 +36,7 @@ class ForLoop(Block):
                 openedBracketCount = openedBracketCount - 1
                 if (openedBracketCount == 0):
                     break
-        return {"blockStartIndex":blockStartIndex - 1, "blockEndIndex":startIndex+blockLength}
+        return {"blockStartIndex":blockStartIndex-1, "blockEndIndex":startIndex+blockLength}
 
     # def isChild(self, parent):
     #     if parent.getStartIndex() < self.getStartIndex() and self.getStartIndex() < parent.getEndIndex():
@@ -58,6 +66,16 @@ class ForLoop(Block):
                 return True
             parent = parent.getParent()
         return False
+
+    def getParentLoop(self):
+        if not self.isNested():
+            return None
+        else:
+            parent = self.getParent()
+            while parent:
+                if isinstance(parent, ForLoop):
+                    return parent
+                parent = parent.getParent()
 
     # def getNestedLoops(self, loopLines, currentLevel):
     #     currentLevel = currentLevel + 1

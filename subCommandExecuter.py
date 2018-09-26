@@ -92,7 +92,6 @@ def vectorizer():
             exit()
         vectorizer = Vectorizer(extractor, folderPath)
 
-
 def modifierExecutor():
 
     global result

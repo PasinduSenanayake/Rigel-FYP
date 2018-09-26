@@ -28,11 +28,17 @@ class Vectorizer():
         sourcePaths = extractor.getSourcePathList()
 
         self.analyzer = VectorReportAnalyzer(sourcePaths)
+        print(self.analyzer.vectors)
         for filePath, vectorList in self.analyzer.vectors.items():
             source = extractor.getSource(filePath)
-            print(source)
             loopMapping = source.getLoopMapping()
             fileName = filePath.split("/")[-1]
+            for vector in vectorList:
+                if vector["type"] == "partial_loop":
+                    source.distribute(vector["line"], vector["section"], vector["permutation"], vector["chunk"])
+            for vector in vectorList:
+                if vector["type"] == "permuted_loop" or (vector["type"] == "partial_loop" and vector["permutation"]):
+                    source.permute(vector["line"], vector["permutation"])
             for vector in vectorList:
                 startLine = None
                 endLine = None
@@ -51,8 +57,15 @@ class Vectorizer():
                             break
 
                 vectorLen = self.getVectorLength(startLine, endLine, filePath, instructionSet)
-                if vector["type"] == "vectorized_loop":
-                    source.vectorize(vector["line"], vectorLen)
+                # if vector["type"] == "vectorized_loop":
+                #     source.vectorize(vector["line"], vectorLen)
+                # if vector["type"] == "partial_loop":
+                #     source.distribute(vector["line"], vector["section"], vector["permutation"])
+                if vector["permutation"] and not vector["section"]:
+                    stepsBack = len(vector["permutation"][1]) - vector["permutation"][1].index(str(len(vector["permutation"][1]))) - 1
+                    source.vectorize(vector["line"], vectorLen, None, vector["chunk"], vector["collapsed"], stepsBack)
+                else:
+                    source.vectorize(vector["line"], vectorLen, None, vector["chunk"], vector["collapsed"])
             # source.root.setLineNumber(1)
             print(vectorDirectory + "/" + fileName[:-2] + "_vectorized.c")
             source.writeToFile(vectorDirectory + "/" + fileName[:-2] + "_vectorized.c", source.tunedroot)
