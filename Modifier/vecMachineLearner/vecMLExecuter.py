@@ -80,25 +80,32 @@ def processMLData():
     # lrmodel = LogisticRegression()
     # lrmodel.fit(X_new1, y_train)
     # prediction = lrmodel.predict(Weighted_XTest[Weighted_XTest.columns[idxs_selected1]])
-    print (prediction)
-
-    # total = prediction1
-    # # print (total)
-    # totalNew = []
-    # for value in total:
-    #     if value > 2:
-    #         totalNew.append('Y')
-    #     else:
-    #         totalNew.append('N')
-    # # print (np.array(totalNew))
-    # # print (np.array(X_test['Class']))
-    # os.remove(fileLocation+'mlTemp.csv')
-    # return np.array(totalNew)
+    # print (prediction)
+    finalResult = []
+    i = 0
+    for index, row in df_test.iterrows():
+        finalResult.append(row['Function / Call Stack'].split('-')[0]+':'+row['Function / Call Stack'].split('-')[1]+':'+prediction[i])
+        i+=1
+    # print(finalResult)
+    os.remove(fileLocation+'mlTemp.csv')
+    return np.array(finalResult)
 
 def vecMlModelExecutor(filePath):
     dataSection = dataPreProcessor(filePath+"/_vector_profiling/")
     resultsSet = processMLData()
     loopData = dbManager.read('loopSections')
+    # print (loopData)
+    for dataitem in resultsSet:
+        startLine = dataitem.split(':')[0]
+        endLine = dataitem.split(':')[1]
+        prediction = dataitem.split(':')[2]
+        if prediction == 'Y':
+            for item in loopData:
+                if item["startLine"] == startLine and item["endLine"] == endLine :
+                    if item["optimizeMethod"] == None:
+                        item["optimizeMethod"] = "vector"
+
+    # print (loopData)
     # subSections=[]
     # for loopSection in dataSection:
     #     dataSource = {'fileName':'', 'loopSegementStartLine':'','loopSegementEndLine':''}
@@ -116,5 +123,5 @@ def vecMlModelExecutor(filePath):
     #                 dataItem["optimizeMethod"] ='GPU'
     #             resultLaunch= resultLaunch+1
     #             break
-    # dbManager.overWrite('loopSections',loopData)
+    dbManager.overWrite('loopSections',loopData)
     return True
