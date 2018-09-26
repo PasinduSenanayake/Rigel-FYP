@@ -120,6 +120,7 @@ def setMechanism(extractor,directory,loopSections):
             if( summaryLoop['startLine'] == profiledLoop['startLine'] and summaryLoop['endLine'] == profiledLoop['endLine'] and summaryLoop['fileName']== profiledLoop['fileName'] ):
                 summaryLoop['optimizedTime'] = max(profiledLoop['threadTimes'])
     dbManager.overWrite('summaryLoops',summaryLoops)
+    print summaryLoops
     shutil.rmtree(fileLocation+'omppScheduler/Sandbox')
 def schdedulerInitializer(extractor, directory):
     global fileLocation

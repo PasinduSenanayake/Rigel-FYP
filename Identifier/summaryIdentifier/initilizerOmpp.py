@@ -14,7 +14,7 @@ def getSummary(filePath,runTimeArguments):
         endLine = dataArray.index('##END overheads for whole program')
         for i in range(initLine+2, endLine, 1):
             if not(dataArray[i].split(',')[0] == 'SUM'):
-                summarizedReport[dataArray[i].split(',')[0]]={'TotalTime':dataArray[i].split(',')[1],'sectionTime':dataArray[i].split(',')[2],'overheadPrecentage':dataArray[i].split(',')[3],'startLine':'','endLine':''}
+                summarizedReport[dataArray[i].split(',')[0]]={'TotalTime':dataArray[i].split(',')[1],'sectionTime':float(dataArray[i].split(',')[1])/4.0,'overheadPrecentage':dataArray[i].split(',')[3],'startLine':'','endLine':''}
         initLine = dataArray.index('##BEG region overview')
         endLine = dataArray.index('##END region overview')
         for i in range(initLine+2, endLine, 1):
