@@ -242,7 +242,6 @@ class SourceCode:
                         structuredBlock = iterator.getParent()
                         structuredBlock.vectorize(vectorLen, alignment, collapsed)
                         break
-
             nextObj = nextObj.getNext()
 
     def distribute(self, lineNumber, section, permutation=None, chunk = None):
@@ -282,7 +281,7 @@ class SourceCode:
                                 parent.permuted = True
                                 nodesRefs.append(parent)
                                 dependants = []
-                                for j in range(1,index):
+                                for j in range(1, index):
                                     dependants.append(parent.elements.pop(1))
                                 nodes.append({"loop": copy.deepcopy(parent), "dependants": dependants})
                                 break
@@ -299,10 +298,15 @@ class SourceCode:
                 modified = permutation[1]
                 nodes.reverse()
                 nodesRefs.reverse()
+                print(lineNumber)
                 for index, node in enumerate(nodes):
                     modifiedIndex = modified.index(str(index+1))
                     targetLoop = nodesRefs[modifiedIndex]
+                    originalLoop = nodesRefs[index]
                     while targetLoop:
+                        for e in targetLoop.elements:
+                            print e.body
+                        print("---")
                         targetLoop.body = node["loop"].body
                         for dependant in reversed(node["dependants"]):
                             dependant.parent = targetLoop
@@ -310,7 +314,7 @@ class SourceCode:
                         nextStructuredBlock = targetLoop.getParent().getParallelNext()
                         while not isinstance(nextStructuredBlock, StructuredBlock) and nextStructuredBlock:
                             nextStructuredBlock = nextStructuredBlock.getParallelNext()
-                        if nextStructuredBlock and nextStructuredBlock.isChild(targetLoop.getParent().getParent()):
+                        if nextStructuredBlock and targetLoop.isChild(originalLoop):
                             targetLoop = nextStructuredBlock.hasAssociatedLoop()
                         else:
                             targetLoop = None

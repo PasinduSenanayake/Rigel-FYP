@@ -86,7 +86,7 @@ def modifierExecutor():
         extractor = Extractor(sourceDirectry)
         logger.loggerInfo("System Information Fetcher Initiated")
         responseObj = __systemInformationIdentifier()
-        if(responseObj['returncode']==1):
+        if(responseObj['returncode']==0):
             dbManager.write('systemData',responseObj['content'])
             logger.loggerSuccess("System Information Fetcher completed successfully")
         else:
