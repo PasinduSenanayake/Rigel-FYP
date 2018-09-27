@@ -154,6 +154,11 @@ def __runOptimizerStandalone(extractor):
         logger.loggerInfo("GPU Offloader Optimizer initiated")
         summarySections = dbManager.read('summaryLoops')
         status = changeMakeFile()
+
+        with open(movePath + '/' + folderName + '/'+'run.json') as inputfile:
+            runJson = json.load(inputfile)
+            runtimeArg = runJson['runTimeArguments']
+
         if status['code'] == 0:
             for loopSection in loopSections:
                 if loopSection['optimizeMethod'] =='GPU':
@@ -223,7 +228,7 @@ def __runOptimizerStandalone(extractor):
                             with open(offloadFolderPath,'w') as f:
                                  f.write(content)
 
-                            runnablePath = makePath + '&& ./runnable '
+                            runnablePath = makePath + '&& ./runnable ' + runtimeArg + ' '
                             p = subprocess.Popen(runnablePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                                   stdin=subprocess.PIPE)
                             (output, err) = p.communicate()  # to check for errors
