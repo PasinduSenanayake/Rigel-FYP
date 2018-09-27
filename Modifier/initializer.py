@@ -13,11 +13,11 @@ def modify(extractor,directory):
     global response
     logger.loggerInfo("Gpu Machine Learning Model Execution Initialized")
 
-    result = mlModelExecutor(directory)
-    if (result):
-        logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
-    else:
-        logger.loggerError("Gpu Machine Learning Model Execution Failed.")
+    # result = mlModelExecutor(directory)
+    # if (result):
+    #     logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
+    # else:
+    #     logger.loggerError("Gpu Machine Learning Model Execution Failed.")
 
     logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
 
@@ -30,6 +30,7 @@ def modify(extractor,directory):
     logger.loggerSuccess("GPU Optimization Completed.")
 
     print dbManager.read('summaryLoops')
+    print dbManager.read('GPU_OptTime')
 
     exit()
 
