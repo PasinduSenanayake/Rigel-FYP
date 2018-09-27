@@ -48,33 +48,33 @@ class StructuredBlock(Block):
                 self.vectorized = True
                 newPragma.parent = self
                 self.elements.insert(0, newPragma)
-            if (collapsed and self.lineNumber < int(collapsed)):
-                iterator = self.hasAssociatedLoop()
-                collapseSize = 0
-                while iterator.lineNumber != int(collapsed):
-                    if isinstance(iterator, ForLoop):
-                        collapseSize += 1
-                    iterator = iterator.getNext()
-                collapseSize += 1
-                newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
-                                  ") collapse(" + str(collapseSize) + ")\n", 0)
-                # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
-                self.vectorized = True
-                newPragma.parent = self
-                self.elements.insert(0, newPragma)
-            elif collapsed and self.lineNumber > int(collapsed):
-                iterator = self.hasAssociatedLoop()
-                collapseSize = 1
-                while iterator.lineNumber != int(collapsed):
-                    iterator = iterator.getParentLoop()
-                    collapseSize += 1
-                newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
-                                  ") collapse(" + str(collapseSize) + ")\n", 0)
-                # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
-                structuredBlock = iterator.getParent()
-                structuredBlock.vectorized = True
-                newPragma.parent = structuredBlock
-                structuredBlock.elements.insert(0, newPragma)
+            # if (collapsed and self.lineNumber < int(collapsed)):
+            #     iterator = self.hasAssociatedLoop()
+            #     collapseSize = 0
+            #     while iterator.lineNumber != int(collapsed):
+            #         if isinstance(iterator, ForLoop):
+            #             collapseSize += 1
+            #         iterator = iterator.getNext()
+            #     collapseSize += 1
+            #     newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
+            #                       ") collapse(" + str(collapseSize) + ")\n", 0)
+            #     # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+            #     self.vectorized = True
+            #     newPragma.parent = self
+            #     self.elements.insert(0, newPragma)
+            # elif collapsed and self.lineNumber > int(collapsed):
+            #     iterator = self.hasAssociatedLoop()
+            #     collapseSize = 1
+            #     while iterator.lineNumber != int(collapsed):
+            #         iterator = iterator.getParentLoop()
+            #         collapseSize += 1
+            #     newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
+            #                       ") collapse(" + str(collapseSize) + ")\n", 0)
+            #     # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+            #     structuredBlock = iterator.getParent()
+            #     structuredBlock.vectorized = True
+            #     newPragma.parent = structuredBlock
+            #     structuredBlock.elements.insert(0, newPragma)
 
 
 

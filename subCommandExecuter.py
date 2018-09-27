@@ -1,6 +1,7 @@
 import json,os,sys
 import shutil
 import random
+import copy
 
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
@@ -90,7 +91,55 @@ def vectorizer():
             logger.loggerError("System Information Fetcher Failed")
             print "System Information Fetcher Failed. Optimization process terminated."
             exit()
-        vectorizer = Vectorizer(extractor, folderPath)
+
+        # Runtime arg extraction Initiated
+        logger.loggerInfo("Run time arguments fetcher Initiated")
+        with open(sourceDirectry + '/run.json') as runArgumentFile:
+            dataArguments = json.load(runArgumentFile)
+        if not (dataArguments['runTimeArguments'] == None):
+            dbManager.write('runTimeArguments', str(dataArguments['runTimeArguments']))
+        else:
+            logger.loggerError("Run time arguments fetcher Failed. Optimization process terminated.")
+            print "Run time arguments fetcher Failed. Optimization process terminated."
+            exit()
+        logger.loggerSuccess("Run time arguments fetcher completed successfully")
+        # Runtime arg extraction Completed
+
+        # Primary Execution Initiated
+        from Evaluator.initializer import initExecutor
+        logger.loggerInfo("Primary Execution Initiated")
+        responseObj = initExecutor(sourceDirectry, dbManager.read('runTimeArguments'))
+        if responseObj['returncode'] == 1:
+            logger.loggerSuccess("Primary Execution completed successfully.")
+            print dbManager.read('iniExeTime')
+        else:
+            logger.loggerError(responseObj['error'])
+            logger.loggerError("Primary Execution Failed. Optimization process terminated.")
+            exit()
+        # Primary Execution Completed
+        # Identifier Initiated
+        from Identifier.initializer import identify
+        logger.loggerInfo("Source Code Indetification Process Initiated")
+        response = identify(extractor, sourceDirectry)
+        if response['returncode'] == 0:
+            logger.loggerSuccess("Source Code Identification Process Completed Successfully")
+
+        else:
+            logger.loggerError("Source Code Identification Process Failed. Optimization process terminated.")
+            return False
+        # Identifier Completed
+
+        print(dbManager.read('loopSectionsTemp'))
+        # vectorizer = Vectorizer(extractor, folderPath)
+        # for file in extractor.getSourcePathList():
+        #     outerLoops = extractor.getSource(file).getOuterLoopMapping()["parallel"]
+        #     for loop in outerLoops:
+        #         vectorizer.initIntelOptimizations(file, loop)
+
+
+
+
+        # vectorizer.vectorize(23)
 
 def modifierExecutor():
 

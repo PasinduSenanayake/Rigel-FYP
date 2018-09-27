@@ -43,6 +43,4 @@ def modify(extractor,directory):
 
     logger.loggerSuccess("CPU Optimization Completed")
 
-    # pragma = source.offload(vector["line"], "parallel for", 4, "map")
-    # pragma.modifyClause("num_threads", 5)
     return response

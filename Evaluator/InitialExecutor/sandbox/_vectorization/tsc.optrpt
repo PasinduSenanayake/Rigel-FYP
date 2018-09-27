@@ -1,0 +1,2965 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 18.0.2.199 Build 20180210
+
+Compiler options: -o2 -qopt-report=5 -qopt-report-phase=all
+
+    Report from: Interprocedural optimizations [ipo]
+
+  WHOLE PROGRAM (SAFE) [EITHER METHOD]: false
+  WHOLE PROGRAM (SEEN) [TABLE METHOD]: false
+  WHOLE PROGRAM (READ) [OBJECT READER METHOD]: false
+
+INLINING OPTION VALUES:
+  -inline-factor: 100
+  -inline-min-size: 30
+  -inline-max-size: 230
+  -inline-max-total-size: 2000
+  -inline-max-per-routine: 10000
+  -inline-max-per-compile: 500000
+
+In the inlining report below:
+   "sz" refers to the "size" of the routine. The smaller a routine's size,
+      the more likely it is to be inlined.
+   "isz" refers to the "inlined size" of the routine. This is the amount
+      the calling routine will grow if the called routine is inlined into it.
+      The compiler generally limits the amount a routine can grow by having
+      routines inlined into it.
+
+Begin optimization report for: main()
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (main()) [1/21=4.8%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(831,11)
+  -> EXTERN: (834,20) memalign(size_t, size_t)
+  -> INLINE: (836,2) set(int *, float *, float *) (isz = 783) (sz = 792)
+    -> EXTERN: (804,16) memalign(size_t, size_t)
+    -> INLINE: (814,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+    -> INLINE: (815,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+    -> INLINE: (816,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+    -> INLINE: (817,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+    -> INLINE: (818,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+    -> INLINE: (819,2) set2d(float (*)[256], float, int) (isz = 109) (sz = 120)
+    -> INLINE: (820,2) set2d(float (*)[256], float, int) (isz = 109) (sz = 120)
+    -> INLINE: (821,2) set2d(float (*)[256], float, int) (isz = 109) (sz = 120)
+  -> INLINE: (838,2) s000() (isz = 79) (sz = 84)
+    -> (785,2) init(char *) (isz = 3783) (sz = 3790)
+       [[ Inlining would exceed -inline-max-size value (3790>253) <1>]]
+    -> EXTERN: (786,12) clock(void)
+    -> EXTERN: (794,3) dummy(float *, float *, float *, float *, float *, float (*)[256], float (*)[256], float (*)[256], float)
+    -> EXTERN: (796,10) clock(void)
+    -> EXTERN: (798,2) printf(const char *__restrict__, ...)
+    -> INLINE: (799,2) check(int) (isz = 243) (sz = 248)
+      -> EXTERN: (192,17) printf(const char *__restrict__, ...)
+      -> EXTERN: (193,17) printf(const char *__restrict__, ...)
+      -> EXTERN: (194,17) printf(const char *__restrict__, ...)
+      -> EXTERN: (195,17) printf(const char *__restrict__, ...)
+      -> EXTERN: (196,17) printf(const char *__restrict__, ...)
+      -> EXTERN: (197,18) printf(const char *__restrict__, ...)
+      -> EXTERN: (198,18) printf(const char *__restrict__, ...)
+      -> EXTERN: (199,18) printf(const char *__restrict__, ...)
+      -> EXTERN: (200,17) printf(const char *__restrict__, ...)
+      -> EXTERN: (201,18) printf(const char *__restrict__, ...)
+      -> EXTERN: (202,18) printf(const char *__restrict__, ...)
+      -> EXTERN: (203,18) printf(const char *__restrict__, ...)
+      -> EXTERN: (204,19) printf(const char *__restrict__, ...)
+      -> EXTERN: (205,20) printf(const char *__restrict__, ...)
+      -> EXTERN: (206,22) printf(const char *__restrict__, ...)
+      -> EXTERN: (207,19) printf(const char *__restrict__, ...)
+      -> EXTERN: (208,18) printf(const char *__restrict__, ...)
+      -> EXTERN: (209,19) printf(const char *__restrict__, ...)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(805,2) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(806,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+1]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(807,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+2]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(808,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+3]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(809,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+4]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(810,3) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.062
+   remark #15453: unmasked strided stores: 5 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 17 
+   remark #15477: vector cost: 20.000 
+   remark #15478: estimated potential speedup: 0.840 
+   remark #15488: --- end vector cost summary ---
+   remark #25438: unrolled without remainder by 2  
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15388: vectorization support: reference a[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(814,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15388: vectorization support: reference b[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(815,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15388: vectorization support: reference c[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(816,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15388: vectorization support: reference d[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(817,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15388: vectorization support: reference e[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(818,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+      remark #15388: vectorization support: reference aa[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.500
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 40.690 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+      remark #15388: vectorization support: reference bb[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.500
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 40.690 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+      remark #15388: vectorization support: reference cc[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.500
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 40.690 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(823,2) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(836,2)
+   remark #15388: vectorization support: reference indx[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(824,3) ]
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.013
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 5 
+   remark #15477: vector cost: 38.500 
+   remark #15478: estimated potential speedup: 0.120 
+   remark #15482: vectorized math library calls: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(789,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(838,2)
+   remark #15388: vectorization support: reference X[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(792,4) ]
+   remark #15388: vectorization support: reference Y[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(792,11) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 6 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 4.800 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(169,2) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(838,2)
+   remark #15388: vectorization support: reference a[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(170,11) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 8
+   remark #15309: vectorization support: normalized vectorization overhead 0.775
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 5 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 3.990 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=1000
+LOOP END
+
+
+Non-optimizable loops:
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(788,2) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(838,2)
+   remark #15543: loop was not vectorized: loop with function call not considered an optimization candidate.
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(831,11):remark #34051: REGISTER ALLOCATION : [main] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:831
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   19[ rax rdx rcx rbx rsi rdi r8-r11 r15 zmm0-zmm7]
+        
+    Routine temporaries
+        Total         :     130
+            Global    :      56
+            Local     :      74
+        Regenerable   :      33
+        Spilled       :       2
+        
+    Routine stack
+        Variables     :       4 bytes*
+            Reads     :       2 [2.00e+00 ~ 0.0%]
+            Writes    :       2 [2.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1d(float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1d(float *, float, int)) [2/21=9.5%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(85,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.076
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 32 
+   remark #15477: vector cost: 9.000 
+   remark #15478: estimated potential speedup: 3.550 
+   remark #15486: divides: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(85,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.289
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(89,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.075
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 34 
+   remark #15477: vector cost: 10.000 
+   remark #15478: estimated potential speedup: 3.390 
+   remark #15486: divides: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(89,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.286
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3)
+<Multiversioned v2>
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <arr[i]>, stride is unknown to compiler   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(93,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.043
+   remark #15453: unmasked strided stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 4 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 0.450 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1):remark #34051: REGISTER ALLOCATION : [set1d] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:82
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   25[ rax rdx rcx rsi rdi r8-r11 zmm0-zmm15]
+        
+    Routine temporaries
+        Total         :     225
+            Global    :      54
+            Local     :     171
+        Regenerable   :       8
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1ds(int, float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1ds(int, float *, float, int)) [3/21=14.3%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(103,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.076
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 32 
+   remark #15477: vector cost: 9.000 
+   remark #15478: estimated potential speedup: 3.550 
+   remark #15486: divides: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(103,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.289
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(106,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(106,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(107,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.075
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 34 
+   remark #15477: vector cost: 10.000 
+   remark #15478: estimated potential speedup: 3.390 
+   remark #15486: divides: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(106,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(107,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.286
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(106,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(110,3)
+<Multiversioned v2>
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <arr[i]>, stride is unknown to compiler   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(111,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.043
+   remark #15453: unmasked strided stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 4 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 0.450 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1):remark #34051: REGISTER ALLOCATION : [set1ds] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:100
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   25[ rax rdx rcx rsi rdi r8-r11 zmm0-zmm15]
+        
+    Routine temporaries
+        Total         :     226
+            Global    :      54
+            Local     :     172
+        Regenerable   :       8
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set2d(float (*)[256], float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set2d(float (*)[256], float, int)) [4/21=19.0%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4)
+      remark #15389: vectorization support: reference arr[i][j] has unaligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.600
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15451: unmasked unaligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 1.250 
+      remark #15478: estimated potential speedup: 24.340 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(129,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(130,4)
+      remark #15389: vectorization support: reference arr[i][j] has unaligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(131,5) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.600
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15451: unmasked unaligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 33 
+      remark #15477: vector cost: 1.250 
+      remark #15478: estimated potential speedup: 25.910 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(135,3)
+   remark #25101: Loop Interchange not done due to: Original Order seems proper
+   remark #25452: Original Order found to be proper, but by a close margin
+   remark #15541: outer loop was not auto-vectorized: consider using SIMD directive
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(136,4)
+   <Multiversioned v2>
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <arr[i][j]>, stride is unknown to compiler   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(137,5) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.043
+      remark #15453: unmasked strided stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 3 
+      remark #15477: vector cost: 8.750 
+      remark #15478: estimated potential speedup: 0.340 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=256
+   LOOP END
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1):remark #34051: REGISTER ALLOCATION : [set2d] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:118
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   10[ rax rdx rcx rsi rdi r8-r10 zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      50
+            Global    :      29
+            Local     :      21
+        Regenerable   :       6
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: sum1d(float *)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (sum1d(float *)) [5/21=23.8%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(144,28)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(146,2)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(146,2)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(147,10) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 8
+   remark #15309: vectorization support: normalized vectorization overhead 1.025
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 5 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 3.980 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=1000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(146,2)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(147,10) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 1.429
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(146,2)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(144,28):remark #34051: REGISTER ALLOCATION : [sum1d] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:144
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   15[ rax rdx rcx rsi rdi r8 zmm0-zmm8]
+        
+    Routine temporaries
+        Total         :      50
+            Global    :      28
+            Local     :      22
+        Regenerable   :       1
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: s471s(void)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (s471s(void)) [6/21=28.6%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(153,1)
+
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(153,1):remark #34051: REGISTER ALLOCATION : [s471s] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:153
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    1[ rax]
+        
+    Routine temporaries
+        Total         :       7
+            Global    :       0
+            Local     :       7
+        Regenerable   :       1
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: f(float, float)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (f(float, float)) [7/21=33.3%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(158,33)
+
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(158,33):remark #34051: REGISTER ALLOCATION : [f] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:158
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    2[ zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      12
+            Global    :       0
+            Local     :      12
+        Regenerable   :       0
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: check(int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (check(int)) [8/21=38.1%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(162,21)
+  -> EXTERN: (192,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (193,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (194,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (195,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (196,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (197,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (198,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (199,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (200,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (201,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (202,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (203,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (204,19) printf(const char *__restrict__, ...)
+  -> EXTERN: (205,20) printf(const char *__restrict__, ...)
+  -> EXTERN: (206,22) printf(const char *__restrict__, ...)
+  -> EXTERN: (207,19) printf(const char *__restrict__, ...)
+  -> EXTERN: (208,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (209,19) printf(const char *__restrict__, ...)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(169,2)
+   remark #15388: vectorization support: reference a[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(170,11) ]
+   remark #15388: vectorization support: reference b[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(171,11) ]
+   remark #15388: vectorization support: reference c[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(172,11) ]
+   remark #15388: vectorization support: reference d[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(173,11) ]
+   remark #15388: vectorization support: reference e[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(174,11) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 6.200
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 5 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 24 
+   remark #15477: vector cost: 6.250 
+   remark #15478: estimated potential speedup: 3.830 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=8000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(179,2)
+   remark #25420: Collapsed with loop at line 180 
+   remark #15388: vectorization support: reference aa[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(181,13) ]
+   remark #15388: vectorization support: reference bb[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(182,13) ]
+   remark #15388: vectorization support: reference cc[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(183,13) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 3.100
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 3 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 14 
+   remark #15477: vector cost: 3.750 
+   remark #15478: estimated potential speedup: 3.730 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=8192
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(180,3)
+      remark #25421: Loop eliminated in Collapsing 
+
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(188,2)
+   remark #15388: vectorization support: reference array[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(189,15) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 8
+   remark #15309: vectorization support: normalized vectorization overhead 0.775
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 5 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 3.990 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2048
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(162,21):remark #34051: REGISTER ALLOCATION : [check] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:162
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   20[ rax rdx rbp rdi zmm0-zmm15]
+        
+    Routine temporaries
+        Total         :     185
+            Global    :      36
+            Local     :     149
+        Regenerable   :      56
+        Spilled       :       6
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :      40 bytes*
+            Reads     :      15 [7.65e-01 ~ 0.0%]
+            Writes    :      15 [7.65e-01 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: s000()
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (s000()) [9/21=42.9%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(777,1)
+  -> (785,2) init(char *) (isz = 3783) (sz = 3790)
+     [[ Inlining would exceed -inline-max-size value (3790>230) <1>]]
+  -> EXTERN: (786,12) clock(void)
+  -> EXTERN: (794,3) dummy(float *, float *, float *, float *, float *, float (*)[256], float (*)[256], float (*)[256], float)
+  -> EXTERN: (796,10) clock(void)
+  -> EXTERN: (798,2) printf(const char *__restrict__, ...)
+  -> CP_CLONE (799,2) check..0(int) (isz = 243) (sz = 248)
+     [[ Inlining would exceed -inline-max-size value (248>230) <1>]]
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(789,3)
+   remark #15388: vectorization support: reference X[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(792,4) ]
+   remark #15388: vectorization support: reference Y[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(792,11) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 6 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 4.800 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+
+Non-optimizable loops:
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(788,2)
+   remark #15543: loop was not vectorized: loop with function call not considered an optimization candidate.
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(777,1):remark #34051: REGISTER ALLOCATION : [s000] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:777
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   14[ rax rdx rcx rbx rbp rsi rdi r8-r9 zmm0-zmm4]
+        
+    Routine temporaries
+        Total         :      47
+            Global    :      21
+            Local     :      26
+        Regenerable   :      23
+        Spilled       :       2
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: check..0(int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (check..0(int)) [10/21=47.6%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(162,21)
+  CLONED FROM: check(int)(1)
+  -> EXTERN: (192,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (193,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (194,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (195,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (196,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (197,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (198,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (199,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (200,17) printf(const char *__restrict__, ...)
+  -> EXTERN: (201,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (202,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (203,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (204,19) printf(const char *__restrict__, ...)
+  -> EXTERN: (205,20) printf(const char *__restrict__, ...)
+  -> EXTERN: (206,22) printf(const char *__restrict__, ...)
+  -> EXTERN: (207,19) printf(const char *__restrict__, ...)
+  -> EXTERN: (208,18) printf(const char *__restrict__, ...)
+  -> EXTERN: (209,19) printf(const char *__restrict__, ...)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(169,2)
+   remark #15388: vectorization support: reference a[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(170,11) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 8
+   remark #15309: vectorization support: normalized vectorization overhead 0.775
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 5 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 3.990 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=1000
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(162,21):remark #34051: REGISTER ALLOCATION : [check..0] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:162
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   10[ rax rdi zmm0-zmm7]
+        
+    Routine temporaries
+        Total         :      33
+            Global    :      15
+            Local     :      18
+        Regenerable   :       3
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set(int *, float *, float *)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set(int *, float *, float *)) [11/21=52.4%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(803,40)
+  -> EXTERN: (804,16) memalign(size_t, size_t)
+  -> INLINE: (814,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+  -> INLINE: (815,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+  -> INLINE: (816,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+  -> INLINE: (817,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+  -> INLINE: (818,2) set1d(float *, float, int) (isz = 67) (sz = 78)
+  -> INLINE: (819,2) set2d(float (*)[256], float, int) (isz = 109) (sz = 120)
+  -> INLINE: (820,2) set2d(float (*)[256], float, int) (isz = 109) (sz = 120)
+  -> INLINE: (821,2) set2d(float (*)[256], float, int) (isz = 109) (sz = 120)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(805,2)
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(806,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+1]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(807,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+2]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(808,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+3]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(809,3) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <ip[i+4]>, stride is 5   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(810,3) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.062
+   remark #15453: unmasked strided stores: 5 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 17 
+   remark #15477: vector cost: 20.000 
+   remark #15478: estimated potential speedup: 0.840 
+   remark #15488: --- end vector cost summary ---
+   remark #25438: unrolled without remainder by 2  
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(814,2)
+   remark #15388: vectorization support: reference a[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(814,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(815,2)
+   remark #15388: vectorization support: reference b[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(815,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(816,2)
+   remark #15388: vectorization support: reference c[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(816,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(817,2)
+   remark #15388: vectorization support: reference d[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(817,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(818,2)
+   remark #15388: vectorization support: reference e[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(818,8) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.000 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(819,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(819,2)
+      remark #15388: vectorization support: reference aa[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.500
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 40.690 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(820,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(820,2)
+      remark #15388: vectorization support: reference bb[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.500
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 40.690 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(821,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4) inlined into /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(821,2)
+      remark #15388: vectorization support: reference cc[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.500
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 40.690 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(823,2)
+   remark #15388: vectorization support: reference indx[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(824,3) ]
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.013
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 5 
+   remark #15477: vector cost: 38.500 
+   remark #15478: estimated potential speedup: 0.120 
+   remark #15482: vectorized math library calls: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(803,40):remark #34051: REGISTER ALLOCATION : [set] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:803
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   15[ rax rdx rcx rbp rsi rdi r8-r13 zmm0-zmm2]
+        
+    Routine temporaries
+        Total         :      66
+            Global    :      35
+            Local     :      31
+        Regenerable   :       6
+        Spilled       :       3
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1d..0(float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1d..0(float *, float, int)) [12/21=57.1%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1)
+  CLONED FROM: set1d(float *, float, int)(X,X,1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(93,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 1.083
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 4 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 5.310 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(93,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 2.600
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(92,3)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1):remark #34051: REGISTER ALLOCATION : [set1d..0] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:82
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    8[ rax rdx rcx rsi rdi r8 zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      33
+            Global    :      20
+            Local     :      13
+        Regenerable   :       1
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1d..1(float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1d..1(float *, float, int)) [13/21=61.9%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1)
+  CLONED FROM: set1d(float *, float, int)(X,X,-1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(85,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.076
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 32 
+   remark #15477: vector cost: 9.000 
+   remark #15478: estimated potential speedup: 3.550 
+   remark #15486: divides: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(85,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.289
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(84,3)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1):remark #34051: REGISTER ALLOCATION : [set1d..1] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:82
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   19[ rax rdx rcx rsi rdi r8-r11 zmm0-zmm9]
+        
+    Routine temporaries
+        Total         :      93
+            Global    :      26
+            Local     :      67
+        Regenerable   :       4
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1d..2(float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1d..2(float *, float, int)) [14/21=66.7%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1)
+  CLONED FROM: set1d(float *, float, int)(X,X,-2)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(89,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.075
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 34 
+   remark #15477: vector cost: 10.000 
+   remark #15478: estimated potential speedup: 3.390 
+   remark #15486: divides: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(89,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.286
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(88,3)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(82,1):remark #34051: REGISTER ALLOCATION : [set1d..2] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:82
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   25[ rax rdx rcx rsi rdi r8-r11 zmm0-zmm15]
+        
+    Routine temporaries
+        Total         :     126
+            Global    :      27
+            Local     :      99
+        Regenerable   :       5
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set2d..0(float (*)[256], float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set2d..0(float (*)[256], float, int)) [15/21=71.4%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1)
+  CLONED FROM: set2d(float (*)[256], float, int)(X,X,-1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(123,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(124,4)
+      remark #15389: vectorization support: reference arr[i][j] has unaligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(125,5) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.600
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15451: unmasked unaligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 31 
+      remark #15477: vector cost: 1.250 
+      remark #15478: estimated potential speedup: 24.340 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1):remark #34051: REGISTER ALLOCATION : [set2d..0] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:118
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    7[ rax rdx rcx rsi rdi zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      21
+            Global    :      13
+            Local     :       8
+        Regenerable   :       3
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set2d..1(float (*)[256], float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set2d..1(float (*)[256], float, int)) [16/21=76.2%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1)
+  CLONED FROM: set2d(float (*)[256], float, int)(X,X,1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(135,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(135,3)
+   remark #25420: Collapsed with loop at line 136 
+   remark #15388: vectorization support: reference arr[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(137,5) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 1.083
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 3.990 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=4096
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(136,4)
+      remark #25421: Loop eliminated in Collapsing 
+
+   LOOP END
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(135,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i][j] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(137,5) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 2.600
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(135,3)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1):remark #34051: REGISTER ALLOCATION : [set2d..1] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:118
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    8[ rax rdx rcx rsi rdi r8 zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      33
+            Global    :      20
+            Local     :      13
+        Regenerable   :       1
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set2d..2(float (*)[256], float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set2d..2(float (*)[256], float, int)) [17/21=81.0%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1)
+  CLONED FROM: set2d(float (*)[256], float, int)(X,X,-2)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(129,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(130,4)
+      remark #15389: vectorization support: reference arr[i][j] has unaligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(131,5) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.600
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15451: unmasked unaligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 33 
+      remark #15477: vector cost: 1.250 
+      remark #15478: estimated potential speedup: 25.910 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=32
+   LOOP END
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(118,1):remark #34051: REGISTER ALLOCATION : [set2d..2] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:118
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    7[ rax rdx rcx rsi rdi zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      21
+            Global    :      13
+            Local     :       8
+        Regenerable   :       3
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1ds..0(int, float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1ds..0(int, float *, float, int)) [18/21=85.7%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1)
+  CLONED FROM: set1ds(int, float *, float, int)(X,X,X,1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(110,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(110,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(111,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 1.083
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 4 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 5.310 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(110,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(111,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 2.600
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(110,3)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1):remark #34051: REGISTER ALLOCATION : [set1ds..0] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:100
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    8[ rax rdx rcx rsi rdi r8 zmm0-zmm1]
+        
+    Routine temporaries
+        Total         :      34
+            Global    :      20
+            Local     :      14
+        Regenerable   :       1
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1ds..1(int, float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1ds..1(int, float *, float, int)) [19/21=90.5%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1)
+  CLONED FROM: set1ds(int, float *, float, int)(X,X,X,2)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(110,3)
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <arr[i]>, stride is 2   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(111,4) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.083
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15453: unmasked strided stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 4 
+   remark #15477: vector cost: 3.000 
+   remark #15478: estimated potential speedup: 1.330 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1):remark #34051: REGISTER ALLOCATION : [set1ds..1] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:100
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :    5[ rax rdx rsi rdi zmm0]
+        
+    Routine temporaries
+        Total         :      17
+            Global    :       9
+            Local     :       8
+        Regenerable   :       1
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: set1ds..2(int, float *, float, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (set1ds..2(int, float *, float, int)) [20/21=95.2%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1)
+  CLONED FROM: set1ds(int, float *, float, int)(X,X,X,-1)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+<Peeled loop for vectorization>
+   remark #25015: Estimate of max trip count of loop=3
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(103,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.076
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 32 
+   remark #15477: vector cost: 9.000 
+   remark #15478: estimated potential speedup: 3.550 
+   remark #15486: divides: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=2000
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(103,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.289
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(102,3)
+<Remainder loop for vectorization>
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(100,1):remark #34051: REGISTER ALLOCATION : [set1ds..2] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:100
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   19[ rax rdx rcx rsi rdi r8-r11 zmm0-zmm9]
+        
+    Routine temporaries
+        Total         :      94
+            Global    :      26
+            Local     :      68
+        Regenerable   :       4
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+Begin optimization report for: init(char *)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (init(char *)) [21/21=100.0%] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(214,1)
+  -> EXTERN: (225,7) strcmp(const char *, const char *)
+  -> EXTERN: (233,14) strcmp(const char *, const char *)
+  -> CP_CLONE (234,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (235,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (236,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (237,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (238,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (239,14) strcmp(const char *, const char *)
+  -> CP_CLONE (240,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (241,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (242,14) strcmp(const char *, const char *)
+  -> CP_CLONE (243,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (244,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (245,14) strcmp(const char *, const char *)
+  -> CP_CLONE (246,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (247,3) set2d..2(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (248,14) strcmp(const char *, const char *)
+  -> CP_CLONE (249,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (250,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (251,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (252,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (253,14) strcmp(const char *, const char *)
+  -> CP_CLONE (254,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (255,14) strcmp(const char *, const char *)
+  -> CP_CLONE (256,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (257,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (258,14) strcmp(const char *, const char *)
+  -> CP_CLONE (259,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (260,3) set2d..2(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (261,14) strcmp(const char *, const char *)
+  -> CP_CLONE (262,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (263,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (264,14) strcmp(const char *, const char *)
+  -> CP_CLONE (265,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (266,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (267,14) strcmp(const char *, const char *)
+  -> CP_CLONE (268,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (269,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (270,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (271,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (272,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (273,14) strcmp(const char *, const char *)
+  -> CP_CLONE (274,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (275,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (276,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (277,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (278,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (279,14) strcmp(const char *, const char *)
+  -> CP_CLONE (280,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (281,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (282,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (283,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (284,14) strcmp(const char *, const char *)
+  -> CP_CLONE (285,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (286,3) set1ds..2(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (287,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (288,14) strcmp(const char *, const char *)
+  -> CP_CLONE (289,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (290,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (291,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (292,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (293,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (294,14) strcmp(const char *, const char *)
+  -> CP_CLONE (295,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (296,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (297,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (298,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (299,14) strcmp(const char *, const char *)
+  -> CP_CLONE (300,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (301,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (302,14) strcmp(const char *, const char *)
+  -> CP_CLONE (303,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (304,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (305,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (306,14) strcmp(const char *, const char *)
+  -> CP_CLONE (307,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (308,3) set2d..2(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (309,14) strcmp(const char *, const char *)
+  -> CP_CLONE (310,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (311,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (312,14) strcmp(const char *, const char *)
+  -> CP_CLONE (313,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (314,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (315,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (316,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (317,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (318,14) strcmp(const char *, const char *)
+  -> CP_CLONE (319,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (320,3) set1ds..1(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (321,3) set1ds..1(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (322,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (323,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (324,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (325,14) strcmp(const char *, const char *)
+  -> CP_CLONE (326,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (327,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (328,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (329,14) strcmp(const char *, const char *)
+  -> CP_CLONE (330,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (331,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (332,14) strcmp(const char *, const char *)
+  -> CP_CLONE (333,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (334,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (335,14) strcmp(const char *, const char *)
+  -> CP_CLONE (336,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (337,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (338,14) strcmp(const char *, const char *)
+  -> CP_CLONE (339,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (340,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (341,14) strcmp(const char *, const char *)
+  -> CP_CLONE (342,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (343,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (344,14) strcmp(const char *, const char *)
+  -> CP_CLONE (345,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (346,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (347,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (348,14) strcmp(const char *, const char *)
+  -> CP_CLONE (349,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (350,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (351,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (352,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (353,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (354,14) strcmp(const char *, const char *)
+  -> CP_CLONE (355,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (356,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (357,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (358,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (359,14) strcmp(const char *, const char *)
+  -> CP_CLONE (360,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (361,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (362,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (363,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (364,14) strcmp(const char *, const char *)
+  -> CP_CLONE (365,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (366,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (367,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (368,14) strcmp(const char *, const char *)
+  -> CP_CLONE (369,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (370,3) set2d..2(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (371,14) strcmp(const char *, const char *)
+  -> CP_CLONE (372,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (373,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (374,14) strcmp(const char *, const char *)
+  -> CP_CLONE (375,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (376,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (377,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (378,14) strcmp(const char *, const char *)
+  -> CP_CLONE (379,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (380,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (381,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (382,14) strcmp(const char *, const char *)
+  -> CP_CLONE (383,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (384,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (385,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (386,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (387,3) set2d..2(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (388,14) strcmp(const char *, const char *)
+  -> CP_CLONE (389,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (390,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (391,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (392,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (393,14) strcmp(const char *, const char *)
+  -> CP_CLONE (394,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (395,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (396,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (397,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (398,14) strcmp(const char *, const char *)
+  -> CP_CLONE (399,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (400,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (401,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (402,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (403,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (404,14) strcmp(const char *, const char *)
+  -> CP_CLONE (405,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (406,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (407,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (408,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (409,14) strcmp(const char *, const char *)
+  -> CP_CLONE (410,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (411,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (412,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (413,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (414,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (415,14) strcmp(const char *, const char *)
+  -> CP_CLONE (416,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (417,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (418,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (419,14) strcmp(const char *, const char *)
+  -> CP_CLONE (420,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (421,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (422,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (423,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (424,14) strcmp(const char *, const char *)
+  -> CP_CLONE (425,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (426,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (427,14) strcmp(const char *, const char *)
+  -> CP_CLONE (428,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (429,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (430,14) strcmp(const char *, const char *)
+  -> CP_CLONE (431,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (432,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (433,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (434,14) strcmp(const char *, const char *)
+  -> CP_CLONE (435,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (436,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (437,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (438,14) strcmp(const char *, const char *)
+  -> CP_CLONE (439,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (440,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (441,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (442,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (443,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (444,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (445,14) strcmp(const char *, const char *)
+  -> CP_CLONE (446,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (447,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (448,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (449,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (450,14) strcmp(const char *, const char *)
+  -> CP_CLONE (451,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (452,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (453,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (454,14) strcmp(const char *, const char *)
+  -> CP_CLONE (455,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (456,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (457,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (458,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (459,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (460,14) strcmp(const char *, const char *)
+  -> CP_CLONE (461,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (462,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (463,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (464,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (465,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (466,14) strcmp(const char *, const char *)
+  -> CP_CLONE (467,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (468,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (469,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (470,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (471,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (472,14) strcmp(const char *, const char *)
+  -> CP_CLONE (473,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (474,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (475,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (476,14) strcmp(const char *, const char *)
+  -> CP_CLONE (477,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (478,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (479,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (480,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (481,14) strcmp(const char *, const char *)
+  -> CP_CLONE (482,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (483,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (484,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (485,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (486,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (487,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (488,14) strcmp(const char *, const char *)
+  -> CP_CLONE (489,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (490,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (491,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (492,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (493,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (494,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (495,14) strcmp(const char *, const char *)
+  -> CP_CLONE (496,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (497,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (499,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (500,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (501,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (502,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (503,14) strcmp(const char *, const char *)
+  -> CP_CLONE (504,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (505,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (506,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (507,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (508,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (509,14) strcmp(const char *, const char *)
+  -> CP_CLONE (510,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (511,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (512,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (513,14) strcmp(const char *, const char *)
+  -> CP_CLONE (514,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (515,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (516,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (517,14) strcmp(const char *, const char *)
+  -> CP_CLONE (518,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (519,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (520,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (521,14) strcmp(const char *, const char *)
+  -> CP_CLONE (522,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (523,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (524,14) strcmp(const char *, const char *)
+  -> CP_CLONE (525,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (526,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (527,14) strcmp(const char *, const char *)
+  -> CP_CLONE (528,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (529,14) strcmp(const char *, const char *)
+  -> CP_CLONE (530,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (531,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (532,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (533,14) strcmp(const char *, const char *)
+  -> CP_CLONE (534,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (535,14) strcmp(const char *, const char *)
+  -> CP_CLONE (537,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (538,14) strcmp(const char *, const char *)
+  -> CP_CLONE (539,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (540,14) strcmp(const char *, const char *)
+  -> CP_CLONE (541,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (542,14) strcmp(const char *, const char *)
+  -> CP_CLONE (543,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (544,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (545,14) strcmp(const char *, const char *)
+  -> CP_CLONE (546,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (547,14) strcmp(const char *, const char *)
+  -> CP_CLONE (548,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (549,14) strcmp(const char *, const char *)
+  -> CP_CLONE (550,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (551,14) strcmp(const char *, const char *)
+  -> EXTERN: (552,14) strcmp(const char *, const char *)
+  -> CP_CLONE (553,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (555,14) strcmp(const char *, const char *)
+  -> CP_CLONE (556,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (557,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (558,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (559,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (560,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (561,14) strcmp(const char *, const char *)
+  -> CP_CLONE (562,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (564,14) strcmp(const char *, const char *)
+  -> CP_CLONE (565,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (566,14) strcmp(const char *, const char *)
+  -> CP_CLONE (567,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (568,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (569,14) strcmp(const char *, const char *)
+  -> CP_CLONE (570,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (572,14) strcmp(const char *, const char *)
+  -> CP_CLONE (573,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (574,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (575,14) strcmp(const char *, const char *)
+  -> CP_CLONE (576,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (577,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (578,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (579,14) strcmp(const char *, const char *)
+  -> CP_CLONE (580,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (581,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (582,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (583,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (584,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (585,14) strcmp(const char *, const char *)
+  -> CP_CLONE (586,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (588,14) strcmp(const char *, const char *)
+  -> CP_CLONE (589,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (591,14) strcmp(const char *, const char *)
+  -> CP_CLONE (592,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (593,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (594,14) strcmp(const char *, const char *)
+  -> CP_CLONE (595,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (596,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (597,14) strcmp(const char *, const char *)
+  -> CP_CLONE (598,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (599,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (600,14) strcmp(const char *, const char *)
+  -> CP_CLONE (601,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (602,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (604,14) strcmp(const char *, const char *)
+  -> CP_CLONE (605,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (606,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (607,14) strcmp(const char *, const char *)
+  -> CP_CLONE (608,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (609,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (611,14) strcmp(const char *, const char *)
+  -> CP_CLONE (612,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (613,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (614,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (615,14) strcmp(const char *, const char *)
+  -> CP_CLONE (616,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (617,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (618,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (619,14) strcmp(const char *, const char *)
+  -> CP_CLONE (620,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (621,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (622,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (623,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (624,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (625,14) strcmp(const char *, const char *)
+  -> CP_CLONE (626,3) set2d..1(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (627,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (628,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (629,14) strcmp(const char *, const char *)
+  -> CP_CLONE (630,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (631,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (632,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (634,14) strcmp(const char *, const char *)
+  -> CP_CLONE (635,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (636,14) strcmp(const char *, const char *)
+  -> CP_CLONE (637,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (638,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (639,14) strcmp(const char *, const char *)
+  -> CP_CLONE (640,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (641,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (642,14) strcmp(const char *, const char *)
+  -> CP_CLONE (643,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (644,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (645,14) strcmp(const char *, const char *)
+  -> CP_CLONE (646,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (647,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (648,14) strcmp(const char *, const char *)
+  -> CP_CLONE (649,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (650,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (651,14) strcmp(const char *, const char *)
+  -> CP_CLONE (652,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (653,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (654,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (655,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (656,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (657,3) set1ds..0(int, float *, float, int) (isz = 66) (sz = 79)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (658,14) strcmp(const char *, const char *)
+  -> CP_CLONE (659,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (660,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (661,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (662,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (663,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (664,14) strcmp(const char *, const char *)
+  -> CP_CLONE (665,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (666,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (667,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (668,14) strcmp(const char *, const char *)
+  -> CP_CLONE (669,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (670,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (671,14) strcmp(const char *, const char *)
+  -> CP_CLONE (672,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (673,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (674,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (675,14) strcmp(const char *, const char *)
+  -> CP_CLONE (676,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (677,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (678,14) strcmp(const char *, const char *)
+  -> CP_CLONE (679,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (680,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (681,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (682,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (683,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (684,14) strcmp(const char *, const char *)
+  -> CP_CLONE (685,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (686,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (687,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (688,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (689,14) strcmp(const char *, const char *)
+  -> CP_CLONE (690,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (691,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (692,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (693,14) strcmp(const char *, const char *)
+  -> CP_CLONE (694,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (695,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (696,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (697,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (698,14) strcmp(const char *, const char *)
+  -> CP_CLONE (699,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (700,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (701,14) strcmp(const char *, const char *)
+  -> CP_CLONE (702,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (703,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (704,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (705,14) strcmp(const char *, const char *)
+  -> CP_CLONE (706,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (707,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (708,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (709,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (710,14) strcmp(const char *, const char *)
+  -> CP_CLONE (711,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (712,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (713,14) strcmp(const char *, const char *)
+  -> CP_CLONE (714,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (715,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (716,14) strcmp(const char *, const char *)
+  -> CP_CLONE (717,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (718,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (719,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (720,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (721,14) strcmp(const char *, const char *)
+  -> CP_CLONE (722,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (723,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (724,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (725,14) strcmp(const char *, const char *)
+  -> CP_CLONE (726,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (727,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (728,14) strcmp(const char *, const char *)
+  -> CP_CLONE (729,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (730,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (731,14) strcmp(const char *, const char *)
+  -> CP_CLONE (732,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (733,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (734,14) strcmp(const char *, const char *)
+  -> CP_CLONE (735,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (736,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (737,14) strcmp(const char *, const char *)
+  -> CP_CLONE (738,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (739,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (740,14) strcmp(const char *, const char *)
+  -> CP_CLONE (741,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (742,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (743,14) strcmp(const char *, const char *)
+  -> CP_CLONE (744,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (745,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (746,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (747,14) strcmp(const char *, const char *)
+  -> CP_CLONE (748,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (749,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (750,14) strcmp(const char *, const char *)
+  -> CP_CLONE (751,3) set1d..2(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (752,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (753,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (754,14) strcmp(const char *, const char *)
+  -> CP_CLONE (755,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (756,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (757,3) set1d..0(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (758,14) strcmp(const char *, const char *)
+  -> CP_CLONE (759,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (760,14) strcmp(const char *, const char *)
+  -> CP_CLONE (761,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (762,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> EXTERN: (763,14) strcmp(const char *, const char *)
+  -> CP_CLONE (764,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (765,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (766,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (767,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (768,3) set1d..1(float *, float, int) (isz = 67) (sz = 78)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+  -> CP_CLONE (769,3) set2d..0(float (*)[256], float, int) (isz = 109) (sz = 120)
+     [[ Inlining inhibited by overrideable criterion  <2>]]
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(226,4)
+   remark #15388: vectorization support: reference X[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(227,13) ]
+   remark #15388: vectorization support: reference Y[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(228,13) ]
+   remark #15388: vectorization support: reference Z[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(229,13) ]
+   remark #15388: vectorization support: reference U[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(230,13) ]
+   remark #15388: vectorization support: reference V[i] has aligned access   [ /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(231,13) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.083
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 5 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 26 
+   remark #15477: vector cost: 7.500 
+   remark #15478: estimated potential speedup: 3.460 
+   remark #15487: type converts: 5 
+   remark #15488: --- end vector cost summary ---
+   remark #25015: Estimate of max trip count of loop=4000
+LOOP END
+
+    Report from: Code generation optimizations [cg]
+
+/home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c(214,1):remark #34051: REGISTER ALLOCATION : [init] /home/praveen/FYP/Repo/Rigel-FYP/Sandbox/tsvc_edited/tsc.c:214
+
+    Hardware registers
+        Reserved     :    2[ rsp rip]
+        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
+        Callee-save  :    6[ rbx rbp r12-r15]
+        Assigned     :   21[ rax rdx rcx rsi rdi zmm0-zmm15]
+        
+    Routine temporaries
+        Total         :    2536
+            Global    :     251
+            Local     :    2285
+        Regenerable   :    2099
+        Spilled       :       0
+        
+    Routine stack
+        Variables     :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+        Spills        :       0 bytes*
+            Reads     :       0 [0.00e+00 ~ 0.0%]
+            Writes    :       0 [0.00e+00 ~ 0.0%]
+    
+    Notes
+    
+        *Non-overlapping variables and spills may share stack space,
+         so the total stack size might be less than this.
+    
+
+===========================================================================
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINING FOOTNOTES:
+
+<1> The function is larger than the inliner would normally inline.  Use the
+    option -inline-max-size to increase the size of any function that would
+    normally be inlined, add "inline __attribute__((always_inline))" to the
+    declaration of the called function, or add "#pragma forceinline" before
+    the call site.
+
+<2> The compiler's heuristics predict that it is not profitable to inline the
+    call.  Add "inline __attribute__((always_inline))" to the declaration of
+    the called function or add "#pragma forceinline" before the call site.
+
