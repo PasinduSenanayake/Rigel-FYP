@@ -40,41 +40,96 @@ class StructuredBlock(Block):
             return self.elements[0]
         return None
 
-    def vectorize(self, vectorLen=None, alignment=None, collapsed=None):
-        if not self.directive():
-            if not collapsed:
-                newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
-                # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
-                self.vectorized = True
-                newPragma.parent = self
+    def vectorize(self, vectorLen=None, alignment=None, collapsed=None, alignedArrays=[]):
+        loop = self.hasAssociatedLoop()
+        pragma = None
+        if not collapsed:
+            newPragma = None
+            if alignedArrays:
+                alignStr = "aligned(" + ",".join(alignedArrays) + ":" + str(alignment) + ")"
+                newPragma = Directive(self.startIndex, name="simd")
+                newPragma.body = "\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n"
+                # newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n", 0)
+            else:
+                newPragma = Directive(self.startIndex, name="simd")
+                newPragma.body = "\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n"
+                # newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
+            # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+            self.vectorized = True
+            newPragma.parent = self
+            if not self.directive():
                 self.elements.insert(0, newPragma)
-            # if (collapsed and self.lineNumber < int(collapsed)):
-            #     iterator = self.hasAssociatedLoop()
-            #     collapseSize = 0
-            #     while iterator.lineNumber != int(collapsed):
-            #         if isinstance(iterator, ForLoop):
-            #             collapseSize += 1
-            #         iterator = iterator.getNext()
-            #     collapseSize += 1
-            #     newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
-            #                       ") collapse(" + str(collapseSize) + ")\n", 0)
-            #     # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
-            #     self.vectorized = True
-            #     newPragma.parent = self
-            #     self.elements.insert(0, newPragma)
-            # elif collapsed and self.lineNumber > int(collapsed):
-            #     iterator = self.hasAssociatedLoop()
-            #     collapseSize = 1
-            #     while iterator.lineNumber != int(collapsed):
-            #         iterator = iterator.getParentLoop()
-            #         collapseSize += 1
-            #     newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
-            #                       ") collapse(" + str(collapseSize) + ")\n", 0)
-            #     # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
-            #     structuredBlock = iterator.getParent()
-            #     structuredBlock.vectorized = True
-            #     newPragma.parent = structuredBlock
-            #     structuredBlock.elements.insert(0, newPragma)
+            else:
+                currentDirectiveHeader = self.directive().name
+                currentDirectiveClauses = self.directive().getContent().replace(self.directive().body, "").\
+                    strip().replace("\n", "")
+                newPragma.body = newPragma.body[:13] + currentDirectiveHeader + " " + newPragma.body[13:]
+                newPragma.body = newPragma.body[:-1] + " " + currentDirectiveClauses + newPragma.body[-1:]
+                del self.elements[0]
+                self.elements.insert(0, newPragma)
+            loop = self.hasAssociatedLoop()
+            pragma = newPragma
+        # if (collapsed and self.lineNumber < int(collapsed)):
+        #     iterator = self.hasAssociatedLoop()
+        #     collapseSize = 0
+        #     while iterator.lineNumber != int(collapsed):
+        #         if isinstance(iterator, ForLoop):
+        #             collapseSize += 1
+        #         iterator = iterator.getNext()
+        #     collapseSize += 1
+        #     newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
+        #                       ") collapse(" + str(collapseSize) + ")\n", 0)
+        #     # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+        #     self.vectorized = True
+        #     newPragma.parent = self
+        #     if not self.directive():
+        #         self.elements.insert(0, newPragma)
+        #     loop = self.hasAssociatedLoop()
+        #     pragma = newPragma
+        # elif collapsed and self.lineNumber > int(collapsed):
+        #     iterator = self.hasAssociatedLoop()
+        #     collapseSize = 1
+        #     while iterator.lineNumber != int(collapsed):
+        #         iterator = iterator.getParentLoop()
+        #         collapseSize += 1
+        #     newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) +
+        #                       ") collapse(" + str(collapseSize) + ")\n", 0)
+        #     # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+        #     structuredBlock = iterator.getParent()
+        #     structuredBlock.vectorized = True
+        #     newPragma.parent = structuredBlock
+        #     if not structuredBlock.directive():
+        #         structuredBlock.elements.insert(0, newPragma)
+        #     loop = structuredBlock.hasAssociatedLoop()
+        #     pragma = newPragma
+
+        directive = loop.parent.directive()
+        loopVariable = loop.body.split("=")[0].split(" ")[-1]
+        block = loop.getNext()
+        reductions = []
+        validReductions = ["+", "*", "-"]
+        while block.isChild(self):
+            for reduction in validReductions:
+                if reduction+"=" in block.body:
+                    reductionVar = block.body.split(reduction+"=")[0].strip()
+                    reductionVarOrg = reductionVar
+                    indexes = []
+                    regex = re.compile(r"\[[^\[]*[^\]]\]", re.DOTALL)
+                    matching = regex.search(reductionVar)
+                    while matching:
+                        indexes.append(reductionVar[matching.start() + 1:matching.end() - 1])
+                        reductionVar = reductionVar[:matching.start()] + reductionVar[matching.end():]
+                        matching = regex.search(reductionVar)
+                    if loopVariable not in indexes:
+                        reductions.append([reduction, reductionVarOrg])
+            block = block.getNext()
+
+        for reduction in reductions:
+            reductionClause = "reduction(" + reduction[0] + ":" + reduction[1] + ")"
+            if not directive.hasClause(reductionClause):
+                newPragma.body = newPragma.body[:-1] + " " + reductionClause + "\n"
+
+
 
 
 

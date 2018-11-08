@@ -23,7 +23,8 @@ class Directive(Block):
             super(Directive, self).__init__(sourceDirective, startIndex)
             if not elements:
                 elements = self.findClauses(startIndex, directiveString)
-        super(Directive, self).setElements(elements)
+        if elements:
+            super(Directive, self).setElements(elements)
 
     def findDirective(self, directiveString):
         matchLen = 0
@@ -36,7 +37,7 @@ class Directive(Block):
             if(matching and matching.end()-matching.start() > matchLen):
                 matchLen = matching.end()-matching.start()
                 directiveName = directiveNameItr
-        return [directiveName, directiveString[:matchLen+1]]
+        return [directiveName, directiveString[:matchLen]]  #was [:matchLen+1]
 
     def findClauses(self, startIndex, directiveString): #single clause cannot be in two lines
         directive = directiveString
@@ -85,6 +86,28 @@ class Directive(Block):
                 parameter = Parameter(0, str(content), [])
                 parameter.parent = clause
                 clause.elements.append(parameter)
+
+    def hasClause(self, clause):
+        fullDirective = self.getContent()
+        if clause in fullDirective:
+            return True
+        else:
+            return False
+
+    def addClause(self, clause, content):
+        fullDirective = self.getContent()
+        clauseBlock = Block(" " + clause + "(" + content + ")")
+        clauseBlock.parent = self
+        if clause not in fullDirective:
+            self.elements.insert(0, clauseBlock)
+        else:
+            for i in range(len(self.elements)):
+                if clause in self.elements[i].body:
+                    del self.elements[i]
+                    break
+            self.elements.insert(0, clauseBlock)
+
+
 
 
     # def setSchedule(self, mechanism):

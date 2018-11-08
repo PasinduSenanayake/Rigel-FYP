@@ -12,11 +12,13 @@ import pprint
 import os.path
 import logger
 import dbManager
+from Evaluator.initializer import finalExecutor
 
 class Vectorizer():
     def __init__(self, extractor, directory):
         self.extractor = extractor
-        instructionSet = self.getLatestInstrucionSet()
+        self.instructionSet = self.getLatestInstrucionSet()
+        self.cacheLineSize = "64"
         self.vectorDirectory = directory + "/_vectorization"
         if os.path.exists(self.vectorDirectory):
             shutil.rmtree(self.vectorDirectory)
@@ -29,6 +31,17 @@ class Vectorizer():
         sourcePaths = extractor.getSourcePathList()
 
         self.analyzer = VectorReportAnalyzer(sourcePaths)
+        # print(self.analyzer.vectors)
+
+    def addVectorizableLoop(self, line, filePath, region):
+        identified = False
+        for vector in self.analyzer.vectors[filePath]:
+            if int(region[0]) <= int(vector["line"]) <= int(region[1]):
+                identified = True
+        if not identified:
+            self.analyzer.vectors[filePath].append({"line": int(line), "type": "vectorized_loop",
+                                                    "vectorize": True, "chunk": None, "section": [line],
+                                                    "collapsed": None, "permutation": None})
 
     def vectorize(self):
         return
@@ -64,27 +77,34 @@ class Vectorizer():
                         startLine = entry[0]
                         endLine = entry[1]
                         break
-            if loopRegion[0] <= startLine <= loopRegion[1]:
-                # vectorLen = self.getVectorLength(startLine, endLine, filePath, instructionSet)
-                vectorLen = 8
+            if int(loopRegion[0]) <= startLine <= int(loopRegion[1]):
+                response = self.getVectorLength(startLine, endLine, filePath, self.instructionSet, source)
+                vectorLen = response[0]
+                alignedArrays = response[1]
                 if vector["permutation"] and not vector["section"] and vector["vectorize"]:
                     stepsBack = len(vector["permutation"][1]) - vector["permutation"][1].index(str(len(vector["permutation"][1]))) - 1
-                    source.vectorize(vector["line"], vectorLen, None, vector["chunk"], vector["collapsed"], stepsBack)
+                    source.vectorize(vector["line"], vectorLen, self.cacheLineSize, vector["chunk"], vector["collapsed"], stepsBack, alignedArrays)
                 elif vector["vectorize"]:
-                    source.vectorize(vector["line"], vectorLen, None, vector["chunk"], vector["collapsed"])
+                    source.vectorize(vector["line"], vectorLen, self.cacheLineSize, vector["chunk"], vector["collapsed"], alignedArrays=alignedArrays)
         # source.root.setLineNumber(1)
         source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
-        from Evaluator.initializer import finalExecutor
         logger.loggerInfo("Test Execution Initiated")
-        responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'))
+        responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'), "-m"+self.instructionSet)
         if responseObj['returncode'] == 1:
             logger.loggerSuccess("Test Execution completed successfully for vectorizing loop at " + str(loopRegion[0]))
-            if not int(dbManager.read('finalExeTime')) < int(dbManager.read('iniExeTime')):
+            if not dbManager.read('finalExeTime') < dbManager.read('iniExeTime'):
+                logger.loggerInfo(
+                    "vectorization reversed for loop region " + str(loopRegion[0]) + "; seems inefficient")
                 self.extractor.getSource(filePath).tunedroot = unchangedRoot
                 source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
+            else:
+                logger.loggerSuccess(
+                    "vectorization commited for loop region " + str(loopRegion[0]))
 
+                dbManager.overWrite('iniExeTime', dbManager.read('finalExeTime'))
         else:
             logger.loggerError(responseObj['error'])
+            logger.loggerError(responseObj['content'])
             logger.loggerError("Test Execution FAILED when vectorizing loop at " + str(loopRegion[0]) + ". Optimization process terminated.")
             exit()
 
@@ -108,9 +128,10 @@ class Vectorizer():
                     set + " instruction set available for vectorization")
                 return set
 
-    def getVectorLength(self, startLine, endLine, filePath, instructionSet):
+    def getVectorLength(self, startLine, endLine, filePath, instructionSet, source):
         logger.loggerInfo("Array Information Fetcher Initiated for lines " + str(startLine)+ "-" + str(endLine) )
         response = arrayInfoExtract(filePath,startLine,endLine)
+        alignedArrays = []
         loopDetails = None
         if(response['code']==0):
             loopDetails = response['content']
@@ -126,6 +147,9 @@ class Vectorizer():
             found = False
             for dataTypeItr, size in dataSizes.items():
                 if dataTypeItr in dataType:
+                    source.align(array, self.cacheLineSize, dataTypeItr)
+                    logger.loggerSuccess("Aligned array " + array)
+                    alignedArrays.append(array)
                     sizes.append(size)
                     found = True
                     break
@@ -138,12 +162,38 @@ class Vectorizer():
             sizes.append(8)
 
         if (all(x == sizes[0] for x in sizes)):
-            for set,length in registerLength.items():
+            for set, length in registerLength.items():
                 if set in instructionSet:
-                    return registerLength[set]/(sizes[0]*8)
+                    return [registerLength[set]/(sizes[0]*8), alignedArrays]
         else:
-            for set,length in registerLength.items():
+            for set, length in registerLength.items():
                 if set in instructionSet:
-                    return registerLength[set] / (max(sizes) * 8)
+                    return [registerLength[set] / (max(sizes) * 8), alignedArrays]
+
+    def optimizeAffinity(self, filePath, loopRegion):
+        options = ["master", "close", "spread"]
+        currentBest = copy.deepcopy(self.extractor.getSource(filePath).tunedroot)
+        fileName = filePath.split("/")[-1]
+        source = self.extractor.getSource(filePath)
+        for option in options:
+            source.addClause(int(loopRegion[0]), "proc_bind", option)
+            source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
+            logger.loggerInfo("Test Execution Initiated after adding affinity clause")
+            responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'),
+                                        "-m" + self.instructionSet)
+            if responseObj['returncode'] == 1:
+                logger.loggerSuccess(
+                    "Test Execution completed successfully for adding affinity clause at " + str(loopRegion[0]))
+                if not dbManager.read('finalExeTime') < dbManager.read('iniExeTime'):
+                    logger.loggerInfo(
+                        "thread affinity reversed for directive at " + str(loopRegion[0]) + "; seems inefficient")
+                    source.tunedroot = currentBest
+                    source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
+                else:
+                    logger.loggerSuccess(
+                        "Thread affinity commited for loop region " + str(loopRegion[0]))
+                    currentBest = source.tunedroot
+                    source.writeToFile(self.vectorDirectory + "/" + fileName, currentBest)
+                    dbManager.overWrite('iniExeTime', dbManager.read('finalExeTime'))
 
 
