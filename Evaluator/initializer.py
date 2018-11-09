@@ -12,26 +12,26 @@ def initExecutor(dirPath,runTimeArguments):
     returnResponse = initExecution(dirPath,runTimeArguments)
     if (returnResponse['returncode']==0):
         response['error'] ='Program terminated due to a runtime error'
-        if returnResponse['error'] =="":
-            response['content'] =returnResponse['error']
+        if returnResponse['error'] == "":
+            response['content'] = returnResponse['error']
         else:
-            response['content'] =returnResponse['content']
+            response['content'] = returnResponse['content']
     response['returncode'] = returnResponse['returncode']
     return response
 
-def finalExecutor(dirPath,runTimeArguments):
+def finalExecutor(dirPath,runTimeArguments, additionalFlags = ""):
     response = {
-        "error":"",
-        "content":{},
-        "returncode":0
+        "error": "",
+        "content": {},
+        "returncode": 0
         }
-    returnResponse = finalExecution(dirPath,runTimeArguments)
+    returnResponse = finalExecution(dirPath,runTimeArguments, additionalFlags)
     if (returnResponse['returncode']==0):
         response['error'] ='Program terminated due to a runtime error'
-        if returnResponse['error'] =="":
-            response['content'] =returnResponse['error']
+        if returnResponse['error'] != "":
+            response['content'] = returnResponse['error']
         else:
-            response['content'] =returnResponse['content']
+            response['content'] = returnResponse['content']
     response['returncode'] = returnResponse['returncode']
     return response
 

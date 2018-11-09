@@ -23,7 +23,7 @@ int main()
         {
             printf("loop1%d\n",omp_get_num_threads());
         }
-    
+    //for(int i)
 
     for (int i = 2; i < 100; i++)
     {

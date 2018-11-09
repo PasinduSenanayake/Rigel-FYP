@@ -144,7 +144,7 @@ def __runOptimizerStandalone(extractor):
     sourceObjList = {}
     loopSections = dbManager.read('loopSections')
     isGPU = False
-
+    print loopSections
     for loop in loopSections:
         if loop['optimizeMethod'] == 'GPU':
             isGPU = True
@@ -154,6 +154,11 @@ def __runOptimizerStandalone(extractor):
         logger.loggerInfo("GPU Offloader Optimizer initiated")
         summarySections = dbManager.read('summaryLoops')
         status = changeMakeFile()
+
+        with open(movePath + '/' + folderName + '/'+'run.json') as inputfile:
+            runJson = json.load(inputfile)
+            runtimeArg = runJson['runTimeArguments']
+
         if status['code'] == 0:
             for loopSection in loopSections:
                 if loopSection['optimizeMethod'] =='GPU':
@@ -223,7 +228,7 @@ def __runOptimizerStandalone(extractor):
                             with open(offloadFolderPath,'w') as f:
                                  f.write(content)
 
-                            runnablePath = makePath + '&& ./runnable '
+                            runnablePath = makePath + '&& ./runnable ' + runtimeArg + ' '
                             p = subprocess.Popen(runnablePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                                   stdin=subprocess.PIPE)
                             (output, err) = p.communicate()  # to check for errors
@@ -249,8 +254,9 @@ def __runOptimizerStandalone(extractor):
 
                         EXTRACTOR_PRAGMA = TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA.replace('$threads', str(threadsPerTeamList[idx]))
                         print EXTRACTOR_PRAGMA
-                        # sourceObj.offload(loopSection['startLine'],EXTRACTOR_PRAGMA)
-                        # sourceObj.writeToFile(folderPath_+'/'+fileName)
+                        sourceObj.offload(int(loopSection['startLine'])+1, EXTRACTOR_PRAGMA)
+
+                        sourceObj.writeToFile(folderPath_+'/'+'test123.c', sourceObj.tunedroot)
                         for summaryLoop in summarySections:
                             if summaryLoop['startLine'] == loopSection['startLine']:
                                 summaryLoop['optimizedTime'] = str(val)

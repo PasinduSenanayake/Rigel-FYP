@@ -131,7 +131,7 @@ def __extractNvidiaGPUinfo():
         if len(err) > 0:
             response['error'] = err
             response['content'] = {}
-            response['returncode'] = 0
+            response['returncode'] = 1
             logger.loggerError('Device Query Execution failed.Check CUDA runtime')
             return response
 
@@ -154,7 +154,7 @@ def __extractNvidiaGPUinfo():
         else:
             response['error'] = output
             response['content'] = {}
-            response['returncode'] = 0
+            response['returncode'] = 1
             logger.loggerError('Check CUDA runtime error')
             return response
 

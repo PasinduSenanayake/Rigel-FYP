@@ -11,7 +11,6 @@ def initExecution(dirPath,runTimeArguments=""):
         "content":{},
         "returncode":0
         }
-
     if(os.path.isdir(dirPath)):
         if(os.path.isdir(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox")):
             shutil.rmtree(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox")
@@ -37,7 +36,8 @@ def initExecution(dirPath,runTimeArguments=""):
             if(stderr == ""):
                 exeEndTime = time.time()
                 shutil.rmtree(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox")
-                dbManager.write('iniExeTime',exeEndTime-exeStartTime)
+                print(exeEndTime-exeStartTime)
+                dbManager.overWrite('iniExeTime', exeEndTime-exeStartTime)
                 response['returncode']=1
             else:
                 response['returncode']=0
