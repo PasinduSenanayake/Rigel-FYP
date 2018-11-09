@@ -65,6 +65,7 @@ def processInitializer():
 
     #Modifier Begins
     logger.loggerInfo("Source Code Modification Process Initiated")
+    exit()
     modify(extractor, sourceDirectry)
     #Modifier Completed
 

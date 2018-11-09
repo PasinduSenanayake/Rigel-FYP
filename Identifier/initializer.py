@@ -67,6 +67,7 @@ def identify(extractor,directory):
         logger.loggerSuccess("Profile Summarization completed successfully")
         loopSections = selectOptimizableLoopSections(summarizedReport['content'])
         dbManager.write('loopSections',loopSections)
+        print loopSections
         if (len(loopSections)>0):
             isGpu = True
             isVector = True

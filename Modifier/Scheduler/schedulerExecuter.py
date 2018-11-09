@@ -73,8 +73,6 @@ def mechanismIdentifier(loopInfo):
     else:
         voting[2] = 0
     if sum(voting)> 1:
-        print "Non-static"
-        #statge 2
         sectionTimes=[]
         difAbsVal = 0
         gCounter = 0
@@ -89,16 +87,12 @@ def mechanismIdentifier(loopInfo):
             elif ((sectionTimes[counter]/totalAverage)<-0.5):
                 gRCounter=gRCounter+1
         if (float(gCounter)/float(len(loopInfo['threadTimes'])-1) >= 0.6):
-            print "Guided"
             loopInfo['schedulingMechanism']="guided"
         elif (float(gRCounter)/float(len(loopInfo['threadTimes'])-1)>= 0.6):
-            print "Guided - R"
-            loopInfo['schedulingMechanism']="guided-R"
+            loopInfo['schedulingMechanism']="guided"
         else:
-            print "dynamic"
             loopInfo['schedulingMechanism']="dynamic"
     else:
-        print "Static"
         loopInfo['schedulingMechanism']="static"
 
 
@@ -106,13 +100,9 @@ def mechanismIdentifier(loopInfo):
 def setMechanism(extractor,directory,loopSections):
     copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
     for loopSection in loopSections:
-        with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName']) as f:
-            file_str = f.readlines()
-            file_str[int(loopSection['startLine'])-1] =   file_str[int(loopSection['startLine'])-1].replace('static',loopSection['schedulingMechanism'])
-    # do stuff with file_str
-
-        with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName'], "w") as f:
-            f.writelines(file_str)
+        sourceObj = extractor.getSource(directory+"/"+loopSection['fileName'])
+        sourceObj.setSchedule(loopSection['schedulingMechanism'],loopSection['startLine'])
+        sourceObj.writeToFile(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName'],sourceObj.tunedroot)
     summaryLoops = dbManager.read('summaryLoops')
     profiledStatus  = getSummary(fileLocation+'omppScheduler/Sandbox',dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
     for profiledLoop in profiledStatus['content']:

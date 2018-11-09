@@ -1,6 +1,7 @@
 import logger,dbManager
 from Vectorizer.Vectorizer import Vectorizer
 from gpuMachineLearner.gpuMLExecuter import mlModelExecutor
+from vecMachineLearner.vecMLExecuter import vecMlModelExecutor
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
 
 response = {
@@ -21,7 +22,13 @@ def modify(extractor,directory):
 
     logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
 
-    logger.loggerSuccess("Vector Machine Learning Model Execution Completed")
+    # result = vecMlModelExecutor(directory)
+    # if (result):
+    #     logger.loggerSuccess("Vec Machine Learning Model Execution Completed")
+    # else:
+    #     logger.loggerError("Vec Machine Learning Model Execution Failed.")
+
+    # Database clean method
 
     logger.loggerInfo("GPU Optimization Initialized.")
 

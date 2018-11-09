@@ -1,0 +1,4 @@
+#!/bin/bash
+./runnableStatic &> StaticOutput.txt
+./runnableGuided &> GuidedOutput.txt
+./runnableDynamic &> DynamicOutput.txt
