@@ -1,6 +1,7 @@
 import json,os,sys
 import shutil
 import random
+import copy
 
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
@@ -78,19 +79,73 @@ def vectorizer():
         from Extractor.Extractor import Extractor
         commadName = commandJson['command']['vectorize']
         folderPath = commadName['folderPath']
-        logger.loggerInfo("Modifier Execution Command Initiated")
         sourceDirectry = folderPath
+        logger.loggerInfo("Extractor Initiated")
         extractor = Extractor(sourceDirectry)
-        logger.loggerInfo("System Information Fetcher Initiated")
-        responseObj = __systemInformationIdentifier()
-        if (responseObj['returncode'] == 1):
-            dbManager.write('systemData', responseObj['content'])
-            logger.loggerSuccess("System Information Fetcher completed successfully")
+        logger.loggerInfo("Extractor Completed")
+        # logger.loggerInfo("System Information Fetcher Initiated")
+        # responseObj = __systemInformationIdentifier()
+        # if (responseObj['returncode'] == 1):
+        #     dbManager.write('systemData', responseObj['content'])
+        #     logger.loggerSuccess("System Information Fetcher completed successfully")
+        # else:
+        #     logger.loggerError("System Information Fetcher Failed")
+        #     print "System Information Fetcher Failed. Optimization process terminated."
+        #     exit()
+
+        # Runtime arg extraction Initiated
+        logger.loggerInfo("Run time arguments fetcher Initiated")
+        with open(sourceDirectry + '/run.json') as runArgumentFile:
+            dataArguments = json.load(runArgumentFile)
+        if not (dataArguments['runTimeArguments'] == None):
+            dbManager.overWrite('runTimeArguments', str(dataArguments['runTimeArguments']))
         else:
-            logger.loggerError("System Information Fetcher Failed")
-            print "System Information Fetcher Failed. Optimization process terminated."
+            logger.loggerError("Run time arguments fetcher Failed. Optimization process terminated.")
+            print "Run time arguments fetcher Failed. Optimization process terminated."
             exit()
+        logger.loggerSuccess("Run time arguments fetcher completed successfully")
+        # Runtime arg extraction Completed
+
+        # Primary Execution Initiated
+        from Evaluator.initializer import initExecutor
+        logger.loggerInfo("Primary Execution Initiated")
+        responseObj = initExecutor(sourceDirectry, dbManager.read('runTimeArguments'))
+        if responseObj['returncode'] == 1:
+            logger.loggerSuccess("Primary Execution completed successfully.")
+            print "initial execution time - " + str(dbManager.read('iniExeTime'))
+        else:
+            logger.loggerError(responseObj['error'])
+            logger.loggerError("Primary Execution Failed. Optimization process terminated.")
+            exit()
+        # Primary Execution Completed
+        # Identifier Initiated
+        from Identifier.initializer import identify
+        logger.loggerInfo("Source Code Identification Process Initiated")
+        response = identify(extractor, sourceDirectry)
+        if response['returncode'] == 0:
+            logger.loggerSuccess("Source Code Identification Process Completed Successfully")
+
+        else:
+            logger.loggerError("Source Code Identification Process Failed. Optimization process terminated.")
+            return False
+        # Identifier Completed
+
         vectorizer = Vectorizer(extractor, folderPath)
+        for file in extractor.getSourcePathList():
+            outerLoops = dbManager.read('loopSections')
+            for loop in outerLoops:
+                vectorizer.initIntelOptimizations(file, [int(loop["startLine"]), int(loop["endLine"])])
+
+        # for file in extractor.getSourcePathList():
+        #     outerLoops = dbManager.read('loopSections')
+        #     for loop in outerLoops:
+        #         vectorizer.optimizeAffinity(file, [int(loop["startLine"]), int(loop["endLine"])])
+
+        print("optimized time - " + str(dbManager.read('iniExeTime')))
+
+
+
+        # vectorizer.vectorize(23)
 
 def modifierExecutor():
 

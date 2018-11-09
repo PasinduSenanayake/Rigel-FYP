@@ -13,31 +13,33 @@ class SourceCode:
         self.forLoops = []
         self.directives = []
         self.structure = []
-        # self.removeBlockComments()
-        # self.removeLineComments()
+        self.blockComments = self.findBlockComments()
+        self.lineComments = self.findLineComments()
         self.searchForLoops()
         self.searchDirectives()
         self.root = self.structureCode()
         self.shatter()
         self.root.setLineNumber(1)
         self.serialroot = self.getSerialCode(self.root)
+        # self.profileroot = self.getProfileCode(self.root)
         self.serialparallelOuterLoopMapping = self.serialParallelOuterLoopMap()
         self.serialparallelLoopMapping = self.serialParallelLoopMap()
         self.tunedroot = copy.deepcopy(self.root)
 
-    def isBlockComments(self, index):
+    def findBlockComments(self):
+        blockComments = []
         tempSource = self.code
         regex = re.compile(r"(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)",
                            re.DOTALL)  # error if block comment syntax found in a string construct or in a line comment
         matching = regex.search(tempSource)
         while (matching):
-            if matching.start() <= index <= matching.end():
-                return True
+            blockComments.append([matching.start(), matching.end()])
             tempSource = tempSource[:matching.start()] + "@"*(matching.end()-matching.start()) + tempSource[matching.end():]
             matching = regex.search(tempSource)
-        return False
+        return blockComments
 
-    def isLineComments(self, index):
+    def findLineComments(self):
+        lineComments = []
         tempSource = self.code
         regex = re.compile(r"(//.*)", re.DOTALL)  # error if line comment syntax found in a string construct or in a block comment
         matching = regex.search(tempSource)
@@ -47,14 +49,19 @@ class SourceCode:
                 commentLength += 1
                 if char == "\n":
                     break
-            if matching.start() <= index <= matching.start() + commentLength:
-                return True
+            lineComments.append([matching.start(), matching.start() + commentLength])
             tempSource = tempSource[:matching.start()] + "@"*commentLength +tempSource[matching.start() + commentLength:]
             matching = regex.search(tempSource)
-        return False
+        return lineComments
 
     def isComment(self, index):
-        return self.isBlockComments(index) or self.isLineComments(index)
+        for lineComment in self.lineComments:
+            if lineComment[0] <= index <= lineComment[1]:
+                return True
+        for blockComment in self.blockComments:
+            if blockComment[0] <= index <= blockComment[1]:
+                return True
+        return False
 
     def searchForLoops(self):
         sourceCode = self.code
@@ -175,6 +182,20 @@ class SourceCode:
         serialRoot.setLineNumber(1)
         return serialRoot
 
+    def getProfileCode(self, root):
+        profileRoot = copy.deepcopy(self.root)
+        nextObj = profileRoot
+        while nextObj:
+            if isinstance(nextObj, StructuredBlock):
+                if not nextObj.directive():
+                    directive = Directive(nextObj.startIndex, name="parallel for")
+                    directive.elements.insert(0,Block(nextObj.startIndex, " num_threads(1)\n"))
+                    nextObj = nextObj.getParallelNext()
+                    break
+            nextObj = nextObj.getNext()
+        profileRoot.setLineNumber(1)
+        return profileRoot
+
     def serialParallelOuterLoopMap(self):
         nextObj = self.root
         mapping = {"serial":[], "parallel":[]}
@@ -223,24 +244,45 @@ class SourceCode:
             mapping["parallel"].append([parallelLoop.lineNumber, parallelLoop.endLineNumber])
         return mapping
 
-    def vectorize(self, lineNumber, vectorLen=None, alignment=None, chunk=None, collapsed=None, stepsBack=None):
+    def align(self, array, alignment, dataType):
+        nextObj = self.tunedroot
+        while nextObj:
+            if type(nextObj) is Block:
+                content = nextObj.body
+                regex = re.compile(dataType + r"\s.*\s" + array + "\[", re.DOTALL)
+                if array + "[" in content:
+                    matching = regex.search(content)
+                    if matching and "aligned" in content:
+                        regex_align = re.compile(r"aligned\([^)]*\)", re.DOTALL)
+                        matching_align = regex_align.search(content)
+                        if matching_align:
+                            content = content[:matching_align.start()] + "aligned(" + str(alignment) + ")" + content[matching_align.end():]
+                            nextObj.body = content
+                        break
+                    if matching and "aligned" not in content:
+                        content = "__attribute__((aligned(" + str(alignment) + "))) " + content
+                        nextObj.body = content
+                        break
+            nextObj = nextObj.getNext()
+
+    def vectorize(self, lineNumber, vectorLen=None, alignment=None, chunk=None, collapsed=None, stepsBack=None, alignedArrays=[] ):
         nextObj = self.tunedroot
         while nextObj:
             if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
                 structuredBlock = nextObj.getParent()
                 if not structuredBlock.vectorized:
                     if chunk and nextObj.distributedIndex == int(chunk):
-                        structuredBlock.vectorize(vectorLen, alignment, collapsed)
+                        structuredBlock.vectorize(vectorLen, alignment, collapsed, alignedArrays=alignedArrays)
                         break
                     if not chunk and not stepsBack:
-                        structuredBlock.vectorize(vectorLen, alignment, collapsed)
+                        structuredBlock.vectorize(vectorLen, alignment, collapsed, alignedArrays=alignedArrays)
                         break
                     if stepsBack:
                         iterator = nextObj
                         for i in range(stepsBack):
                             iterator = iterator.getParentLoop()
                         structuredBlock = iterator.getParent()
-                        structuredBlock.vectorize(vectorLen, alignment, collapsed)
+                        structuredBlock.vectorize(vectorLen, alignment, collapsed, alignedArrays=alignedArrays)
                         break
             nextObj = nextObj.getNext()
 
@@ -298,15 +340,11 @@ class SourceCode:
                 modified = permutation[1]
                 nodes.reverse()
                 nodesRefs.reverse()
-                print(lineNumber)
                 for index, node in enumerate(nodes):
                     modifiedIndex = modified.index(str(index+1))
                     targetLoop = nodesRefs[modifiedIndex]
                     originalLoop = nodesRefs[index]
                     while targetLoop:
-                        for e in targetLoop.elements:
-                            print e.body
-                        print("---")
                         targetLoop.body = node["loop"].body
                         for dependant in reversed(node["dependants"]):
                             dependant.parent = targetLoop
@@ -321,9 +359,6 @@ class SourceCode:
                 break
             nextObj = nextObj.getNext()
 
-
-
-
     def offload(self, lineNumber, pragma=None, num_threads=None, clauses=""):
         nextObj = self.tunedroot
         while nextObj:
@@ -332,6 +367,15 @@ class SourceCode:
                 return structuredBlock.offload(pragma, str(num_threads), clauses)
                 break
             nextObj = nextObj.getNext()
+
+    def addClause(self, line, clause, content):
+        nextObj = self.tunedroot
+        while nextObj:
+            if str(nextObj.lineNumber) == str(line) and isinstance(nextObj, Directive):
+                nextObj.addClause(clause, content)
+                break
+            nextObj = nextObj.getNext()
+
 
     # def permute(self, lineNumber, permutation):
     #     nextObj = self.tunedroot

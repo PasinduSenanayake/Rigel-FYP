@@ -5,7 +5,7 @@ import platform
 import dbManager
 import time
 
-def finalExecution(dirPath,runTimeArguments=""):
+def finalExecution(dirPath,runTimeArguments="", additionalFlags=""):
     response = {
         "error":"",
         "content":{},
@@ -21,10 +21,13 @@ def finalExecution(dirPath,runTimeArguments=""):
             lines = books.readlines()
             for index,line in enumerate(lines):
                 if '[compiler]' in line:
-                    line = line.replace("[compiler]",' clang  -fopenmp')
+                    line = line.replace("[compiler]",' clang  -fopenmp -w')
                     lines[index] = line
                 if '[targetObject]' in line:
                     line = line.replace("[targetObject]",'testapp')
+                    lines[index] = line
+                if "flags" in line and "$" not in line and additionalFlags and additionalFlags not in line:
+                    line = line[:-1] + " " + additionalFlags + "\n"
                     lines[index] = line
         with open(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox/Makefile", 'w') as rewriteMake:
             rewriteMake.writelines(lines)
@@ -37,7 +40,7 @@ def finalExecution(dirPath,runTimeArguments=""):
             if(stderr == ""):
                 exeEndTime = time.time()
                 shutil.rmtree(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox")
-                dbManager.write('finalExeTime',exeEndTime-exeStartTime)
+                dbManager.overWrite('finalExeTime', exeEndTime-exeStartTime)
                 response['returncode']=1
             else:
                 response['returncode']=0

@@ -118,29 +118,36 @@ class VectorReportAnalyzer:
         # loop = Loop(line,vectorLen,speedup,overhead)
         loop = {"type": "vectorized_loop", "line": line,
                 "vectorLen": vectorLen, "speedup": speedup,
-                "overhead": overhead, "section":section, "collapsed":collapsed, "chunk":None, "permutation":None}
+                "overhead": overhead, "section":section, "collapsed":collapsed, "chunk":None,
+                "permutation":None, "vectorize":True}
         return loop
 
-    def getPermutedVectorData(self,lineNo, report ):
+    def getPermutedVectorData(self,lineNo, report, vectorData):
         line = 0
         vectorLen = 0
         speedup = 0
         overhead = 0.0
         permutation = {}
         section = []
+        chunk = None
         lineregex = re.compile(r"LOOP BEGIN", re.DOTALL)
         vectorLenregex = re.compile(r"#15305")
         speedupregex = re.compile(r"#15478")
         overheadregex = re.compile(r"#15309")
         permutationregex = re.compile(r"#25444")
         sectionregex = re.compile(r"#15388")
+        chunkregex = re.compile(r"Distributed chunk")
         for i in range(lineNo,0,-1):
             match1 = lineregex.search(report[i])
             match2 = vectorLenregex.search(report[i])
             match4 = overheadregex.search(report[i])
             match5 = permutationregex.search(report[i])
             match6 = sectionregex.search(report[i])
+            match7 = chunkregex.search(report[i])
 
+            if match7:
+                fullLine = report[i]
+                chunk = fullLine[-3]
             if match6:
                 fullLine = report[i][:-1].strip()
                 sectionLine = re.split('\(|,', fullLine)[-2]
@@ -174,11 +181,18 @@ class VectorReportAnalyzer:
         # print(str(line)+" "+str(vectorLen)+" "+str(speedup))
         loop = {"type": "permuted_loop", "line": line,
                 "vectorLen": vectorLen, "speedup": speedup,
-                "overhead": overhead, "permutation": permutation, "section":section, "collapsed":None,"chunk":None}
+                "overhead": overhead, "permutation": permutation, "section": section,
+                "collapsed": None, "chunk": None, "vectorize":True}
         # loop = PermutedLoop(line, vectorLen, speedup, overhead,permutation)
-        return loop
+        if loop not in vectorData:
+            vectorData.append(loop)
+        if chunk:
+            partialData = self.getPartialVectorData(lineNo, report, chunk)
+            if partialData not in vectorData:
+                vectorData.append(partialData)
+        return vectorData
 
-    def getPartialVectorData(self,lineNo, report ):
+    def getPartialVectorData(self, lineNo, report, chunk=None):
         line = 0
         vectorLen = 0
         speedup = 0
@@ -186,7 +200,7 @@ class VectorReportAnalyzer:
         permutation = {}
         section = []
         collapsed = None
-        chunk = None
+        chunk = chunk
         lineregex = re.compile(r"LOOP BEGIN", re.DOTALL)
         vectorLenregex = re.compile(r"#15305")
         speedupregex = re.compile(r"#15478")
@@ -196,7 +210,7 @@ class VectorReportAnalyzer:
         collapsedregex = re.compile(r"remark #25420: Collapsed with")
         chunkregex = re.compile(r"Distributed chunk")
 
-        for i in range(lineNo,0,-1):
+        for i in range(lineNo, 0, -1):
             match1 = lineregex.search(report[i])
             match2 = vectorLenregex.search(report[i])
             match3 = permutationregex.search(report[i])
@@ -214,7 +228,7 @@ class VectorReportAnalyzer:
                 collapsed = collapsedLine
             if match3:
                 fullLine = report[i]
-                values =re.findall('\((.*?)\)',fullLine)
+                values =re.findall('\((.*?)\)', fullLine)
                 values[0] = values[0].split(' ')[1:-1]
                 values[1] = values[1].split(' ')[1:-1]
                 permutation = values
@@ -237,7 +251,7 @@ class VectorReportAnalyzer:
                 line = int(val.split(',')[0])
                 break
 
-        for i in range(lineNo,len(report),1):
+        for i in range(lineNo, len(report), 1):
             match3 = speedupregex.search(report[i])
             if match3:
                 fullLine = report[i][:-1]
@@ -246,35 +260,38 @@ class VectorReportAnalyzer:
         # print(str(line)+" "+str(vectorLen)+" "+str(speedup))
         loop = {"type": "partial_loop", "line": line,
                 "vectorLen": vectorLen, "speedup": speedup,
-                "overhead": overhead, "permutation": permutation, "section":section, "collapsed":collapsed,
-                "chunk":chunk}
+                "overhead": overhead, "permutation": permutation, "section": section, "collapsed": collapsed,
+                "chunk": chunk, "vectorize":True}
+        if chunk:
+            loop = {"type": "partial_loop", "line": line,
+                    "vectorLen": vectorLen, "speedup": speedup,
+                    "overhead": overhead, "permutation": permutation, "section": section, "collapsed": collapsed,
+                    "chunk": chunk, "vectorize": False}
         # loop = PermutedLoop(line, vectorLen, speedup, overhead,permutation)
         return loop
 
-    def findLoopBlocks(self,report):
-        vectorDataList= []
-        for i in range(0,len(report)):
+    def findLoopBlocks(self, report):
+        vectorDataList = []
+        for i in range(0, len(report)):
             regex1 = re.compile(r"#15300: LOOP WAS VECTORIZED", re.DOTALL)
             match1 = regex1.search(report[i])
             regex2 = re.compile(r"remark #15301: PERMUTED LOOP WAS VECTORIZED", re.DOTALL)
             match2 = regex2.search(report[i])
             regex3 = re.compile(r"remark #15301: PARTIAL LOOP WAS VECTORIZED", re.DOTALL)
             match3 = regex3.search(report[i])
-            if match1 :
-                vectorData = self.getVectorData(i,report)
-                if vectorData not in vectorDataList :
+            if match1:
+                vectorData = self.getVectorData(i, report)
+                if vectorData not in vectorDataList:
                     vectorDataList.append(vectorData)
-            elif match2 :
-                permutedData = self.getPermutedVectorData(i,report)
-                if permutedData not in vectorDataList :
-                    vectorDataList.append(permutedData)
-            elif match3 :
-                partialData = self.getPartialVectorData(i,report)
-                if partialData not in vectorDataList :
+            elif match2:
+                vectorDataList = self.getPermutedVectorData(i, report, vectorDataList)
+            elif match3:
+                partialData = self.getPartialVectorData(i, report)
+                if partialData not in vectorDataList:
                     vectorDataList.append(partialData)
         return vectorDataList
 
-    def removeDuplicateLoops(self,loopList):
+    def removeDuplicateLoops(self, loopList):
         duplicateList = []
         for vector1 in loopList:
             duplicateList.append(vector1)
