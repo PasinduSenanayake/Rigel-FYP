@@ -364,7 +364,7 @@ class SourceCode:
         while nextObj:
             if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
                 structuredBlock = nextObj.getParent()
-                return structuredBlock.offload(pragma, str(num_threads), clauses)
+                structuredBlock.offload(pragma, str(num_threads), clauses)
                 break
             nextObj = nextObj.getNext()
 

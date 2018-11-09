@@ -1,7 +1,7 @@
 {
   "general":{
     "type": "ForStructured",
-    "clauses": "if,num_threads,default,shared,copyin,proc_bind,private,firstprivate,lastprivate,linear,reduction,schedule,collapse,ordered"
+    "clauses": "if,num_threads,default,shared,copyin,proc_bind,firstprivate,lastprivate,private,linear,reduction,schedule,collapse,ordered"
   },
 
   "clauses":{
@@ -43,11 +43,7 @@
       "0": "master$close$spread"
     },
 
-    "private": {
-      "optimizable": false,
-      "haveParameters": true,
-      "parameterPattern": "2"
-    },
+
 
     "firstprivate": {
       "optimizable": false,
@@ -56,6 +52,12 @@
     },
 
     "lastprivate": {
+      "optimizable": false,
+      "haveParameters": true,
+      "parameterPattern": "2"
+    },
+
+    "private": {
       "optimizable": false,
       "haveParameters": true,
       "parameterPattern": "2"
