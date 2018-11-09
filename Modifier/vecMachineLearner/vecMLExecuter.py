@@ -90,7 +90,22 @@ def processMLData():
     os.remove(fileLocation+'mlTemp.csv')
     return np.array(finalResult)
 
-def vecMlModelExecutor(filePath):
+def get_loop_line(start,end,extractor,filepath):
+    start = int(start)
+    end = int(end)
+    sourceObj = extractor.getSource(filepath)
+    loops = sourceObj.getLoopMapping()['serial']
+    # print(loops)
+    inner_loop_line = start
+    for loop in loops:
+        # print(loop[0], start, end)
+        if loop[0] >= start and loop[0] <= end:
+            # print(loop[0],start,end)
+            inner_loop_line = loop[0]
+    return inner_loop_line
+
+
+def vecMlModelExecutor(filePath,extractor):
     dataSection = dataPreProcessor(filePath+"/_vector_profiling/")
     resultsSet = processMLData()
     loopData = dbManager.read('loopSections')
@@ -104,24 +119,11 @@ def vecMlModelExecutor(filePath):
                 if item["startLine"] == startLine and item["endLine"] == endLine :
                     if item["optimizeMethod"] == None:
                         item["optimizeMethod"] = "vector"
+                        loop_line = get_loop_line(item["startLine"],item["endLine"],extractor,filePath+'/'+item['fileName'])
+                        item["loopLine"] = loop_line
+                        # print(loop_line)
 
     print (loopData)
-    # subSections=[]
-    # for loopSection in dataSection:
-    #     dataSource = {'fileName':'', 'loopSegementStartLine':'','loopSegementEndLine':''}
-    #     dataSource['fileName'] = loopSection.split(' ')[1].split(':')[0]
-    #     loopSubSection =  loopSection.split(' ')[1].split(':')[1].split('[')[1].split('-')
-    #     dataSource['loopSegementStartLine'] = loopSubSection[0]
-    #     dataSource['loopSegementEndLine'] = loopSubSection[1].split(']')[0]
-    #     subSections.append(dataSource)
-    #
-    # resultLaunch =0
-    # for loopMatchSection in subSections:
-    #     for dataItem in loopData:
-    #         if(dataItem["startLine"]== loopMatchSection['loopSegementStartLine'] and dataItem["endLine"]== loopMatchSection['loopSegementEndLine'] and dataItem["fileName"]== loopMatchSection['fileName']):
-    #             if(resultsSet[resultLaunch]=='Y'):
-    #                 dataItem["optimizeMethod"] ='GPU'
-    #             resultLaunch= resultLaunch+1
-    #             break
+
     dbManager.overWrite('loopSections',loopData)
     return True

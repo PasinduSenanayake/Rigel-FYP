@@ -47,7 +47,7 @@ def checkSubCommandConf():
 def vectorFeatureIdentifier():
     responseSet =  modifierExecutor()
     vecAnalzyer(responseSet['extractor'],responseSet['folderPath'],dbManager.read('loopSections'))
-    vecMlModelExecutor(responseSet['folderPath'])
+    vecMlModelExecutor(responseSet['folderPath'],responseSet['extractor'])
 
 
 def schedulingIdentifier():
@@ -160,7 +160,7 @@ def modifierExecutor():
         extractor = Extractor(sourceDirectry)
         logger.loggerInfo("System Information Fetcher Initiated")
         responseObj = __systemInformationIdentifier()
-        if(responseObj['returncode']==0):
+        if(responseObj['returncode']==1):
             dbManager.write('systemData',responseObj['content'])
             logger.loggerSuccess("System Information Fetcher completed successfully")
         else:
