@@ -160,7 +160,8 @@ def modifierExecutor():
         extractor = Extractor(sourceDirectry)
         logger.loggerInfo("System Information Fetcher Initiated")
         responseObj = __systemInformationIdentifier()
-        if(responseObj['returncode']==0):
+
+        if(responseObj['returncode']==1):
             dbManager.write('systemData',responseObj['content'])
             logger.loggerSuccess("System Information Fetcher completed successfully")
         else:
@@ -195,7 +196,7 @@ def modifierExecutor():
                     'serialEndLine':0,
                     'executionTime': optimizableLoops[loopSection]['sectionTime'],
                     'optimiazability': False,
-                    'optimizeMethod': None
+                    'optimizeMethod': "GPU"
                 }
                 summarySection = {
                 'fileName':optimizableLoops[loopSection]['fileName'],
@@ -204,7 +205,7 @@ def modifierExecutor():
                 'executionTime':optimizableLoops[loopSection]['sectionTime'],
                 'optimiazability':False,
                 'optimizedTime':0,
-                'optimizeMethod':None
+                'optimizeMethod':"GPU"
                 }
                 if (float(optimizableLoops[loopSection]['overheadPrecentage']) > 0.0):
                     selectedSection['optimiazability'] = True
