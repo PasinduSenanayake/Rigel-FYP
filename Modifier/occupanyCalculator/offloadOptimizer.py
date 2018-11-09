@@ -144,7 +144,7 @@ def __runOptimizerStandalone(extractor):
     sourceObjList = {}
     loopSections = dbManager.read('loopSections')
     isGPU = False
-
+    print loopSections
     for loop in loopSections:
         if loop['optimizeMethod'] == 'GPU':
             isGPU = True
@@ -254,8 +254,9 @@ def __runOptimizerStandalone(extractor):
 
                         EXTRACTOR_PRAGMA = TARGET_MAP_PRAGMA + '\n' + TARGET_PRAGMA.replace('$threads', str(threadsPerTeamList[idx]))
                         print EXTRACTOR_PRAGMA
-                        sourceObj.offload(loopSection['startLine'],EXTRACTOR_PRAGMA)
-                        sourceObj.writeToFile(folderPath_+'/'+fileName)
+                        sourceObj.offload(int(loopSection['startLine'])+1, EXTRACTOR_PRAGMA)
+
+                        sourceObj.writeToFile(folderPath_+'/'+'test123.c', sourceObj.tunedroot)
                         for summaryLoop in summarySections:
                             if summaryLoop['startLine'] == loopSection['startLine']:
                                 summaryLoop['optimizedTime'] = str(val)
