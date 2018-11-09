@@ -29,7 +29,7 @@ def selectOptimizableLoopSections(optimizableLoops):
         'serialEndLine':0,
         'executionTime':optimizableLoops[loopSection]['sectionTime'],
         'optimiazability':False,
-        'optimizeMethod':None
+        'optimizeMethod':'GPU'
         }
         summarySection = {
         'fileName':optimizableLoops[loopSection]['fileName'],
@@ -38,7 +38,7 @@ def selectOptimizableLoopSections(optimizableLoops):
         'executionTime':optimizableLoops[loopSection]['sectionTime'],
         'optimiazability':False,
         'optimizedTime':0,
-        'optimizeMethod':None
+        'optimizeMethod':'GPU'
         }
         if(float(optimizableLoops[loopSection]['overheadPrecentage'])> 0.0):
             selectedSection['optimiazability'] = True
@@ -66,7 +66,7 @@ def identify(extractor,directory):
     if summarizedReport['returncode'] == 1:
         logger.loggerSuccess("Profile Summarization completed successfully")
         loopSections = selectOptimizableLoopSections(summarizedReport['content'])
-        dbManager.write('loopSections',loopSections)
+        dbManager.overWrite('loopSections', loopSections)
         if (len(loopSections)>0):
             isGpu = True
             isVector = True

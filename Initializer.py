@@ -32,7 +32,7 @@ def processInitializer():
     with open(sourceDirectry+'/run.json') as runArgumentFile:
         dataArguments = json.load(runArgumentFile)
     if not (dataArguments['runTimeArguments'] == None):
-        dbManager.write('runTimeArguments',str(dataArguments['runTimeArguments']))
+        dbManager.write('runTimeArguments', str(dataArguments['runTimeArguments']))
     else:
         logger.loggerError("Run time arguments fetcher Failed. Optimization process terminated.")
         print "Run time arguments fetcher Failed. Optimization process terminated."
@@ -136,34 +136,3 @@ if __name__ == "__main__":
             logger.loggerError("Source Code Integrity Validation Failed")
     else:
         logger.loggerError("Dependency Validation Process Falied")
-
-
-
-#
-# exit()
-#
-# ### EXTRACTOR ###
-# extractor = Extractor(args.fdirectory)
-#
-#
-#
-# ##profiling init
-# directoryName = args.fdirectory.split("/")[-1]
-# workingDir = args.fdirectory + "/_profiling"
-# if os.path.exists(workingDir):
-#     shutil.rmtree(workingDir)
-# os.makedirs(workingDir)
-#
-# for file in os.listdir(args.fdirectory):
-#     filePath = args.fdirectory + "/" + file
-#     if os.path.isfile(filePath):
-#         if file.endswith(".c"):
-#             sourceObj = extractor.getSource(filePath)
-#             sourceObj.writeToFile(workingDir + "/" + file, sourceObj.root)
-#             sourceObj.writeToFile(workingDir + "/" + file[:-2] + "_serial.c", sourceObj.serialroot)
-#         else:
-#             copyfile(filePath, workingDir + "/" + file)
-#
-# ### VECTORIZING ###
-#
-# vectorizer = Vectorizer(extractor, args.fdirectory)

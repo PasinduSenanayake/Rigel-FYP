@@ -151,9 +151,9 @@ def arrayInfoFetch(fileName,loopStartLine,loopEndline):
         fileLocationNew = os.path.dirname(os.path.realpath(__file__))+'/Sandbox'
         fileLocationNew = fileLocationNew+fileName.rsplit('/', 1)[0]+"/"
         fileName = "/"+fileName.rsplit('/', 1)[1]
-        findVariables(fileName,loopStartLine,loopEndline)
-        findVariableTypeAttempt1(fileName,loopStartLine)
-        findVariableTypeAttempt2(fileName,loopStartLine)
+        findVariables(fileName, loopStartLine, loopEndline)
+        findVariableTypeAttempt1(fileName, loopStartLine)
+        findVariableTypeAttempt2(fileName, loopStartLine)
 
         isSuccess = True
         # Remove intermediate files

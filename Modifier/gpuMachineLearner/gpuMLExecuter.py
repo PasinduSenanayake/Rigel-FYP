@@ -216,6 +216,8 @@ def processMLData():
     return np.array(totalNew)
 
 def mlModelExecutor(filePath):
+    if not (os.path.isfile(filePath+"/_profiling/gpuvscpu.csv")):
+        return True
     dataSection = dataPreProcessor(filePath+"/_profiling/")
     resultsSet = processMLData()
     loopData = dbManager.read('loopSections')
@@ -229,6 +231,9 @@ def mlModelExecutor(filePath):
         dataSource['loopSegementEndLine'] = loopSubSection[1].split(']')[0]
         subSections.append(dataSource)
 
+
+    print resultsSet
+    exit()
     resultLaunch =0
     for loopMatchSection in subSections:
         for dataItem in loopData:

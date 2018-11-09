@@ -128,7 +128,14 @@ def __extractNvidiaGPUinfo():
         p = subprocess.Popen(NVIDIA_NVCC_COMMAND , shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         (output, err) = p.communicate() #to check for errors
         deviceQuery_list = output.splitlines()
-        if deviceQuery_list[0] == 'SUCCESS':
+        if len(err) > 0:
+            response['error'] = err
+            response['content'] = {}
+            response['returncode'] = 0
+            logger.loggerError('Device Query Execution failed.Check CUDA runtime')
+            return response
+
+        elif deviceQuery_list[0] == 'SUCCESS':
             detect = int(deviceQuery_list[1].split('=')[1])
             for gpu in range(0 , detect):
                 name_='Device_'+str(gpu)
@@ -144,14 +151,16 @@ def __extractNvidiaGPUinfo():
                      deviceQuery_list = deviceQuery_list[end:]
                      gpu_info_list[gpu_model] = nvidia_info_list
             logger.loggerSuccess('Detecting available NVIDIA devices')
-
-            os.remove(deviceQueryPath + os.sep + 'deviceQuery')
         else:
-            response['error'] = err
+            response['error'] = output
             response['content'] = {}
             response['returncode'] = 0
-            logger.loggerError('Device Query Execution failed.Check CUDA runtime')
+            logger.loggerError('Check CUDA runtime error')
             return response
+
+
+
+            os.remove(deviceQueryPath + os.sep + 'deviceQuery')
     else:
         #need to set GPU devices = 0 database or so to prevent directing to GPU optimization
         logger.loggerInfo('No NVIDIA accelerators found.')
