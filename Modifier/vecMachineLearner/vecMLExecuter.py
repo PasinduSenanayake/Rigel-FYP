@@ -86,7 +86,7 @@ def processMLData():
     for index, row in df_test.iterrows():
         finalResult.append(row['Function / Call Stack'].split('-')[0]+':'+row['Function / Call Stack'].split('-')[1]+':'+prediction[i])
         i+=1
-    # print(finalResult)
+    print(finalResult)
     os.remove(fileLocation+'mlTemp.csv')
     return np.array(finalResult)
 
@@ -105,7 +105,7 @@ def vecMlModelExecutor(filePath):
                     if item["optimizeMethod"] == None:
                         item["optimizeMethod"] = "vector"
 
-    # print (loopData)
+    print (loopData)
     # subSections=[]
     # for loopSection in dataSection:
     #     dataSource = {'fileName':'', 'loopSegementStartLine':'','loopSegementEndLine':''}
