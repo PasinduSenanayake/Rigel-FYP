@@ -1,4 +1,4 @@
-import os,sys,json
+import os,sys,json,glob
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Utils")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/Logger")
 sys.path.append(str(os.path.dirname(os.path.realpath(__file__)))+"/DatabaseManager")
@@ -15,6 +15,8 @@ def processInitializer():
     from Extractor.metaDataExtractor import metaDataExtractor
     from Modifier.initializer import modify
     from Evaluator.initializer import initExecutor
+    from Evaluator.initializer import finalExecutor
+    from Evaluator.initializer import visualizerExecutor
     #Identifier Begins
     logger.loggerInfo("Extracting Source Code Initiated")
     sourceDirectry = os.path.dirname(os.path.realpath(__file__))+"/Sandbox/"+directoryList[0]
@@ -45,7 +47,6 @@ def processInitializer():
     responseObj =initExecutor(sourceDirectry,dbManager.read('runTimeArguments'))
     if responseObj['returncode']==1:
         logger.loggerSuccess("Primary Execution completed successfully.")
-        print dbManager.read('iniExeTime')
     else:
         logger.loggerError(responseObj['error'])
         logger.loggerError("Primary Execution Failed. Optimization process terminated.")
@@ -65,16 +66,35 @@ def processInitializer():
 
     #Modifier Begins
     logger.loggerInfo("Source Code Modification Process Initiated")
-    exit()
     modify(extractor, sourceDirectry)
     #Modifier Completed
 
     #Evaluator Begins
     logger.loggerInfo("Program Evaluation Process Initiated")
-    #modify(extractor, sourceDirectry)
+    logger.loggerSuccess("Final Execution completed successfully")
+    # responseObj =finalExecutor(sourceDirectry,dbManager.read('runTimeArguments'))
+    # if responseObj['returncode']==1:
+    #     logger.loggerSuccess("Final Execution completed successfully.")
+    #     print dbManager.read('iniExeTime')
+    # else:
+    #     logger.loggerError(responseObj['error'])
+    #     logger.loggerError("Final Execution Failed. Optimization process terminated.")
+    #     exit()
+    logger.loggerInfo("Optimization Visualization Process Initiated")
+    visualizerExecutor()
+    logger.loggerSuccess("Optimization Visualization Process Completed Successfully")
+    logger.loggerInfo("Optimizied Code Written Process Initiated")
+    os.chdir("/"+sourceDirectry)
+    for file in glob.glob("*.c"):
+        sourceObj = extractor.getSource(sourceDirectry+"/"+file)
+        sourceObj.writeToFile(sourceDirectry+"/optimized_"+file,sourceObj.tunedroot)
+    logger.loggerSuccess("Optimizied Code Written Process Completed Successfully")
+    logger.loggerInfo("Optimization Summary Written Process Initiated")
+    with open(sourceDirectry+"/optimization_summary.json", 'w') as outfile:
+        json.dump(dbManager.read('report'), outfile)
+    logger.loggerSuccess("Optimization Summary Written Process Completed Successfully")
     logger.loggerSuccess("Program Evaluation Process Completed Successfully")
     #Evaluator Completed
-
     return True
 
 def dependencyChecker():

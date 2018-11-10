@@ -256,7 +256,7 @@ def __runOptimizerStandalone(extractor):
                         print EXTRACTOR_PRAGMA
                         sourceObj.offload(int(loopSection['startLine'])+1, EXTRACTOR_PRAGMA)
 
-                        sourceObj.writeToFile(folderPath_+'/'+'test123.c', sourceObj.tunedroot)
+                        #sourceObj.writeToFile(folderPath_+'/'+'test123.c', sourceObj.tunedroot)
                         for summaryLoop in summarySections:
                             if summaryLoop['startLine'] == loopSection['startLine']:
                                 summaryLoop['optimizedTime'] = str(val)

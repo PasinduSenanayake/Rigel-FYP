@@ -87,31 +87,45 @@ def mechanismIdentifier(loopInfo):
             elif ((sectionTimes[counter]/totalAverage)<-0.5):
                 gRCounter=gRCounter+1
         if (float(gCounter)/float(len(loopInfo['threadTimes'])-1) >= 0.6):
+            print "guided"
             loopInfo['schedulingMechanism']="guided"
         elif (float(gRCounter)/float(len(loopInfo['threadTimes'])-1)>= 0.6):
+            print "guided"
             loopInfo['schedulingMechanism']="guided"
         else:
+            print "dynamic"
             loopInfo['schedulingMechanism']="dynamic"
     else:
+        print "static"
         loopInfo['schedulingMechanism']="static"
 
 
 
 def setMechanism(extractor,directory,loopSections):
     copyFolder(directory,fileLocation+'omppScheduler/Sandbox')
+    tempLoopList = []
     for loopSection in loopSections:
-        sourceObj = extractor.getSource(directory+"/"+loopSection['fileName'])
-        sourceObj.setSchedule(loopSection['schedulingMechanism'],loopSection['startLine'])
-        sourceObj.writeToFile(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName'],sourceObj.tunedroot)
+        if(loopSection['schedulingMechanism'] != None):
+            tempLoopList.append(loopSection['startLine'])
+            sourceObj = extractor.getSource(directory+"/"+loopSection['fileName'])
+            sourceObj.setSchedule(loopSection['schedulingMechanism'],loopSection['startLine'])
+            with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName']) as f:
+                file_str = f.readlines()
+                file_str[int(loopSection['startLine'])-1] =   file_str[int(loopSection['startLine'])-1].replace('static',loopSection['schedulingMechanism'])
+            with open(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName'], "w") as f:
+                f.writelines(file_str)
+            #sourceObj.writeToFile(fileLocation+'omppScheduler/Sandbox/'+loopSection['fileName'],sourceObj.tunedroot)
+            #sourceObj.writeToFile('/media/pasindu/newvolume/FYP/Framework/Rigel-FYP/Sandbox/2MM/test.c',sourceObj.tunedroot)
     summaryLoops = dbManager.read('summaryLoops')
     profiledStatus  = getSummary(fileLocation+'omppScheduler/Sandbox',dbManager.read('runTimeArguments'),fileLocation+'omppScheduler/Sandbox')
     for profiledLoop in profiledStatus['content']:
-        for summaryLoop in summaryLoops:
-            if( summaryLoop['startLine'] == profiledLoop['startLine'] and summaryLoop['endLine'] == profiledLoop['endLine'] and summaryLoop['fileName']== profiledLoop['fileName'] ):
-                summaryLoop['optimizedTime'] = max(profiledLoop['threadTimes'])
+        if profiledLoop['startLine'] in tempLoopList :
+            for summaryLoop in summaryLoops:
+                if( summaryLoop['startLine'] == profiledLoop['startLine'] and summaryLoop['endLine'] == profiledLoop['endLine'] and summaryLoop['fileName']== profiledLoop['fileName'] ):
+                    summaryLoop['optimizedTime'] = max(profiledLoop['threadTimes'])
     dbManager.overWrite('summaryLoops',summaryLoops)
-    print summaryLoops
     shutil.rmtree(fileLocation+'omppScheduler/Sandbox')
+
 def schdedulerInitializer(extractor, directory):
     global fileLocation
     loopSections = dbManager.read('loopSections')
@@ -126,4 +140,4 @@ def schdedulerInitializer(extractor, directory):
                         break
 
         setMechanism(extractor,directory,profiledStatus['content'])
-        dbManager.write('schedulerExeTime',time.time()-schedulerStartTime)
+    dbManager.write('schedulerExeTime',time.time()-schedulerStartTime)
