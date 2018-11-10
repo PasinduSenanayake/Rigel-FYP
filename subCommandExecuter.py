@@ -134,7 +134,8 @@ def vectorizer():
         for file in extractor.getSourcePathList():
             outerLoops = dbManager.read('loopSections')
             for loop in outerLoops:
-                vectorizer.initIntelOptimizations(file, [int(loop["startLine"]), int(loop["endLine"])])
+                if loop["fileName"] in file:
+                    vectorizer.initIntelOptimizations(file, [int(loop["startLine"]), int(loop["endLine"])])
 
         # for file in extractor.getSourcePathList():
         #     outerLoops = dbManager.read('loopSections')

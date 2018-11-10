@@ -249,7 +249,7 @@ class SourceCode:
         while nextObj:
             if type(nextObj) is Block:
                 content = nextObj.body
-                regex = re.compile(dataType + r"\s.*\s" + array + "\[", re.DOTALL)
+                regex = re.compile(dataType + r"\s.*" + array + "\[", re.DOTALL)
                 if array + "[" in content:
                     matching = regex.search(content)
                     if matching and "aligned" in content:

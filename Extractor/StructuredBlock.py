@@ -43,32 +43,32 @@ class StructuredBlock(Block):
     def vectorize(self, vectorLen=None, alignment=None, collapsed=None, alignedArrays=[]):
         loop = self.hasAssociatedLoop()
         pragma = None
-        if not collapsed:
-            newPragma = None
-            if alignedArrays:
-                alignStr = "aligned(" + ",".join(alignedArrays) + ":" + str(alignment) + ")"
-                newPragma = Directive(self.startIndex, name="simd")
-                newPragma.body = "\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n"
-                # newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n", 0)
-            else:
-                newPragma = Directive(self.startIndex, name="simd")
-                newPragma.body = "\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n"
-                # newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
-            # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
-            self.vectorized = True
-            newPragma.parent = self
-            if not self.directive():
-                self.elements.insert(0, newPragma)
-            else:
-                currentDirectiveHeader = self.directive().name
-                currentDirectiveClauses = self.directive().getContent().replace(self.directive().body, "").\
-                    strip().replace("\n", "")
-                newPragma.body = newPragma.body[:13] + currentDirectiveHeader + " " + newPragma.body[13:]
-                newPragma.body = newPragma.body[:-1] + " " + currentDirectiveClauses + newPragma.body[-1:]
-                del self.elements[0]
-                self.elements.insert(0, newPragma)
-            loop = self.hasAssociatedLoop()
-            pragma = newPragma
+        # if not collapsed:
+        newPragma = None
+        if alignedArrays:
+            alignStr = "aligned(" + ",".join(alignedArrays) + ":" + str(alignment) + ")"
+            newPragma = Directive(self.startIndex, name="simd")
+            newPragma.body = "\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n"
+            # newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n", 0)
+        else:
+            newPragma = Directive(self.startIndex, name="simd")
+            newPragma.body = "\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n"
+            # newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ")\n", 0)
+        # newPragma = Block("#pragma omp simd simdlen(8)\n", 0)
+        self.vectorized = True
+        newPragma.parent = self
+        if not self.directive():
+            self.elements.insert(0, newPragma)
+        else:
+            currentDirectiveHeader = self.directive().name
+            currentDirectiveClauses = self.directive().getContent().replace(self.directive().body, "").\
+                strip().replace("\n", "")
+            newPragma.body = newPragma.body[:13] + currentDirectiveHeader + " " + newPragma.body[13:]
+            newPragma.body = newPragma.body[:-1] + " " + currentDirectiveClauses + newPragma.body[-1:]
+            del self.elements[0]
+            self.elements.insert(0, newPragma)
+        loop = self.hasAssociatedLoop()
+        pragma = newPragma
         # if (collapsed and self.lineNumber < int(collapsed)):
         #     iterator = self.hasAssociatedLoop()
         #     collapseSize = 0
