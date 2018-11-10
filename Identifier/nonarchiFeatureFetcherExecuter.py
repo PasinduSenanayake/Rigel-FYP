@@ -66,15 +66,17 @@ def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
                 folderPath = directory + "/_profiling/Sandbox"
                 loopSegments = [[sequentialStartLine,sequentialEndLine]]
                 logger.loggerInfo("GPU Feature Extraction Process Initiated for section "+parallelStartLine+":"+parallelEndLine)
-                #hotspotsProfiler(codeName,fileFeaturePath,fileFeaturePath,folderPath+"/Makefile","",dbManager.read('runTimeArguments'),loopSegments,directory+"/_profiling",False)
+                hotspotsProfiler(codeName,fileFeaturePath,fileFeaturePath,folderPath+"/Makefile","",dbManager.read('runTimeArguments'),loopSegments,directory+"/_profiling",False)
                 gc.collect()
                 logger.loggerSuccess("GPU Feature Extraction Process completed for section "+parallelStartLine+":"+parallelEndLine)
+                break
             elif(isIn=='notSig'):
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is skipped due to low overhead")
             else:
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is not a parallelable region. Skipped")
         dbManager.write('loopSectionsTemp', loopSections)
         dbManager.write('gpuFeatureTime', time.time() - gpuStartTime)
+        print (time.time() - gpuStartTime)
 
 
 

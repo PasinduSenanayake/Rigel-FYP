@@ -2,6 +2,7 @@ import re
 from ForLoop import ForLoop
 from Directive import Directive
 from StructuredBlock import StructuredBlock
+from Parameter import Parameter
 from Block import Block
 from pprint import pprint
 import copy
@@ -364,9 +365,24 @@ class SourceCode:
         while nextObj:
             if str(nextObj.lineNumber) == str(lineNumber) and isinstance(nextObj, ForLoop):
                 structuredBlock = nextObj.getParent()
-                return structuredBlock.offload(pragma, str(num_threads), clauses)
+                structuredBlock.offload(pragma, str(num_threads), clauses)
                 break
             nextObj = nextObj.getNext()
+
+
+    def setSchedule(self,mechanism, lineNumber = None):
+        nextObj = self.tunedroot
+        while nextObj:
+            if isinstance(nextObj, Directive) and str(nextObj.lineNumber) == str(lineNumber):
+                for clause in nextObj.elements:
+                    # print clause.name
+                    if "schedule" in clause.getContent():
+                        for parameter in clause.elements:
+                            if isinstance(parameter, Parameter):
+                                if len(parameter.enums) > 0 and mechanism in parameter.enums:
+                                    parameter.body = mechanism
+            nextObj = nextObj.getNext()
+
 
     def addClause(self, line, clause, content):
         nextObj = self.tunedroot
@@ -377,6 +393,7 @@ class SourceCode:
             nextObj = nextObj.getNext()
 
 
+   
     # def permute(self, lineNumber, permutation):
     #     nextObj = self.tunedroot
     #     while nextObj:
@@ -389,4 +406,3 @@ class SourceCode:
     # def getNestedLoops(self):
     #     nestedLoopLines = []
     #     nestedLoopLines = self.root.getNestedLoops(nestedLoopLines, 0)
-

@@ -19,6 +19,7 @@ from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayI
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
 from Identifier.summaryIdentifier.initilizerOmpp import getSummary
 from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
+from Evaluator.visualizer import reportGenerator
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
     with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as f:
@@ -56,22 +57,19 @@ def schedulingIdentifier():
 
 
 def reportGen():
-    loopDataNOpt =[10,8,6,4,6,1]
-    loopDataOpt =[12,6,7,3,4,2]
-    summaryLoops = []
-    hardware = ['GPU','vec','CPU']
-    for Index, loopSection in enumerate(loopDataNOpt):
-        summarySection = {
-        'fileName':'testFilename',
-        'startLine': 0,
-        'endLine':0,
-        'executionTime':loopSection,
-        'optimiazability':True,
-        'optimizedTime':loopDataOpt[Index],
-        'optimizeMethod':random.choice(hardware)
-        }
-        summaryLoops.append(summarySection)
-    print summaryLoops
+    reportObj = {}
+    reportObj['totalExeTime'] = 100
+    reportObj['gpuOptTime'] = 20
+    reportObj['cpuOptTime'] = 45
+    reportObj['vecOptTime'] = 10
+    reportObj['notOptTime'] = 10
+    reportObj['gpuExeTime'] = 15
+    reportObj['cpuExeTime'] = 40
+    reportObj['vecExeTime'] = 45
+    reportObj['loopLines'] = ['10:18','20:26']
+    reportObj['notOptLoopTimes'] = [10,8]
+    reportObj['optLoopTimes'] = [8,6]
+    reportGenerator(reportObj)
 
 
 def vectorizer():
@@ -161,7 +159,8 @@ def modifierExecutor():
         extractor = Extractor(sourceDirectry)
         logger.loggerInfo("System Information Fetcher Initiated")
         responseObj = __systemInformationIdentifier()
-        if(responseObj['returncode']==0):
+
+        if(responseObj['returncode']==1):
             dbManager.write('systemData',responseObj['content'])
             logger.loggerSuccess("System Information Fetcher completed successfully")
         else:
@@ -196,7 +195,7 @@ def modifierExecutor():
                     'serialEndLine':0,
                     'executionTime': optimizableLoops[loopSection]['sectionTime'],
                     'optimiazability': False,
-                    'optimizeMethod': None
+                    'optimizeMethod': "GPU"
                 }
                 summarySection = {
                 'fileName':optimizableLoops[loopSection]['fileName'],
@@ -205,7 +204,7 @@ def modifierExecutor():
                 'executionTime':optimizableLoops[loopSection]['sectionTime'],
                 'optimiazability':False,
                 'optimizedTime':0,
-                'optimizeMethod':None
+                'optimizeMethod':"GPU"
                 }
                 if (float(optimizableLoops[loopSection]['overheadPrecentage']) > 0.0):
                     selectedSection['optimiazability'] = True

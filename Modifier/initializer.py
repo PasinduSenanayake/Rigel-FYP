@@ -1,7 +1,9 @@
 import logger,dbManager
 from Vectorizer.Vectorizer import Vectorizer
 from gpuMachineLearner.gpuMLExecuter import mlModelExecutor
+from vecMachineLearner.vecMLExecuter import vecMlModelExecutor
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
+from Modifier.Scheduler.schedulerExecuter import schdedulerInitializer
 
 response = {
     "returncode":0,
@@ -11,37 +13,44 @@ response = {
 
 def modify(extractor,directory):
     global response
-    logger.loggerInfo("Gpu Machine Learning Model Execution Initialized")
 
-    # result = mlModelExecutor(directory)
-    # if (result):
-    #     logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
-    # else:
-    #     logger.loggerError("Gpu Machine Learning Model Execution Failed.")
+    if(dbManager.read('gpuopt')) :
+        logger.loggerInfo("Gpu Machine Learning Model Execution Initialized")
+        result = mlModelExecutor(directory)
+        if (result):
+            logger.loggerSuccess("Gpu Machine Learning Model Execution Completed")
+        else:
+            logger.loggerError("Gpu Machine Learning Model Execution Failed. Gpu Optimizations will be skipped")
+            dbManager.overWrite('gpuopt',False)
 
-    logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
 
-    logger.loggerSuccess("Vector Machine Learning Model Execution Completed")
 
-    logger.loggerInfo("GPU Optimization Initialized.")
+    if(dbManager.read('vecopt')) :
+        logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
 
-    resultLocal = runOffloadOptimizer(extractor, directory)
+        # result = vecMlModelExecutor(directory)
+        # if (result):
+        #     logger.loggerSuccess("Vec Machine Learning Model Execution Completed")
+        # else:
+        #     logger.loggerError("Vec Machine Learning Model Execution Failed.")
 
-    logger.loggerSuccess("GPU Optimization Completed.")
 
-    print dbManager.read('summaryLoops')
-    print dbManager.read('GPU_OptTime')
+    # Database clean method
 
-    exit()
+    if(dbManager.read('gpuopt')):
+        logger.loggerInfo("GPU Optimization Initialized.")
+        resultLocal = runOffloadOptimizer(extractor, directory)
+        logger.loggerSuccess("GPU Optimization Completed.")
 
-    logger.loggerInfo("Vector Optimization Initialized.")
 
-    vectorizer = Vectorizer(extractor, directory)
+    if(dbManager.read('vecopt')) :
+        logger.loggerInfo("Vector Optimization Initialized.")
+        vectorizer = Vectorizer(extractor, directory)
+        logger.loggerSuccess("Vector Optimization Completed")
 
-    logger.loggerSuccess("Vector Optimization Completed")
 
     logger.loggerInfo("CPU Optimization Initialized")
-
+    schdedulerInitializer(extractor, directory)
     logger.loggerSuccess("CPU Optimization Completed")
 
     return response

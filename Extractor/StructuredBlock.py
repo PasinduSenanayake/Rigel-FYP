@@ -146,6 +146,15 @@ class StructuredBlock(Block):
             newPragma.parent = self
             self.elements.insert(0, newPragma)
             return newPragma
+        if self.directive():
+            givenClauses = ""
+            for i in self.directive().elements:
+                if not "schedule" in i.getContent() and not "collapse" in i.getContent():
+                    givenClauses = givenClauses + i.getContent()
+            pragmaBlock = Block(pragma[:-1] + " " + givenClauses + "\n", self.startIndex)
+            pragmaBlock.parent = self
+            self.elements[0] = pragmaBlock
+            return pragma
 
 
     # def isChild(self, parent):

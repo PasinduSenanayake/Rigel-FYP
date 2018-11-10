@@ -1,0 +1,4 @@
+#!/bin/bash
+./runnableStatic 900000 --multithreaded --nodigits &> StaticOutput.txt
+./runnableGuided 900000 --multithreaded --nodigits &> GuidedOutput.txt
+./runnableDynamic 900000 --multithreaded --nodigits &> DynamicOutput.txt

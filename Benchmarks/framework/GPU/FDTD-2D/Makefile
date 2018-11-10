@@ -2,8 +2,8 @@
 CC = [compiler]
 
 
-2mm:
-	$(CC) 2mm_CPU.c -o [targetObject]
+fdtd2d:
+	$(CC) fdtd2d.c -o [targetObject] -lm
 
 clean:
 	rm -f *.o
