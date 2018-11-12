@@ -19,6 +19,7 @@ from Modifier.modifierSandbox.arrayInfoIdentifier.arrayInfoFetcher import arrayI
 from Modifier.occupanyCalculator.offloadOptimizer import runOffloadOptimizer
 from Identifier.summaryIdentifier.initilizerOmpp import getSummary
 from Identifier.systemIdentifier.systemIdentifier import __systemInformationIdentifier
+from Evaluator.visualizer import reportGenerator
 
 if(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json")):
     with open(os.path.dirname(os.path.realpath(__file__))+"/subCommandConf.json") as f:
@@ -56,22 +57,19 @@ def schedulingIdentifier():
 
 
 def reportGen():
-    loopDataNOpt =[10,8,6,4,6,1]
-    loopDataOpt =[12,6,7,3,4,2]
-    summaryLoops = []
-    hardware = ['GPU','vec','CPU']
-    for Index, loopSection in enumerate(loopDataNOpt):
-        summarySection = {
-        'fileName':'testFilename',
-        'startLine': 0,
-        'endLine':0,
-        'executionTime':loopSection,
-        'optimiazability':True,
-        'optimizedTime':loopDataOpt[Index],
-        'optimizeMethod':random.choice(hardware)
-        }
-        summaryLoops.append(summarySection)
-    print summaryLoops
+    reportObj = {}
+    reportObj['totalExeTime'] = 100
+    reportObj['gpuOptTime'] = 20
+    reportObj['cpuOptTime'] = 45
+    reportObj['vecOptTime'] = 10
+    reportObj['notOptTime'] = 10
+    reportObj['gpuExeTime'] = 15
+    reportObj['cpuExeTime'] = 40
+    reportObj['vecExeTime'] = 45
+    reportObj['loopLines'] = ['10:18','20:26']
+    reportObj['notOptLoopTimes'] = [10,8]
+    reportObj['optLoopTimes'] = [8,6]
+    reportGenerator(reportObj)
 
 
 def vectorizer():
@@ -134,7 +132,8 @@ def vectorizer():
         for file in extractor.getSourcePathList():
             outerLoops = dbManager.read('loopSections')
             for loop in outerLoops:
-                vectorizer.initIntelOptimizations(file, [int(loop["startLine"]), int(loop["endLine"])])
+                if loop["fileName"] in file:
+                    vectorizer.initIntelOptimizations(file, [int(loop["startLine"]), int(loop["endLine"])])
 
         # for file in extractor.getSourcePathList():
         #     outerLoops = dbManager.read('loopSections')

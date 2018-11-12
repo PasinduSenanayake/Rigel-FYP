@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
 from matplotlib import interactive
+import dbManager
 
 def visual(report):
     colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue', 'limegreen','red', 'navy', 'blue', 'magenta', 'crimson']
@@ -27,9 +28,9 @@ def visual(report):
 
     objects = report['set']['loopSections']
     y_pos = np.arange(len(objects))
-    performanceSet1 = [0,0,0,0,0,0]
+    performanceSet1 = [0] * len(report['set']['nonOptimized'])
     originalPerformanceSet1 = report['set']['nonOptimized']
-    performanceSet2 = [0,0,0,0,0,0]
+    performanceSet2 = [0] * len(report['set']['nonOptimized'])
     originalPerformanceSet2 = report['set']['optimized']
     axBar = plt.subplot(2, 2, 2)
 
@@ -37,7 +38,7 @@ def visual(report):
     def updateBar(i):
         axBar.clear()
         axBar.set_title('SubSections Execution Times')
-        for sizeVal in range (0,6):
+        for sizeVal in range (0,len(report['set']['nonOptimized'])):
             if performanceSet1[sizeVal]<originalPerformanceSet1[sizeVal]:
                 performanceSet1[sizeVal] = performanceSet1[sizeVal] +1
             if performanceSet2[sizeVal]<originalPerformanceSet2[sizeVal]:
@@ -100,43 +101,42 @@ def visual(report):
     mng.resize(*mng.window.maxsize())
     plt.show()
 
-def reportGenerator():
+def reportGenerator(reportObj):
 
-    TotalTime = 100
-    gpuOptmizer = 20
-    cpuOptimizer = 45
-    vecOptimizer = 10
-    notOptiimzer =10
+    TotalTime = reportObj['totalExeTime']
+    gpuOptmizer =  reportObj['gpuOptTime']
+    cpuOptimizer = reportObj['cpuOptTime']
+    vecOptimizer = reportObj['vecOptTime']
+    notOptiimzer = reportObj['notOptTime']
     notParalleableTime = TotalTime-(gpuOptmizer+cpuOptimizer+vecOptimizer+notOptiimzer)
-    notParalleable = notParalleableTime/TotalTime
-    gpuOptimizerable = gpuOptmizer/TotalTime
-    vecOptimizerable = vecOptimizer/TotalTime
-    cpuOptimizerable = cpuOptimizer/TotalTime
-    notOptimizerable = notOptiimzer/TotalTime
-    loopNames=[]
-    nonOptLoops=[]
-    optLoops=[]
-    for index,loopSection in enumerate(loopSections):
-        loopNames.append('Section'+str(index+1))
-        nonOptLoops.append(loopSection['executionTime'])
-        optLoops.append(loopSection['optimizedTime'])
-    nonOptimizeWhole = notParalleable + sum(nonOptLoops)
-    optimizeWhole = notParalleable + sum(optLoops)
-    gpuExeTime = 15
-    cpuExeTime = 40
-    vecExeTime = 45
+    notParalleable = float(notParalleableTime)/float(TotalTime)*100
+    gpuOptimizerable = float(gpuOptmizer)/float(TotalTime)*100
+    vecOptimizerable = float(vecOptimizer)/float(TotalTime)*100
+    cpuOptimizerable = float(cpuOptimizer)/float(TotalTime)*100
+    notOptimizerable = float(notOptiimzer)/float(TotalTime)*100
+    loopNames = reportObj['loopLines']
+    nonOptLoops = reportObj['notOptLoopTimes']
+    optLoops =  reportObj['optLoopTimes']
+    totalNotOpttime =  notParalleableTime + sum(nonOptLoops)
+    totalOptTime = notParalleableTime + sum(optLoops)
+    gpuExeTime = reportObj['gpuExeTime']
+    cpuExeTime = reportObj['cpuExeTime']
+    vecExeTime = reportObj['vecExeTime']
     totalExetime = gpuExeTime+cpuExeTime+vecExeTime
-    gpuExePreset= gpuExeTime/totalExetime
-    cpuExePreset= cpuExeTime/totalExetime
-    vecExePreset= vecExeTime/totalExetime
+    gpuExePreset= float(gpuExeTime)/float(totalExetime)*100
+    cpuExePreset= float(cpuExeTime)/float(totalExetime)*100
+    vecExePreset= float(vecExeTime)/float(totalExetime)*100
+    # report = {
+    #     'lsb':{'Not Parallelable':15,'GPU Optimizable':20,'CPU Optimizable':45,'Vector Optimizable':10,'Not Optimizable':10},
+    #     'set':{'loopSections':['Section1', 'Section2', 'Section3', 'Section4', 'Section5', 'Section6'],'nonOptimized':[10,8,6,4,2,1],'optimized':[12,6,7,3,6,2],},
+    #     'oet':{'nonOptimized':14,'optimized':10},
+    #     'otb':{'GPU Optimizations':15,'CPU Optimizations':40,'Vector Optimizations':45}
+    # }
     report = {
-        'lsb':{'Not Parallelable':15,'GPU Optimizable':20,'CPU Optimizable':45,'Vector Optimizable':10,'Not Optimizable':10},
-        'set':{'loopSections':['Section1', 'Section2', 'Section3', 'Section4', 'Section5', 'Section6'],'nonOptimized':[10,8,6,4,2,1],'optimized':[12,6,7,3,6,2],},
-        'oet':{'nonOptimized':14,'optimized':10},
-        'otb':{'GPU Optimizations':15,'CPU Optimizations':40,'Vector Optimizations':45}
+        'lsb':{'Not Parallelable':notParalleable,'GPU Optimizable':gpuOptimizerable,'CPU Optimizable':cpuOptimizerable,'Vector Optimizable':vecOptimizerable,'Not Optimizable':notOptimizerable},
+        'set':{'loopSections':loopNames,'nonOptimized':nonOptLoops,'optimized':optLoops,},
+        'oet':{'nonOptimized':totalNotOpttime,'optimized':totalOptTime},
+        'otb':{'GPU Optimizations':gpuExePreset,'CPU Optimizations':cpuExePreset,'Vector Optimizations':vecExePreset}
     }
-
+    dbManager.write('report',report)
     visual(report)
-
-
-reportGenerator()

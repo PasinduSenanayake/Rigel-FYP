@@ -77,7 +77,11 @@ class Vectorizer():
                         startLine = entry[0]
                         endLine = entry[1]
                         break
-            if int(loopRegion[0]) <= startLine <= int(loopRegion[1]):
+            # print("----")
+            # print(loopRegion)
+            # print(startLine)
+            # print("----")
+            if int(loopRegion[0]) <= int(startLine) <= int(loopRegion[1]):
                 response = self.getVectorLength(startLine, endLine, filePath, self.instructionSet, source)
                 vectorLen = response[0]
                 alignedArrays = response[1]
@@ -89,7 +93,7 @@ class Vectorizer():
         # source.root.setLineNumber(1)
         source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
         logger.loggerInfo("Test Execution Initiated")
-        responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'), "-m"+self.instructionSet)
+        responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'), " -m"+self.instructionSet)
         if responseObj['returncode'] == 1:
             logger.loggerSuccess("Test Execution completed successfully for vectorizing loop at " + str(loopRegion[0]))
             if not dbManager.read('finalExeTime') < dbManager.read('iniExeTime'):

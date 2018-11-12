@@ -90,7 +90,7 @@ static __inline__ int clc_prime(unsigned long long max)
     /* Get high-res time */
     clock_gettime(CLOCK_MONOTONIC_RAW, &pstart);
 
-    #pragma omp parallel for shared (max) private (x, y, pnum) reduction (+:tpnums)
+    #pragma omp parallel for schedule(dynamic) shared (max) private (x, y, pnum) reduction (+:tpnums)
 
     /* Start computing primes */
     for (x = 2; x <= max; x++)
@@ -113,7 +113,7 @@ static __inline__ int clc_prime(unsigned long long max)
 
     /* Calculate and print time taken */
     double ptime_taken = (double)(pend.tv_sec - pstart.tv_sec) + (double)(pend.tv_nsec - pstart.tv_nsec) / 1E9;
-    printf("Done!\n\nTime taken (seconds): %lf\n", ptime_taken);
+    printf("Done!\n\nTime Dyanmic taken (seconds): %lf\n", ptime_taken);
 
     /* Return total primes */
     return tpnums;

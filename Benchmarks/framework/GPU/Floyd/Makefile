@@ -1,9 +1,9 @@
 # C compiler
-CC = clang
+CC = [compiler]
 
 
 floyd:
-	$(CC) floyd_profile.c -o runnable -lm
+	$(CC) floyd_profile.c -o [targetObject]
 
 clean:
 	rm -f *.o

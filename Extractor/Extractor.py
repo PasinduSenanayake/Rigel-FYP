@@ -23,13 +23,8 @@ class Extractor:
     def getSourcePathList(self):
         return self.sourceCodes.keys()
 
-    def setSchedule(self, sourcePath, mechanism):
-        self.sourceCodes[sourcePath].setSchedule(mechanism)
+    # def setSchedule(self, sourcePath, mechanism):
+    #     self.sourceCodes[sourcePath].setSchedule(mechanism)
     #
     # def writeToFile(self, sourcePath, outPath):
     #     self.sourceCodes[sourcePath].writeToFile(outPath)
-
-
-
-
-

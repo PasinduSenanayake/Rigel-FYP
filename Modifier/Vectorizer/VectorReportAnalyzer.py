@@ -192,7 +192,7 @@ class VectorReportAnalyzer:
                 vectorData.append(partialData)
         return vectorData
 
-    def getPartialVectorData(self, lineNo, report, chunk=None):
+    def getPartialVectorData(self, lineNo, report, chunkOrg=None):
         line = 0
         vectorLen = 0
         speedup = 0
@@ -200,7 +200,7 @@ class VectorReportAnalyzer:
         permutation = {}
         section = []
         collapsed = None
-        chunk = chunk
+        chunk = None
         lineregex = re.compile(r"LOOP BEGIN", re.DOTALL)
         vectorLenregex = re.compile(r"#15305")
         speedupregex = re.compile(r"#15478")
@@ -262,7 +262,7 @@ class VectorReportAnalyzer:
                 "vectorLen": vectorLen, "speedup": speedup,
                 "overhead": overhead, "permutation": permutation, "section": section, "collapsed": collapsed,
                 "chunk": chunk, "vectorize":True}
-        if chunk:
+        if chunkOrg:
             loop = {"type": "partial_loop", "line": line,
                     "vectorLen": vectorLen, "speedup": speedup,
                     "overhead": overhead, "permutation": permutation, "section": section, "collapsed": collapsed,

@@ -5,7 +5,7 @@ import re,os
 from Tkinter import *
 
 undefinedVariables = {}
-operationArray = ['+=','-=','*=','/=','%=']
+operationArray = ['+=','-=','*=','/=','%=','==']
 directoryPath = ""
 #Show extracted data and get approval from user to proceed
 def getUserApproval():
