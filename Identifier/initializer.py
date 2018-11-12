@@ -86,7 +86,8 @@ def identify(extractor,directory):
                 dbManager.write('vecopt',True)
                 vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
                 vectorThread.start()
-                vecAnalzyer(extractor,directory)
+
+                #vecAnalzyer(extractor,directory)
             else:
                 isVector = False
                 dbManager.write('vecopt',False)

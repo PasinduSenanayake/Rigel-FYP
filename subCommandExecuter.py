@@ -48,7 +48,7 @@ def checkSubCommandConf():
 def vectorFeatureIdentifier():
     responseSet =  modifierExecutor()
     vecAnalzyer(responseSet['extractor'],responseSet['folderPath'],dbManager.read('loopSections'))
-    vecMlModelExecutor(responseSet['folderPath'])
+    vecMlModelExecutor(responseSet['folderPath'],responseSet['extractor'])
 
 
 def schedulingIdentifier():
@@ -195,7 +195,11 @@ def modifierExecutor():
                     'serialEndLine':0,
                     'executionTime': optimizableLoops[loopSection]['sectionTime'],
                     'optimiazability': False,
+<<<<<<< HEAD
                     'optimizeMethod': None
+=======
+                    'optimizeMethod':None
+>>>>>>> e48a046c806766ef8681312acb161fb2bae09b12
                 }
                 summarySection = {
                 'fileName':optimizableLoops[loopSection]['fileName'],
