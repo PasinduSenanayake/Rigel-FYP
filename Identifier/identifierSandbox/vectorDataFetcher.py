@@ -4,7 +4,7 @@ from subprocess import Popen, PIPE
 import os
 import shutil
 import dbManager,logger
-VTUNE_PATH = '/opt/intel/vtune_amplifier/bin64/'
+VTUNE_PATH = '/media/pasindu/newvolume/intel/vtune_amplifier_2018.1.0.535340/bin64/'
 def vtuneProfiler(codeName,mainFilePath,annotatedFile,makeFile,compileCommand,arguments,segmentArray,initLocation,trainCollection=True):
     # print(codeName,mainFilePath,annotatedFile,makeFile,compileCommand,arguments,segmentArray,initLocation)
     location = initLocation+'/Sandbox'
@@ -24,7 +24,3 @@ def vtuneProfiler(codeName,mainFilePath,annotatedFile,makeFile,compileCommand,ar
     print(error1)
     print(error2)
     # print(output)
-
-
-
-

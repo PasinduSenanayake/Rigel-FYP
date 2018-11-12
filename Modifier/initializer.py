@@ -28,11 +28,11 @@ def modify(extractor,directory):
     if(dbManager.read('vecopt')) :
         logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
 
-        # result = vecMlModelExecutor(directory)
-        # if (result):
-        #     logger.loggerSuccess("Vec Machine Learning Model Execution Completed")
-        # else:
-        #     logger.loggerError("Vec Machine Learning Model Execution Failed.")
+        result = vecMlModelExecutor(directory)
+        if (result):
+            logger.loggerSuccess("Vec Machine Learning Model Execution Completed")
+        else:
+            logger.loggerError("Vec Machine Learning Model Execution Failed.")
 
 
     # Database clean method

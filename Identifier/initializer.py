@@ -1,10 +1,10 @@
 from Identifier.nestedLoopChecker import nestedloopAnalysis
-# from Identifier.vectorFeatureFetcher import vecAnalzyer
+from Identifier.vectorFeatureFetcher import vecAnalzyer
 from loopAnalyzer import loopAnalysis
 from summaryIdentifier.initilizerOmpp import getSummary
 from systemIdentifier.systemIdentifier import __systemInformationIdentifier
 from nonarchiFeatureFetcherExecuter import gpuAnalzyer
-#from vectorFeatureFetcherExecuter import vecAnalzyer
+from vectorFeatureFetcherExecuter import vecAnalzyer
 import dbManager,logger
 import json
 import threading
@@ -79,14 +79,14 @@ def identify(extractor,directory):
                 isGpu = False
                 dbManager.write('gpuopt',False)
                 logger.loggerInfo("No GPU found. GPU offloading will be skipped")
-            if not (responseObj['content']['cpuinfo']['vectorization']): #check Vectorization optimizations
+            if (responseObj['content']['cpuinfo']['vectorization']): #check Vectorization optimizations
                 logger.loggerInfo("Available Vector Instructions")
                 #display what Instructions available
                 logger.loggerInfo("Feature Extraction for Vectorization Initiated")
                 dbManager.write('vecopt',True)
-                #vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
-                #vectorThread.start()
-                #vecAnalzyer(extractor,directory)
+                vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
+                vectorThread.start()
+                vecAnalzyer(extractor,directory)
             else:
                 isVector = False
                 dbManager.write('vecopt',False)
@@ -95,7 +95,7 @@ def identify(extractor,directory):
             if (isGpu):
                 if (isVector):
                     gpuThread.join()
-                    #vectorThread.join()
+                    vectorThread.join()
                     loopSectionsTemp = dbManager.read('loopSectionsTemp')
                     dbManager.overWrite('loopSections', loopSectionsTemp)
                     logger.loggerInfo("GPU and Vector Optimizations Considered")
@@ -111,7 +111,7 @@ def identify(extractor,directory):
                     response["returncode"] = 0
             else:
                 if (isVector):
-                    #vectorThread.join()
+                    vectorThread.join()
                     loopSectionsTemp = dbManager.read('loopSectionsTemp')
                     dbManager.overWrite('loopSections', loopSectionsTemp)
                     logger.loggerInfo("Only Vector Optimizations Considered.")

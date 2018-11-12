@@ -195,7 +195,7 @@ def modifierExecutor():
                     'serialEndLine':0,
                     'executionTime': optimizableLoops[loopSection]['sectionTime'],
                     'optimiazability': False,
-                    'optimizeMethod': "GPU"
+                    'optimizeMethod': None
                 }
                 summarySection = {
                 'fileName':optimizableLoops[loopSection]['fileName'],
@@ -204,7 +204,7 @@ def modifierExecutor():
                 'executionTime':optimizableLoops[loopSection]['sectionTime'],
                 'optimiazability':False,
                 'optimizedTime':0,
-                'optimizeMethod':"GPU"
+                'optimizeMethod':None
                 }
                 if (float(optimizableLoops[loopSection]['overheadPrecentage']) > 0.0):
                     selectedSection['optimiazability'] = True
