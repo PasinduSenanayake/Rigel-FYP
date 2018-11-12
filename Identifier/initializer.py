@@ -1,5 +1,5 @@
 from Identifier.nestedLoopChecker import nestedloopAnalysis
-# from Identifier.vectorFeatureFetcher import vecAnalzyer
+from Identifier.vectorFeatureFetcher import vecAnalzyer
 from loopAnalyzer import loopAnalysis
 from summaryIdentifier.initilizerOmpp import getSummary
 from systemIdentifier.systemIdentifier import __systemInformationIdentifier
@@ -29,7 +29,7 @@ def selectOptimizableLoopSections(optimizableLoops):
         'serialEndLine':0,
         'executionTime':optimizableLoops[loopSection]['sectionTime'],
         'optimiazability':False,
-        'optimizeMethod':'GPU'
+        'optimizeMethod':None
         }
         summarySection = {
         'fileName':optimizableLoops[loopSection]['fileName'],
@@ -38,7 +38,7 @@ def selectOptimizableLoopSections(optimizableLoops):
         'executionTime':optimizableLoops[loopSection]['sectionTime'],
         'optimiazability':False,
         'optimizedTime':0,
-        'optimizeMethod':'GPU'
+        'optimizeMethod':None
         }
         if(float(optimizableLoops[loopSection]['overheadPrecentage'])> 0.0):
             selectedSection['optimiazability'] = True
@@ -81,8 +81,8 @@ def identify(extractor,directory):
                 logger.loggerInfo("Available Vector Instructions")
                 #display what Instructions available
                 logger.loggerInfo("Feature Extraction for Vectorization Initiated")
-                #vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
-                #vectorThread.start()
+                vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
+                vectorThread.start()
                 #vecAnalzyer(extractor,directory)
             else:
                 isVector = False
