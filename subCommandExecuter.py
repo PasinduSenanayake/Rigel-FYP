@@ -195,11 +195,7 @@ def modifierExecutor():
                     'serialEndLine':0,
                     'executionTime': optimizableLoops[loopSection]['sectionTime'],
                     'optimiazability': False,
-<<<<<<< HEAD
                     'optimizeMethod': None
-=======
-                    'optimizeMethod':None
->>>>>>> e48a046c806766ef8681312acb161fb2bae09b12
                 }
                 summarySection = {
                 'fileName':optimizableLoops[loopSection]['fileName'],
