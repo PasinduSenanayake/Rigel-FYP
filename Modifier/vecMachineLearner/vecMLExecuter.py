@@ -86,7 +86,6 @@ def processMLData():
     for index, row in df_test.iterrows():
         finalResult.append(row['Function / Call Stack'].split('-')[0]+':'+row['Function / Call Stack'].split('-')[1]+':'+prediction[i])
         i+=1
-    print(finalResult)
     os.remove(fileLocation+'mlTemp.csv')
     return np.array(finalResult)
 
@@ -114,8 +113,16 @@ def vecMlModelExecutor(filePath,extractor):
         startLine = dataitem.split(':')[0]
         endLine = dataitem.split(':')[1]
         prediction = dataitem.split(':')[2]
-        if prediction == 'Y':
-            for item in loopData:
+        # if prediction == 'Y':
+        #     for item in loopData:
+        #         if item["startLine"] == startLine and item["endLine"] == endLine :
+        #             if item["optimizeMethod"] == None:
+        #                 item["optimizeMethod"] = "vector"
+        #                 loop_line = get_loop_line(item["startLine"],item["endLine"],extractor,filePath+'/'+item['fileName'])
+        #                 item["loopLine"] = loop_line
+
+        for item in loopData:
+            if item['identifier']=='R00002':
                 if item["startLine"] == startLine and item["endLine"] == endLine :
                     if item["optimizeMethod"] == None:
                         item["optimizeMethod"] = "vector"

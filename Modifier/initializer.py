@@ -27,8 +27,7 @@ def modify(extractor,directory):
 
     if(dbManager.read('vecopt')) :
         logger.loggerInfo("Vector Machine Learning Model Execution Initialized")
-
-        result = vecMlModelExecutor(directory)
+        result = vecMlModelExecutor(directory,extractor)
         if (result):
             logger.loggerSuccess("Vec Machine Learning Model Execution Completed")
         else:
@@ -45,7 +44,7 @@ def modify(extractor,directory):
 
     if(dbManager.read('vecopt')) :
         logger.loggerInfo("Vector Optimization Initialized.")
-        vectorizer = Vectorizer(extractor, directory)
+        # vectorizer = Vectorizer(extractor, directory)
         logger.loggerSuccess("Vector Optimization Completed")
 
 

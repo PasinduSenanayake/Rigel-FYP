@@ -4,7 +4,6 @@ from loopAnalyzer import loopAnalysis
 from summaryIdentifier.initilizerOmpp import getSummary
 from systemIdentifier.systemIdentifier import __systemInformationIdentifier
 from nonarchiFeatureFetcherExecuter import gpuAnalzyer
-from vectorFeatureFetcherExecuter import vecAnalzyer
 import dbManager,logger
 import json
 import threading
@@ -86,8 +85,6 @@ def identify(extractor,directory):
                 dbManager.write('vecopt',True)
                 vectorThread = threading.Thread(target=vecAnalzyer,args=(extractor,directory,loopSections,))
                 vectorThread.start()
-
-                #vecAnalzyer(extractor,directory)
             else:
                 isVector = False
                 dbManager.write('vecopt',False)

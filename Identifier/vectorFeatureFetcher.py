@@ -59,7 +59,6 @@ def featureExtractionExecutor(extractor,directory,loopSections,fileNames):
             else:
                 logger.loggerInfo("Section "+parallelStartLine+":"+parallelEndLine+" is not a parallelable region. Skipped")
     dbManager.write('vecFeatureTime', time.time() - vectorStartTime)
-    print(time.time() - vectorStartTime)
 
 def vecAnalzyer(extractor,directory,loopSections):
     fileData =[]
@@ -143,5 +142,4 @@ def preparefeatureData(location):
         dfList.append(df)
         os.remove(fname)
     bigdata = pd.concat(dfList, ignore_index=True)
-    print(bigdata)
     bigdata.to_csv(location+'/out.csv')

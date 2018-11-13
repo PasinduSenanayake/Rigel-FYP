@@ -204,7 +204,7 @@ def modifierExecutor():
                 'executionTime':optimizableLoops[loopSection]['sectionTime'],
                 'optimiazability':False,
                 'optimizedTime':0,
-                'optimizeMethod':None
+                'optimizeMethod': None
                 }
                 if (float(optimizableLoops[loopSection]['overheadPrecentage']) > 0.0):
                     selectedSection['optimiazability'] = True
@@ -312,7 +312,7 @@ def offloadOptimizer():
         logger.loggerInfo("offloadOptimizer Command Initiated")
         if(checkSubCommandConf()):
             modifireReturn = modifierExecutor()
-            commadName = commandJson['command']['offloadOptimizer']
+            #commadName = commandJson['command']['offloadOptimizer']
             resultLocal = runOffloadOptimizer(modifireReturn['extractor'], modifireReturn['folderPath'])
             result['code']=0
             result['content']=resultLocal
