@@ -46,7 +46,14 @@ class StructuredBlock(Block):
         # if not collapsed:
         newPragma = None
         if alignedArrays:
-            alignStr = "aligned(" + ",".join(alignedArrays) + ":" + str(alignment) + ")"
+            content = self.getContent()
+            presentArrays = []
+            for array in alignedArrays:
+                regex1 = re.compile(r"\s"+array+"\s", re.DOTALL)
+                regex2 = re.compile(r"\s"+array+"\[", re.DOTALL)
+                if regex1.search(content) or regex2.search(content):
+                    presentArrays.append(array)
+            alignStr = "aligned(" + ",".join(presentArrays) + ":" + str(alignment) + ")"
             newPragma = Directive(self.startIndex, name="simd")
             newPragma.body = "\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n"
             # newPragma = Block("\n#pragma omp simd simdlen(" + str(vectorLen) + ") " + alignStr + "\n", 0)

@@ -44,7 +44,8 @@ def modify(extractor,directory):
 
     if(dbManager.read('vecopt')) :
         logger.loggerInfo("Vector Optimization Initialized.")
-        # vectorizer = Vectorizer(extractor, directory)
+        vectorizer = Vectorizer(extractor, directory)
+        vectorizer.initOptimizations()
         logger.loggerSuccess("Vector Optimization Completed")
 
 

@@ -16,9 +16,10 @@ from Evaluator.initializer import finalExecutor
 
 class Vectorizer():
     def __init__(self, extractor, directory):
+        dbManager.overWrite("vecOptTime", dbManager.read("iniExeTime"))
         self.extractor = extractor
         self.instructionSet = self.getLatestInstrucionSet()
-        self.cacheLineSize = "64"
+        self.cacheLineSize = self.getCacheLineSize()
         self.vectorDirectory = directory + "/_vectorization"
         if os.path.exists(self.vectorDirectory):
             shutil.rmtree(self.vectorDirectory)
@@ -33,6 +34,11 @@ class Vectorizer():
         self.analyzer = VectorReportAnalyzer(sourcePaths)
         # print(self.analyzer.vectors)
 
+    def getCacheLineSize(self):
+        with open("/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size", 'r') as file:
+            lineSize = int(file.read().replace("\n",""))
+            return lineSize
+
     def addVectorizableLoop(self, line, filePath, region):
         identified = False
         for vector in self.analyzer.vectors[filePath]:
@@ -42,6 +48,17 @@ class Vectorizer():
             self.analyzer.vectors[filePath].append({"line": int(line), "type": "vectorized_loop",
                                                     "vectorize": True, "chunk": None, "section": [line],
                                                     "collapsed": None, "permutation": None})
+
+    def initOptimizations(self):
+        for file in self.extractor.getSourcePathList():
+            outerLoops = dbManager.read('loopSections')
+            print(outerLoops)
+            for loop in outerLoops:
+                # if loop["fileName"] in file:
+                if loop["fileName"] in file and loop["optimizeMethod"] == "vector":
+                    self.addVectorizableLoop(loop["loopLine"], file, [int(loop["startLine"]), int(loop["endLine"])])
+                    self.initIntelOptimizations(file, [int(loop["startLine"]), int(loop["endLine"])])
+        print("optimized time - " + str(dbManager.read('vecOptTime')))
 
     def vectorize(self):
         return
@@ -82,13 +99,16 @@ class Vectorizer():
             # print(startLine)
             # print("----")
             if int(loopRegion[0]) <= int(startLine) <= int(loopRegion[1]):
-                response = self.getVectorLength(startLine, endLine, filePath, self.instructionSet, source)
-                vectorLen = response[0]
-                alignedArrays = response[1]
                 if vector["permutation"] and not vector["section"] and vector["vectorize"]:
+                    response = self.getVectorLength(startLine, endLine, filePath, self.instructionSet, source)
+                    vectorLen = response[0]
+                    alignedArrays = response[1]
                     stepsBack = len(vector["permutation"][1]) - vector["permutation"][1].index(str(len(vector["permutation"][1]))) - 1
                     source.vectorize(vector["line"], vectorLen, self.cacheLineSize, vector["chunk"], vector["collapsed"], stepsBack, alignedArrays)
                 elif vector["vectorize"]:
+                    response = self.getVectorLength(startLine, endLine, filePath, self.instructionSet, source)
+                    vectorLen = response[0]
+                    alignedArrays = response[1]
                     source.vectorize(vector["line"], vectorLen, self.cacheLineSize, vector["chunk"], vector["collapsed"], alignedArrays=alignedArrays)
         # source.root.setLineNumber(1)
         source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
@@ -96,7 +116,7 @@ class Vectorizer():
         responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'), " -m"+self.instructionSet)
         if responseObj['returncode'] == 1:
             logger.loggerSuccess("Test Execution completed successfully for vectorizing loop at " + str(loopRegion[0]))
-            if not dbManager.read('finalExeTime') < dbManager.read('iniExeTime'):
+            if not dbManager.read('finalExeTime') < dbManager.read('vecOptTime'):
                 logger.loggerInfo(
                     "vectorization reversed for loop region " + str(loopRegion[0]) + "; seems inefficient")
                 self.extractor.getSource(filePath).tunedroot = unchangedRoot
@@ -105,7 +125,7 @@ class Vectorizer():
                 logger.loggerSuccess(
                     "vectorization commited for loop region " + str(loopRegion[0]))
 
-                dbManager.overWrite('iniExeTime', dbManager.read('finalExeTime'))
+                dbManager.overWrite('vecOptTime', dbManager.read('finalExeTime'))
         else:
             logger.loggerError(responseObj['error'])
             logger.loggerError(responseObj['content'])
