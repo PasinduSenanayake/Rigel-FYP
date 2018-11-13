@@ -114,6 +114,8 @@ def changeMakeFile():
             makeFileContentList = f.readlines()
             makefileContent = ""
         for line in makeFileContentList:
+            if 'flags =' in line :
+                makefileContent = makefileContent + line.replace('flags =', '')
             if CLANG in line:
                 makefileContent = makefileContent + CLANG_OFFLOAD
             elif '[targetObject]' in line:

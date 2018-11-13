@@ -32,6 +32,7 @@ def selectOptimizableLoopSections(optimizableLoops):
         }
         summarySection = {
         'fileName':optimizableLoops[loopSection]['fileName'],
+        'identifier':loopSection,
         'startLine': optimizableLoops[loopSection]['startLine'],
         'endLine':optimizableLoops[loopSection]['endLine'],
         'executionTime':optimizableLoops[loopSection]['sectionTime'],

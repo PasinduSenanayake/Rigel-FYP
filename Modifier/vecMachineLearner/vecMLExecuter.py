@@ -108,6 +108,7 @@ def vecMlModelExecutor(filePath,extractor):
     dataSection = dataPreProcessor(filePath+"/_vector_profiling/")
     resultsSet = processMLData()
     loopData = dbManager.read('loopSections')
+    summaryLoopData = dbManager.read('summaryLoops')
     # print (loopData)
     for dataitem in resultsSet:
         startLine = dataitem.split(':')[0]
@@ -129,8 +130,11 @@ def vecMlModelExecutor(filePath,extractor):
                         loop_line = get_loop_line(item["startLine"],item["endLine"],extractor,filePath+'/'+item['fileName'])
                         item["loopLine"] = loop_line
                         # print(loop_line)
-
-    print (loopData)
+        for summaryLoopDataItem in summaryLoopData:
+            if(summaryLoopDataItem["identifier"]=='R00002'):
+                summaryLoopDataItem["optimizeMethod"] ='vector'
+                break
 
     dbManager.overWrite('loopSections',loopData)
+    dbManager.overWrite('summaryLoops',summaryLoopData)
     return True

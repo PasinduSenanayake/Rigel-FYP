@@ -1,4 +1,4 @@
-import logger,dbManager
+import logger,dbManager,time
 from Vectorizer.Vectorizer import Vectorizer
 from gpuMachineLearner.gpuMLExecuter import mlModelExecutor
 from vecMachineLearner.vecMLExecuter import vecMlModelExecutor
@@ -34,8 +34,6 @@ def modify(extractor,directory):
             logger.loggerError("Vec Machine Learning Model Execution Failed.")
 
 
-    # Database clean method
-
     if(dbManager.read('gpuopt')):
         logger.loggerInfo("GPU Optimization Initialized.")
         resultLocal = runOffloadOptimizer(extractor, directory)
@@ -44,8 +42,10 @@ def modify(extractor,directory):
 
     if(dbManager.read('vecopt')) :
         logger.loggerInfo("Vector Optimization Initialized.")
+        vecStartTime = time.time()
         vectorizer = Vectorizer(extractor, directory)
         vectorizer.initOptimizations()
+        dbManager.write('Vec_OptTime',time.time()-vecStartTime)
         logger.loggerSuccess("Vector Optimization Completed")
 
 

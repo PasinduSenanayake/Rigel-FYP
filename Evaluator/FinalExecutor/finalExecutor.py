@@ -17,6 +17,18 @@ def finalExecution(dirPath,runTimeArguments="", additionalFlags=""):
             shutil.rmtree(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox")
         shutil.copytree(dirPath, str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox")
         lines=[]
+        clines=[]
+        with open(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox/2mm_profile.c") as cfile:
+            clines = cfile.readlines()
+            for cindex,cline in enumerate(clines):
+                if '#pragma omp target' in cline:
+                    cline = cline.replace("#pragma omp target",' //#pragma omp target')
+                    clines[cindex] = cline
+                if '#pragma omp distribute' in cline:
+                    cline = cline.replace("#pragma omp distribute",'//#pragma omp distribute')
+                    clines[cindex] = cline
+        with open(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox/2mm_profile.c", 'w') as crewriteMake:
+            crewriteMake.writelines(clines)
         with open(str(os.path.dirname(os.path.realpath(__file__)))+"/sandbox/Makefile") as books:
             lines = books.readlines()
             for index,line in enumerate(lines):

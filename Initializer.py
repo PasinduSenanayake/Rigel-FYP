@@ -80,20 +80,20 @@ def processInitializer():
     #     logger.loggerError(responseObj['error'])
     #     logger.loggerError("Final Execution Failed. Optimization process terminated.")
     #     exit()
-    # logger.loggerInfo("Optimization Visualization Process Initiated")
-    # visualizerExecutor()
-    # logger.loggerSuccess("Optimization Visualization Process Completed Successfully")
-    # logger.loggerInfo("Optimizied Code Written Process Initiated")
-    # os.chdir("/"+sourceDirectry)
-    # for file in glob.glob("*.c"):
-    #     sourceObj = extractor.getSource(sourceDirectry+"/"+file)
-    #     sourceObj.writeToFile(sourceDirectry+"/optimized_"+file,sourceObj.tunedroot)
-    # logger.loggerSuccess("Optimizied Code Written Process Completed Successfully")
-    # logger.loggerInfo("Optimization Summary Written Process Initiated")
-    # with open(sourceDirectry+"/optimization_summary.json", 'w') as outfile:
-    #     json.dump(dbManager.read('report'), outfile)
-    # logger.loggerSuccess("Optimization Summary Written Process Completed Successfully")
-    # logger.loggerSuccess("Program Evaluation Process Completed Successfully")
+    logger.loggerInfo("Optimization Visualization Process Initiated")
+    visualizerExecutor()
+    logger.loggerSuccess("Optimization Visualization Process Completed Successfully")
+    logger.loggerInfo("Optimizied Code Written Process Initiated")
+    os.chdir("/"+sourceDirectry)
+    for file in glob.glob("*.c"):
+        sourceObj = extractor.getSource(sourceDirectry+"/"+file)
+        sourceObj.writeToFile(sourceDirectry+"/optimized_"+file,sourceObj.tunedroot)
+    logger.loggerSuccess("Optimizied Code Written Process Completed Successfully")
+    logger.loggerInfo("Optimization Summary Written Process Initiated")
+    with open(sourceDirectry+"/optimization_summary.json", 'w') as outfile:
+        json.dump(dbManager.read('report'), outfile)
+    logger.loggerSuccess("Optimization Summary Written Process Completed Successfully")
+    logger.loggerSuccess("Program Evaluation Process Completed Successfully")
     #Evaluator Completed
     return True
 

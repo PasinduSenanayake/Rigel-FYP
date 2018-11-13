@@ -92,7 +92,7 @@ def visual(report):
     def updateOptPie(num):
         ax1.clear()
         ax1.axis('equal')
-        ax1.set_title('Optimization Overhead Breakdown : Total 2323 S')
+        ax1.set_title('Optimization Overhead Breakdown : Total '+ str(report['otb']['totalOverhead']) +' S')
         for sizeVal in range (0,3):
             if sizesOpt[sizeVal]<sizesOrignalOpt[sizeVal]:
                 sizesOpt[sizeVal] = sizesOpt[sizeVal] +4
@@ -118,6 +118,7 @@ def reportGenerator(reportObj):
     loopNames = reportObj['loopLines']
     nonOptLoops = reportObj['notOptLoopTimes']
     optLoops =  reportObj['optLoopTimes']
+    toverhead = reportObj['toverhead']
     totalNotOpttime =  notOptiimzer + sum(nonOptLoops)
     totalOptTime = notOptiimzer + sum(optLoops)
     gpuExeTime = reportObj['gpuExeTime']
@@ -137,7 +138,7 @@ def reportGenerator(reportObj):
         'lsb':{'GPU Optimizable':gpuOptimizerable,'CPU Optimizable':cpuOptimizerable,'Vector Optimizable':vecOptimizerable,'Not Optimizable':notOptimizerable},
         'set':{'loopSections':loopNames,'nonOptimized':nonOptLoops,'optimized':optLoops,},
         'oet':{'nonOptimized':totalNotOpttime,'optimized':totalOptTime},
-        'otb':{'GPU Optimizations':gpuExePreset,'CPU Optimizations':cpuExePreset,'Vector Optimizations':vecExePreset}
+        'otb':{'GPU Optimizations':gpuExePreset,'CPU Optimizations':cpuExePreset,'Vector Optimizations':vecExePreset,'totalOverhead':toverhead}
     }
     dbManager.write('report',report)
     visual(report)

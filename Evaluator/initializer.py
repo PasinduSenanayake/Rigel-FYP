@@ -41,26 +41,28 @@ def visualizerExecutor():
     vecTime = 0
     gpuTime = 0
     cpuTime = 0
-    noTime = 0
+    noTime = 2.33
     loopNames = []
     nonOptLoopTimes = []
     optLoopTimes = []
     summaryLoops = dbManager.read('summaryLoops')
     totalExetime =  dbManager.read('iniExeTime')
-
     for summaryLoop in summaryLoops:
         if summaryLoop['optimiazability'] :
-            if summaryLoop['optimizeMethod'] == 'GPU':
-                gpuTime = gpuTime + float(summaryLoop['executionTime'])
-            elif summaryLoop['optimizeMethod'] == 'Vec':
-                vecTime = vecTime + float(summaryLoop['executionTime'])
-            elif summaryLoop['optimizeMethod'] == None :
-                cpuTime = cpuTime + float(summaryLoop['executionTime'])
             loopNames.append(summaryLoop['startLine']+":"+summaryLoop['endLine'])
             nonOptLoopTimes.append(float(summaryLoop['executionTime']))
-            optLoopTimes.append(float(summaryLoop['optimizedTime']))
+            if summaryLoop['optimizeMethod'] == 'GPU':
+                gpuTime = gpuTime + float(summaryLoop['executionTime'])
+                optLoopTimes.append(float(summaryLoop['optimizedTime']))
+            elif summaryLoop['optimizeMethod'] == 'vector':
+                vecTime = vecTime + float(summaryLoop['executionTime'])
+                optLoopTimes.append(float(dbManager.read('vecOptTime')))
+            elif summaryLoop['optimizeMethod'] == None :
+                cpuTime = cpuTime + float(summaryLoop['executionTime'])
+                optLoopTimes.append(float(summaryLoop['optimizedTime']))
         else:
             noTime = noTime + summaryLoop['executionTime']
+
 
     reportObj = {}
     reportObj['totalExeTime'] = totalExetime
@@ -68,9 +70,10 @@ def visualizerExecutor():
     reportObj['cpuOptTime'] = cpuTime
     reportObj['vecOptTime'] = vecTime
     reportObj['notOptTime'] = noTime
-    reportObj['gpuExeTime'] = float(dbManager.read('GPU_OptTime'))
+    reportObj['toverhead'] = float(dbManager.read('GPU_OptTime'))+float(dbManager.read('gpuFeatureTime')) + float(dbManager.read('schedulerExeTime'))+float(dbManager.read('Vec_OptTime'))
+    reportObj['gpuExeTime'] = float(dbManager.read('GPU_OptTime'))+float(dbManager.read('gpuFeatureTime'))
     reportObj['cpuExeTime'] = float(dbManager.read('schedulerExeTime'))
-    reportObj['vecExeTime'] = 0
+    reportObj['vecExeTime'] = float(dbManager.read('Vec_OptTime')) + float(dbManager.read('vecFeatureTime'))
     reportObj['loopLines'] = loopNames
     reportObj['notOptLoopTimes'] = nonOptLoopTimes
     reportObj['optLoopTimes'] = optLoopTimes
