@@ -52,7 +52,6 @@ class Vectorizer():
     def initOptimizations(self):
         for file in self.extractor.getSourcePathList():
             outerLoops = dbManager.read('loopSections')
-            print(outerLoops)
             for loop in outerLoops:
                 # if loop["fileName"] in file:
                 if loop["fileName"] in file and loop["optimizeMethod"] == "vector":
