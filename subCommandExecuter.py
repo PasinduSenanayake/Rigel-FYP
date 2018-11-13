@@ -59,16 +59,16 @@ def schedulingIdentifier():
 def reportGen():
     reportObj = {}
     reportObj['totalExeTime'] = 100
-    reportObj['gpuOptTime'] = 20
+    reportObj['gpuOptTime'] = 18
     reportObj['cpuOptTime'] = 45
     reportObj['vecOptTime'] = 10
-    reportObj['notOptTime'] = 10
+    reportObj['notOptTime'] = 25
     reportObj['gpuExeTime'] = 15
     reportObj['cpuExeTime'] = 40
     reportObj['vecExeTime'] = 45
-    reportObj['loopLines'] = ['10:18','20:26']
-    reportObj['notOptLoopTimes'] = [10,8]
-    reportObj['optLoopTimes'] = [8,6]
+    reportObj['loopLines'] = ['10:18','20:26','30:34','40:45','60:68']
+    reportObj['notOptLoopTimes'] = [10.24,8.45,4.24,6.25,3.47]
+    reportObj['optLoopTimes'] = [8.17,6.65,2.14,1.85,2.98]
     reportGenerator(reportObj)
 
 
