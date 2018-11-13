@@ -113,7 +113,7 @@ class Vectorizer():
         # source.root.setLineNumber(1)
         source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
         logger.loggerInfo("Test Execution Initiated")
-        responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'), " -m"+self.instructionSet)
+        responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'), "-O2 -m"+self.instructionSet)
         if responseObj['returncode'] == 1:
             logger.loggerSuccess("Test Execution completed successfully for vectorizing loop at " + str(loopRegion[0]))
             if not dbManager.read('finalExeTime') < dbManager.read('vecOptTime'):
@@ -203,8 +203,7 @@ class Vectorizer():
             source.addClause(int(loopRegion[0]), "proc_bind", option)
             source.writeToFile(self.vectorDirectory + "/" + fileName, source.tunedroot)
             logger.loggerInfo("Test Execution Initiated after adding affinity clause")
-            responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'),
-                                        "-m" + self.instructionSet)
+            responseObj = finalExecutor(self.vectorDirectory, dbManager.read('runTimeArguments'))
             if responseObj['returncode'] == 1:
                 logger.loggerSuccess(
                     "Test Execution completed successfully for adding affinity clause at " + str(loopRegion[0]))
