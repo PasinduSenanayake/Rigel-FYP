@@ -96,7 +96,7 @@ class Directive(Block):
 
     def addClause(self, clause, content):
         fullDirective = self.getContent()
-        clauseBlock = Block(" " + clause + "(" + content + ")")
+        clauseBlock = Block(" " + clause + "(" + content + ") ")
         clauseBlock.parent = self
         if clause not in fullDirective:
             self.elements.insert(0, clauseBlock)

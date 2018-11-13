@@ -127,20 +127,13 @@ def vectorizer():
             logger.loggerError("Source Code Identification Process Failed. Optimization process terminated.")
             return False
         # Identifier Completed
-
         vectorizer = Vectorizer(extractor, folderPath)
-        for file in extractor.getSourcePathList():
-            outerLoops = dbManager.read('loopSections')
-            for loop in outerLoops:
-                if loop["fileName"] in file:
-                    vectorizer.initIntelOptimizations(file, [int(loop["startLine"]), int(loop["endLine"])])
+        vectorizer.initOptimizations()
 
         # for file in extractor.getSourcePathList():
         #     outerLoops = dbManager.read('loopSections')
         #     for loop in outerLoops:
         #         vectorizer.optimizeAffinity(file, [int(loop["startLine"]), int(loop["endLine"])])
-
-        print("optimized time - " + str(dbManager.read('iniExeTime')))
 
 
 
